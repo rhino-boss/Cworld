@@ -14,10 +14,10 @@
       --text-primary: #1a1a1a;
       --text-secondary: #6b6b6b;
       --text-tag: #4a4a4a;
-      --accent-1: #d4a8a8; /* 嘻嘻的足跡 — dusty rose */
-      --accent-2: #a8b8d4; /* 雜物堆 — slate blue */
-      --accent-3: #a8d4b8; /* 研究室 — sage */
-      --accent-4: #d4cba8; /* 工作室 — warm sand */
+      --accent-1: #d4a8a8;
+      --accent-2: #a8b8d4;
+      --accent-3: #a8d4b8;
+      --accent-4: #d4cba8;
       --radius: 16px;
       --shadow: 0 2px 12px rgba(0,0,0,0.07);
       --shadow-hover: 0 8px 32px rgba(0,0,0,0.13);
@@ -30,26 +30,10 @@
       min-height: 100vh;
     }
 
-    /* ── Header ── */
-    header {
-      padding: 56px 48px 32px;
-      max-width: 960px;
-      margin: 0 auto;
-    }
+    header { padding: 56px 48px 32px; max-width: 960px; margin: 0 auto; }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { margin-top: 8px; font-size: 0.95rem; color: var(--text-secondary); }
 
-    header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    header p {
-      margin-top: 8px;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-    }
-
-    /* ── Grid ── */
     main {
       max-width: 960px;
       margin: 0 auto;
@@ -59,7 +43,6 @@
       gap: 20px;
     }
 
-    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -70,13 +53,7 @@
       position: relative;
       overflow: hidden;
     }
-
-    .card:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-3px);
-    }
-
-    /* colour stripe on top */
+    .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
     .card::before {
       content: '';
       position: absolute;
@@ -85,91 +62,41 @@
       background: var(--accent);
       border-radius: var(--radius) var(--radius) 0 0;
     }
-
     .card-1 { --accent: var(--accent-1); }
     .card-2 { --accent: var(--accent-2); }
     .card-3 { --accent: var(--accent-3); }
     .card-4 { --accent: var(--accent-4); }
 
-    .card-icon {
-      font-size: 2rem;
-      margin-bottom: 12px;
-      line-height: 1;
-    }
+    .card-icon { font-size: 2rem; margin-bottom: 12px; line-height: 1; }
+    .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .card-desc { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 24px; min-height: 18px; }
 
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .card-desc {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-      min-height: 18px;
-    }
-
-    /* ── Sub-items ── */
-    .sub-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .sub-items { display: flex; flex-direction: column; gap: 8px; }
     .sub-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      text-decoration: none;
-      color: var(--text-tag);
-      font-size: 0.9rem;
-      font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      background: var(--bg); border: 1px solid var(--border);
+      text-decoration: none; color: var(--text-tag);
+      font-size: 0.9rem; font-weight: 500;
       transition: background 0.18s, border-color 0.18s;
     }
-
     .sub-item:hover {
       background: color-mix(in srgb, var(--accent) 12%, white);
       border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
     }
-
     .sub-item .arrow {
-      margin-left: auto;
-      color: var(--text-secondary);
-      font-size: 0.8rem;
-      opacity: 0.5;
+      margin-left: auto; color: var(--text-secondary);
+      font-size: 0.8rem; opacity: 0.5;
       transition: opacity 0.18s, transform 0.18s;
     }
+    .sub-item:hover .arrow { opacity: 1; transform: translateX(3px); }
 
-    .sub-item:hover .arrow {
-      opacity: 1;
-      transform: translateX(3px);
-    }
-
-    /* ── No-sub card ── */
-    .card-solo {
-      cursor: pointer;
-    }
-
-    .card-solo .card-title a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    /* ── Footer ── */
     footer {
-      text-align: center;
-      padding: 24px;
-      font-size: 0.78rem;
-      color: var(--text-secondary);
+      text-align: center; padding: 24px;
+      font-size: 0.78rem; color: var(--text-secondary);
       border-top: 1px solid var(--border);
     }
 
-    /* ── Responsive ── */
     @media (max-width: 640px) {
       header { padding: 36px 24px 24px; }
       main { grid-template-columns: 1fr; padding: 0 24px 60px; }
@@ -184,71 +111,46 @@
 </header>
 
 <main>
-
-  <!-- 嘻嘻的足跡 -->
   <div class="card card-1">
     <div class="card-icon">🗺️</div>
     <div class="card-title">嘻嘻的足跡</div>
     <div class="card-desc">走過的山，去過的地方</div>
     <div class="sub-items">
-      <a class="sub-item" href="hiking.html">
-        <span>🏔️</span> 爬山
-        <span class="arrow">→</span>
-      </a>
-      <a class="sub-item" href="travel.html">
-        <span>✈️</span> 旅遊
-        <span class="arrow">→</span>
-      </a>
+      <a class="sub-item" href="hiking.html"><span>🏔️</span> 爬山<span class="arrow">→</span></a>
+      <a class="sub-item" href="travel.html"><span>✈️</span> 旅遊<span class="arrow">→</span></a>
     </div>
   </div>
 
-  <!-- 雜物堆 -->
   <div class="card card-2">
     <div class="card-icon">📦</div>
     <div class="card-title">雜物堆</div>
     <div class="card-desc">各種亂七八糟的東西</div>
     <div class="sub-items">
-      <a class="sub-item" href="misc.html" style="justify-content: center; color: var(--text-secondary); font-size:0.82rem; border-style: dashed;">
-        施工中 🚧
-      </a>
+      <a class="sub-item" href="misc.html" style="justify-content:center;color:var(--text-secondary);font-size:0.82rem;border-style:dashed;">施工中 🚧</a>
     </div>
   </div>
 
-  <!-- 研究室 -->
   <div class="card card-3">
     <div class="card-icon">🔬</div>
     <div class="card-title">研究室</div>
     <div class="card-desc">腦子裡跑來跑去的東西</div>
     <div class="sub-items">
-      <a class="sub-item" href="stocks.html">
-        <span>📈</span> 股票
-        <span class="arrow">→</span>
-      </a>
-      <a class="sub-item" href="ai.html">
-        <span>🤖</span> AI
-        <span class="arrow">→</span>
-      </a>
+      <a class="sub-item" href="stocks.html"><span>📈</span> 股票<span class="arrow">→</span></a>
+      <a class="sub-item" href="ai.html"><span>🤖</span> AI<span class="arrow">→</span></a>
     </div>
   </div>
 
-  <!-- 工作室 -->
   <div class="card card-4">
     <div class="card-icon">🎮</div>
     <div class="card-title">工作室</div>
     <div class="card-desc">做出來的小玩意兒</div>
     <div class="sub-items">
-      <a class="sub-item" href="demogame.html">
-        <span>🎰</span> Demogame
-        <span class="arrow">→</span>
-      </a>
+      <a class="sub-item" href="demogame.html"><span>🎰</span> Demogame<span class="arrow">→</span></a>
     </div>
   </div>
-
 </main>
 
-<footer>
-  made with ☕ by 嘻嘻
-</footer>
+<footer>made with ☕ by 嘻嘻</footer>
 
 </body>
 </html>
