@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>雜物堆 · Cworld</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    nav { position: fixed; top: 0; left: 0; right: 0; background: #3d4a5c; padding: 0 32px; display: flex; align-items: center; gap: 8px; height: 52px; z-index: 10; }
+    nav a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
+    nav a:hover { color: #fff; }
+    nav span { color: rgba(255,255,255,.3); font-size: .85rem; }
+    nav .current { color: #fff; font-weight: 600; }
+    .placeholder { text-align: center; padding: 48px 24px; }
+    .placeholder .emoji { font-size: 4rem; margin-bottom: 20px; }
+    .placeholder h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+    .placeholder p { color: #6b6b6b; font-size: .9rem; }
+    .wip { display: inline-block; margin-top: 20px; padding: 8px 20px; background: #e8e8e4; border-radius: 99px; font-size: .82rem; color: #4a4a4a; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../index.html">Cworld</a>
+  <span>/</span>
+  <span class="current">雜物堆</span>
+</nav>
+<div class="placeholder">
+  <div class="emoji">📦</div>
+  <h1>雜物堆</h1>
+  <p>各種亂七八糟的東西</p>
+  <div class="wip">施工中 🚧</div>
+</div>
+</body>
+</html>
