@@ -245,7 +245,7 @@
 const GH = {
   owner: 'rhino-boss', repo: 'Cworld', branch: 'main',
   get token() { return localStorage.getItem('gh_token') || ''; },
-  dataFile: 'data.json', photoDir: 'images/hiking',
+  dataFile: 'hiking/data.json', photoDir: 'hiking/images',
 };
 
 // ── 官方台灣百岳（資料來源：TMCA） ────────────
@@ -547,9 +547,9 @@ function removePreview(i) { pendingPhotos.splice(i, 1); renderPreviews(); }
 
 // ── GitHub API ────────────────────────────────
 async function ghGet(path) {
-  const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`, {
-    headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github+json' }
-  });
+  const headers = { Accept: 'application/vnd.github+json' };
+  if (GH.token) headers.Authorization = `token ${GH.token}`;
+  const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`, { headers });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`GitHub ${res.status}`);
   return res.json();
