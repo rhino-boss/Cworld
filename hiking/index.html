@@ -66,6 +66,7 @@
     .marker-triangle .lbl-name { font-size: .78rem; font-weight: 600; color: #222; }
     .marker-triangle .lbl-name.visited { color: var(--visited-color); }
     .marker-triangle .lbl-alt { font-size: .7rem; color: #888; font-weight: 400; }
+    .marker-triangle .marker-thumb { display: block; width: 54px; height: 54px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.22); border: 2px solid #fff; margin-left: 4px; flex-shrink: 0; }
 
     /* Popup */
     .leaflet-popup-content-wrapper { border-radius: 14px !important; box-shadow: 0 8px 32px rgba(0,0,0,.18) !important; padding: 0 !important; overflow: hidden; }
@@ -390,9 +391,12 @@ function updateMarkersForZoom() {
   });
 }
 
-function makeIcon(peak, visited) {
+function makeIcon(peak, info) {
+  const visited = !!info;
   const triClass = visited ? 'tri-visited' : 'tri-unvisited';
   const nameClass = visited ? 'lbl-name visited' : 'lbl-name';
+  const photo = info && info.photos && info.photos.length ? info.photos[0] : null;
+  const thumbHtml = photo ? `<img class="marker-thumb" src="${rawUrl(photo)}" />` : '';
   return L.divIcon({
     className: '',
     html: `<div class="marker-triangle">
@@ -401,6 +405,7 @@ function makeIcon(peak, visited) {
         <span class="${nameClass}">${peak.name}</span>
         <span class="lbl-alt">${peak.alt.toLocaleString()}m</span>
       </div>
+      ${thumbHtml}
     </div>`,
     iconSize: [1, 1], iconAnchor: [0, 8],
   });
@@ -432,7 +437,7 @@ function buildPopup(peak) {
 
 function initMarkers() {
   PEAKS.forEach(peak => {
-    const m = L.marker([peak.lat, peak.lng], { icon: makeIcon(peak, !!VISITED[peak.name]) })
+    const m = L.marker([peak.lat, peak.lng], { icon: makeIcon(peak, VISITED[peak.name]) })
       .bindPopup(buildPopup(peak), { maxWidth: 300 });
     markerMap[peak.name] = { marker: m, peak };
   });
@@ -444,7 +449,7 @@ map.on('zoomend', updateMarkersForZoom);
 function refreshMarker(name) {
   const entry = markerMap[name];
   if (!entry) return;
-  entry.marker.setIcon(makeIcon(entry.peak, !!VISITED[name]));
+  entry.marker.setIcon(makeIcon(entry.peak, VISITED[name]));
   entry.marker.setPopupContent(buildPopup(entry.peak));
   updateMarkersForZoom();
 }
