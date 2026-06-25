@@ -6,32 +6,212 @@
   <title>Demogame · Cworld</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: #f7f7f5; color: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    nav { position: fixed; top: 0; left: 0; right: 0; background: #4a3828; padding: 0 32px; display: flex; align-items: center; gap: 8px; height: 52px; z-index: 10; }
+    :root {
+      --bg: #f7f7f5; --surface: #fff; --border: #e8e8e4;
+      --text: #1a1a1a; --muted: #6b6b6b;
+      --accent-dark: #4a3828; --accent-mid: #7a5c3a;
+      --radius: 14px;
+    }
+    body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    nav { background: var(--accent-dark); padding: 0 32px; display: flex; align-items: center; gap: 8px; height: 52px; }
     nav a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
     nav a:hover { color: #fff; }
-    nav span { color: rgba(255,255,255,.3); font-size: .85rem; }
+    nav .sep { color: rgba(255,255,255,.3); font-size: .85rem; }
     nav .current { color: #fff; font-weight: 600; }
-    .placeholder { text-align: center; padding: 48px 24px; }
-    .placeholder .emoji { font-size: 4rem; margin-bottom: 20px; }
-    .placeholder h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
-    .placeholder p { color: #6b6b6b; font-size: .9rem; }
-    .wip { display: inline-block; margin-top: 20px; padding: 8px 20px; background: #e8e8e4; border-radius: 99px; font-size: .82rem; color: #4a4a4a; }
+
+    .hero { background: linear-gradient(135deg, var(--accent-dark), var(--accent-mid)); padding: 40px 48px 36px; color: #fff; }
+    .hero h1 { font-size: 1.75rem; font-weight: 700; }
+    .hero p { margin-top: 6px; font-size: .9rem; opacity: .7; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 36px 48px 80px; }
+
+    .status-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: .82rem; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+    .dot.loading { background: #f0a020; animation: pulse 1s infinite; }
+    .dot.done { background: #3a8a50; }
+    .dot.error { background: #c0392b; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      transition: box-shadow .2s, transform .2s;
+      display: flex; flex-direction: column;
+    }
+    .card.has-demo:hover { box-shadow: 0 8px 28px rgba(0,0,0,.13); transform: translateY(-3px); }
+
+    .card-cover {
+      width: 100%; aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #3a2c1a, #6b4e2a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; position: relative; overflow: hidden;
+    }
+    .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .card-cover .no-demo-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.45);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.6);
+      letter-spacing: .5px;
+    }
+
+    .card-body { padding: 14px 16px 10px; flex: 1; }
+    .card-id { font-size: .72rem; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+    .card-title { font-size: .95rem; font-weight: 700; }
+
+    .card-footer { padding: 10px 16px 14px; }
+    .play-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; padding: 9px; border-radius: 10px;
+      background: var(--accent-dark); color: #fff;
+      text-decoration: none; font-size: .85rem; font-weight: 700;
+      transition: background .15s;
+    }
+    .play-btn:hover { background: var(--accent-mid); }
+    .no-demo-btn {
+      width: 100%; padding: 9px; border-radius: 10px;
+      background: var(--bg); border: 1px dashed var(--border);
+      font-size: .82rem; color: var(--muted); text-align: center;
+    }
+
+    .skeleton { animation: shimmer 1.2s infinite linear; background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; border-radius: var(--radius); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skel-card { height: 200px; }
+
+    .error-msg { text-align: center; padding: 60px 24px; color: var(--muted); }
+    .error-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+    @media (max-width: 640px) {
+      .hero { padding: 28px 24px; }
+      .container { padding: 24px 20px 60px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    }
   </style>
 </head>
 <body>
+
 <nav>
   <a href="../../index.html">Cworld</a>
-  <span>/</span>
+  <span class="sep">/</span>
   <a href="../../index.html">工作室</a>
-  <span>/</span>
+  <span class="sep">/</span>
   <span class="current">Demogame</span>
 </nav>
-<div class="placeholder">
-  <div class="emoji">🎰</div>
-  <h1>Demogame</h1>
-  <p>做出來的小遊戲</p>
-  <div class="wip">施工中 🚧</div>
+
+<div class="hero">
+  <h1>🎰 Demogame</h1>
+  <p>自製的 Slot 遊戲，點進去直接玩</p>
 </div>
+
+<div class="container">
+  <div class="status-bar">
+    <div class="dot loading" id="status-dot"></div>
+    <span id="status-text">讀取遊戲清單中…</span>
+  </div>
+  <div class="grid" id="game-grid">
+    <!-- 骨架屏 -->
+    <div class="skeleton skel-card"></div>
+    <div class="skeleton skel-card"></div>
+    <div class="skeleton skel-card"></div>
+  </div>
+</div>
+
+<script>
+const REPO_OWNER = 'rhino-boss';
+const REPO_NAME  = 'Jumbo';
+const SLOTS_PATH = 'Project_AI/Slots';
+const PAGES_BASE = `https://${REPO_OWNER}.github.io/${REPO_NAME}`;
+
+// 從資料夾名稱解析 id 和顯示名稱
+// 格式：H026_彩罐熱舞 → { id: 'H026', title: '彩罐熱舞' }
+function parseFolderName(name) {
+  const m = name.match(/^([A-Za-z0-9]+)_(.+)$/);
+  if (m) return { id: m[1], title: m[2] };
+  return { id: '', title: name };
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function checkHasDemo(folderName) {
+  try {
+    const files = await fetchJson(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SLOTS_PATH}/${encodeURIComponent(folderName)}`
+    );
+    return Array.isArray(files) && files.some(f => f.name.toLowerCase() === 'index.html');
+  } catch { return false; }
+}
+
+async function init() {
+  const grid = document.getElementById('game-grid');
+  const dot  = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+
+  try {
+    // 取得 Slots 目錄下所有資料夾
+    const items = await fetchJson(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SLOTS_PATH}`
+    );
+    const folders = items.filter(i => i.type === 'dir');
+
+    if (folders.length === 0) {
+      grid.innerHTML = '<div class="error-msg"><div class="icon">📭</div><p>目前還沒有遊戲</p></div>';
+      dot.className = 'dot done'; statusText.textContent = '沒有找到遊戲';
+      return;
+    }
+
+    statusText.textContent = `找到 ${folders.length} 個遊戲，檢查 Demo 中…`;
+
+    // 並行檢查每個資料夾是否有 index.html
+    const results = await Promise.all(
+      folders.map(async f => {
+        const hasDemo = await checkHasDemo(f.name);
+        return { ...parseFolderName(f.name), folderName: f.name, hasDemo };
+      })
+    );
+
+    // 有 demo 的排前面
+    results.sort((a, b) => b.hasDemo - a.hasDemo);
+
+    const demoCount = results.filter(r => r.hasDemo).length;
+    dot.className = 'dot done';
+    statusText.textContent = `共 ${folders.length} 款遊戲，${demoCount} 款可遊玩`;
+
+    grid.innerHTML = results.map(g => {
+      const playUrl = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}/`;
+      return `
+        <div class="card ${g.hasDemo ? 'has-demo' : ''}">
+          <div class="card-cover">
+            🎰
+            ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
+          </div>
+          <div class="card-body">
+            ${g.id ? `<div class="card-id">${g.id}</div>` : ''}
+            <div class="card-title">${g.title}</div>
+          </div>
+          <div class="card-footer">
+            ${g.hasDemo
+              ? `<a class="play-btn" href="${playUrl}" target="_blank">▶ 開始遊玩</a>`
+              : `<div class="no-demo-btn">🚧 製作中</div>`
+            }
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch (e) {
+    dot.className = 'dot error';
+    statusText.textContent = '讀取失敗';
+    grid.innerHTML = `<div class="error-msg"><div class="icon">⚠️</div><p>無法讀取遊戲清單<br><small>${e.message}</small></p></div>`;
+  }
+}
+
+init();
+</script>
 </body>
 </html>
