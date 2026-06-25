@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>百岳制霸地圖 — 我的登山紀錄</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f2f4f0; --surface: #fff; --border: #dde2d8;
+      --green-dark: #2d4a2d; --green-mid: #4a7c59; --green-light: #7fb08a;
+      --text: #1a1a1a; --muted: #5a6b5a;
+      --visited-color: #e85d2f; --unvisited-color: #9ab5a0;
+      --nav-height: 52px;
+    }
+    body { background: var(--bg); font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; color: var(--text); min-height: 100vh; }
+
+    /* ── My Nav ── */
+    .site-nav {
+      background: var(--green-dark); padding: 0 24px;
+      display: flex; align-items: center; height: var(--nav-height);
+      position: sticky; top: 0; z-index: 1000;
+    }
+    .site-nav .logo {
+      display: flex; align-items: center; gap: 8px;
+      color: #fff; font-weight: 700; font-size: .95rem;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .site-nav ul { display: flex; gap: 2px; list-style: none; margin-left: auto; align-items: center; }
+    .site-nav ul > li { position: relative; }
+    .site-nav ul a {
+      display: block; padding: 6px 12px; border-radius: 6px;
+      color: rgba(255,255,255,.72); text-decoration: none; font-size: .85rem;
+      transition: background .15s, color .15s; white-space: nowrap;
+    }
+    .site-nav ul a:hover,
+    .site-nav ul a.active { background: rgba(255,255,255,.15); color: #fff; font-weight: 600; }
+    .dropdown-menu {
+      display: none; position: absolute; top: calc(100% + 6px); left: 0;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15); min-width: 180px; padding: 6px 0;
+      list-style: none; z-index: 2000;
+    }
+    .has-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu li a {
+      color: var(--text); border-radius: 0; padding: 10px 16px; font-size: .85rem;
+    }
+    .dropdown-menu li a:hover { background: #f0f8f3; color: var(--green-dark); font-weight: 600; }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, var(--green-dark), #3a6b4a); padding: 28px 48px 24px; color: #fff; }
+    .hero h1 { font-size: 1.6rem; font-weight: 700; }
+    .hero p { margin-top: 5px; font-size: .88rem; opacity: .72; }
+
+    /* ── Stats bar ── */
+    .stats { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 48px; display: flex; gap: 32px; align-items: center; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-num { font-size: 1.45rem; font-weight: 700; color: var(--green-dark); line-height: 1; }
+    .stat-label { font-size: .72rem; color: var(--muted); margin-top: 3px; }
+    .stat-bar { flex: 1; height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .stat-fill { height: 100%; background: linear-gradient(90deg, var(--green-mid), var(--green-light)); border-radius: 99px; transition: width .8s ease; }
+
+    /* ── Layout ── */
+    .layout { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - var(--nav-height) - 80px - 54px); min-height: 500px; position: relative; }
+    #map { width: 100%; height: 100%; z-index: 1; }
+
+    /* ── Sidebar ── */
+    .sidebar { background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    .sidebar-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
+    .sidebar-header h2 { font-size: .95rem; font-weight: 700; }
+    .search-box { width: 100%; margin-top: 10px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); font-size: .85rem; background: var(--bg); color: var(--text); }
+    .search-box:focus { outline: 2px solid var(--green-mid); border-color: transparent; }
+    .filter-tabs { display: flex; gap: 6px; padding: 10px 18px; border-bottom: 1px solid var(--border); }
+    .tab { padding: 4px 10px; border-radius: 99px; font-size: .78rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--bg); color: var(--muted); transition: all .15s; }
+    .tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
+    .peak-list { overflow-y: auto; flex: 1; padding: 6px 0; }
+    .peak-item { display: flex; align-items: center; gap: 10px; padding: 9px 18px; cursor: pointer; border-bottom: 1px solid #f5f5f3; transition: background .12s; }
+    .peak-item:hover { background: var(--bg); }
+    .peak-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: var(--unvisited-color); }
+    .peak-dot.visited { background: var(--visited-color); }
+    .peak-info { flex: 1; min-width: 0; }
+    .peak-name { font-size: .88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .peak-rank { font-size: .72rem; color: var(--muted); font-weight: 400; }
+    .peak-meta { font-size: .74rem; color: var(--muted); margin-top: 1px; }
+    .peak-badge { font-size: .7rem; padding: 2px 7px; border-radius: 99px; background: #ffeee8; color: var(--visited-color); font-weight: 700; flex-shrink: 0; }
+
+    /* ── Markers ── */
+    .marker-triangle { display: flex; align-items: center; gap: 4px; white-space: nowrap; pointer-events: none; }
+    .marker-triangle .tri { font-size: .7rem; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,.2)); }
+    .tri-visited { color: var(--visited-color); }
+    .tri-unvisited { color: #7a9a8a; }
+    .marker-triangle .label-wrap { background: rgba(255,255,255,.92); border-radius: 5px; padding: 2px 7px; box-shadow: 0 1px 6px rgba(0,0,0,.13); display: flex; align-items: baseline; gap: 5px; }
+    .marker-triangle .lbl-name { font-size: .78rem; font-weight: 600; color: #222; }
+    .marker-triangle .lbl-name.visited { color: var(--visited-color); }
+    .marker-triangle .lbl-alt { font-size: .7rem; color: #888; font-weight: 400; }
+    .marker-triangle .marker-thumb { display: block; width: 48px; height: 48px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.22); border: 2px solid #fff; margin-left: 4px; flex-shrink: 0; }
+
+    /* ── Popup ── */
+    .leaflet-popup-content-wrapper { border-radius: 14px !important; box-shadow: 0 8px 32px rgba(0,0,0,.18) !important; padding: 0 !important; overflow: hidden; }
+    .leaflet-popup-content { margin: 0 !important; }
+    .popup-inner { padding: 16px 18px; min-width: 230px; max-width: 280px; }
+    .popup-title { font-size: 1rem; font-weight: 700; color: var(--green-dark); }
+    .popup-sub { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+    .popup-date { font-size: .75rem; color: var(--visited-color); font-weight: 700; margin-top: 4px; }
+    .popup-note { font-size: .75rem; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+    .popup-photos { display: grid; grid-template-columns: repeat(2,1fr); gap: 4px; margin-top: 10px; }
+    .popup-photos img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; cursor: pointer; }
+    .popup-photos img:only-child { grid-column: span 2; height: 120px; }
+    .popup-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .pbtn { padding: 7px 14px; border-radius: 8px; border: none; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .15s; font-family: inherit; }
+    .pbtn-primary { background: var(--green-dark); color: #fff; flex: 1; }
+    .pbtn-primary:hover { background: var(--green-mid); }
+    .pbtn-danger { background: #ffeee8; color: var(--visited-color); }
+    .pbtn-danger:hover { background: #ffddd0; }
+
+    /* ── Zoom hint ── */
+    .zoom-hint { position: absolute; bottom: 60px; left: 12px; z-index: 500; background: rgba(255,255,255,.88); border-radius: 8px; padding: 6px 12px; font-size: .75rem; color: var(--muted); box-shadow: 0 1px 8px rgba(0,0,0,.12); pointer-events: none; }
+
+    /* ── Modal ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 9000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: 18px; padding: 28px; width: 460px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .modal h2 { font-size: 1.1rem; font-weight: 700; color: var(--green-dark); margin-bottom: 3px; }
+    .modal .sub { font-size: .82rem; color: var(--muted); margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .form-group input[type=date],
+    .form-group input[type=text],
+    .form-group input[type=number],
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border);
+      font-size: .9rem; background: var(--bg); color: var(--text); font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: 2px solid var(--green-mid); border-color: transparent; }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all .15s; }
+    .upload-zone:hover, .upload-zone.drag { border-color: var(--green-mid); background: #f0f8f3; }
+    .upload-zone p { font-size: .82rem; color: var(--muted); margin-top: 6px; }
+    .upload-zone .icon { font-size: 1.8rem; }
+    #photo-input { display: none; }
+    .photo-previews { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
+    .preview-wrap { position: relative; aspect-ratio: 1; }
+    .preview-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    .preview-remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,.6); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: .75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .gpx-row { display: flex; gap: 16px; flex-wrap: wrap; background: #f0f8f3; border-radius: 8px; padding: 10px 14px; font-size: .82rem; color: var(--green-dark); margin-top: 6px; display: none; }
+    .gpx-row.show { display: flex; }
+    .gpx-row strong { font-size: .95rem; }
+    .modal-footer { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+    .mbtn { padding: 8px 16px; border-radius: 8px; border: none; font-size: .85rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .15s; }
+    .mbtn-primary { background: var(--green-dark); color: #fff; }
+    .mbtn-primary:hover { background: var(--green-mid); }
+    .mbtn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .mbtn-danger { background: #ffeee8; color: var(--visited-color); }
+
+    /* ── Lightbox ── */
+    #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 9999; align-items: center; justify-content: center; }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 92vw; max-height: 92vh; border-radius: 8px; }
+    #lightbox-close { position: fixed; top: 20px; right: 24px; color: #fff; font-size: 2rem; cursor: pointer; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 99px; font-size: .85rem; opacity: 0; transition: all .3s; z-index: 99999; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .source-note { text-align: center; padding: 8px; font-size: .72rem; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border); }
+    .source-note a { color: var(--green-mid); }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; grid-template-rows: 55vh auto; height: auto; }
+      .hero { padding: 20px 24px; }
+      .stats { padding: 10px 20px; gap: 16px; }
+      .sidebar { height: 280px; border-left: none; border-top: 1px solid var(--border); }
+      .site-nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── My Nav ── -->
+<nav class="site-nav">
+  <a href="index.html" class="logo">⛰️ 我的登山紀錄</a>
+  <ul>
+    <li><a href="index.html">首頁</a></li>
+    <li><a href="records.html">紀錄列表</a></li>
+    <li class="has-dropdown">
+      <a href="#" class="active">制霸地圖 ▾</a>
+      <ul class="dropdown-menu">
+        <li><a href="peaks.html" style="font-weight:700;color:var(--green-dark);">百岳制霸地圖</a></li>
+        <li><a href="peaks-small.html">小百岳制霸地圖</a></li>
+        <li><a href="peaks-285.html">285峰制霸地圖</a></li>
+      </ul>
+    </li>
+    <li><a href="gear.html">裝備清單</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <h1>🏔️ 百岳足跡</h1>
+  <p>台灣百岳制霸地圖 · 縮放查看更多 · 點擊標記查看 / 新增紀錄</p>
+</div>
+
+<!-- ── Stats ── -->
+<div class="stats">
+  <div class="stat"><span class="stat-num" id="count-visited">0</span><span class="stat-label">已完成</span></div>
+  <div class="stat"><span class="stat-num" style="color:var(--muted)">100</span><span class="stat-label">總座數</span></div>
+  <div class="stat-bar"><div class="stat-fill" id="progress-bar" style="width:0%"></div></div>
+  <div class="stat"><span class="stat-num" id="count-pct">0%</span><span class="stat-label">完成率</span></div>
+</div>
+
+<!-- ── Map + Sidebar ── -->
+<div class="layout">
+  <div id="map"></div>
+  <div class="zoom-hint" id="zoom-hint">縮放地圖以顯示更多百岳</div>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>百岳列表</h2>
+      <input class="search-box" id="search" type="text" placeholder="搜尋山名…" />
+    </div>
+    <div class="filter-tabs">
+      <div class="tab active" data-filter="all">全部</div>
+      <div class="tab" data-filter="visited">已完成</div>
+      <div class="tab" data-filter="unvisited">未完成</div>
+    </div>
+    <div class="peak-list" id="peak-list"></div>
+  </div>
+</div>
+
+<div class="source-note">
+  百岳資料來源：<a href="https://www.tmca-tpe.org/content.asp?id=676&cat=98&type=1" target="_blank">台北市山岳協會（TMCA）</a> · 連動自「紀錄列表」的登山紀錄
+</div>
+
+<!-- ── Edit Modal ── -->
+<div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <h2 id="modal-title"></h2>
+    <p class="sub" id="modal-sub"></p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>登頂日期</label>
+        <input type="date" id="input-date" />
+      </div>
+      <div class="form-group">
+        <label>背包負重 (kg)</label>
+        <input type="number" id="input-weight" placeholder="例：12" min="0" step="0.5" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>行程天數</label>
+        <input type="text" id="input-days" placeholder="當日來回 / 2天1夜" />
+      </div>
+      <div class="form-group">
+        <label>地點 / 縣市</label>
+        <input type="text" id="input-loc" placeholder="嘉義" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>📂 GPX（自動計算距離 / 爬升 / 下降）</label>
+      <input type="file" id="gpx-input" accept=".gpx" onchange="parseGPXModal(this)" />
+      <div class="gpx-row" id="gpx-result">
+        距離 <strong id="gpx-dist-val">—</strong> km ·
+        爬升 <strong id="gpx-gain-val">—</strong> m ·
+        下降 <strong id="gpx-loss-val">—</strong> m
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>總距離 (km)</label>
+        <input type="number" id="input-dist" placeholder="自動或手動" step="0.1" min="0" />
+      </div>
+      <div class="form-group">
+        <label>總爬升 (m)</label>
+        <input type="number" id="input-gain" placeholder="自動或手動" min="0" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>📷 照片</label>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('photo-input').click()">
+        <div class="icon">📷</div>
+        <p>點此選擇 · 可多張</p>
+      </div>
+      <input type="file" id="photo-input" multiple accept="image/*" />
+      <div class="photo-previews" id="photo-previews"></div>
+    </div>
+
+    <div class="form-group">
+      <label>備註 / 心得</label>
+      <textarea id="input-note" placeholder="路況、天氣、感受…"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="mbtn mbtn-danger" id="btn-remove" style="display:none" onclick="removePeak()">移除紀錄</button>
+      <button class="mbtn mbtn-secondary" onclick="closeEditModal()">取消</button>
+      <button class="mbtn mbtn-primary" onclick="savePeak()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Lightbox ── -->
+<div id="lightbox">
+  <span id="lightbox-close" onclick="closeLightbox()">✕</span>
+  <img id="lightbox-img" src="" alt="" />
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// 百岳資料（座標來源：TMCA 近似值）
+// ═══════════════════════════════════════════════
+const PEAKS = [
+  {rank:1,  name:"玉山",        alt:3952, lat:23.4697, lng:120.9572},
+  {rank:2,  name:"雪山",        alt:3886, lat:24.3881, lng:121.2147},
+  {rank:3,  name:"玉山東峰",    alt:3869, lat:23.4731, lng:120.9644},
+  {rank:4,  name:"玉山北峰",    alt:3858, lat:23.4806, lng:120.9539},
+  {rank:5,  name:"玉山南峰",    alt:3844, lat:23.4611, lng:120.9528},
+  {rank:6,  name:"秀姑巒山",    alt:3805, lat:23.5017, lng:121.0283},
+  {rank:7,  name:"馬博拉斯山",  alt:3785, lat:23.4844, lng:120.9222},
+  {rank:8,  name:"南湖大山",    alt:3742, lat:24.3614, lng:121.4692},
+  {rank:9,  name:"東小南山",    alt:3709, lat:23.3833, lng:120.9083},
+  {rank:10, name:"中央尖山",    alt:3705, lat:24.2539, lng:121.4261},
+  {rank:11, name:"雪山北峰",    alt:3703, lat:24.4033, lng:121.2656},
+  {rank:12, name:"關山",        alt:3668, lat:23.1917, lng:120.8719},
+  {rank:13, name:"大水窟山",    alt:3642, lat:23.4992, lng:121.0597},
+  {rank:14, name:"南湖大山東峰",alt:3632, lat:24.3622, lng:121.4789},
+  {rank:15, name:"東郡大山",    alt:3619, lat:23.6219, lng:121.0383},
+  {rank:16, name:"奇萊北峰",    alt:3607, lat:24.1972, lng:121.3353},
+  {rank:17, name:"向陽山",      alt:3603, lat:23.2856, lng:120.8758},
+  {rank:18, name:"大劍山",      alt:3594, lat:24.2789, lng:121.2322},
+  {rank:19, name:"雲峰",        alt:3564, lat:23.3806, lng:120.8836},
+  {rank:20, name:"奇萊主山",    alt:3560, lat:24.1761, lng:121.3378},
+  {rank:21, name:"馬利加南山",  alt:3546, lat:23.5219, lng:120.9961},
+  {rank:22, name:"南湖北山",    alt:3536, lat:24.3783, lng:121.4633},
+  {rank:23, name:"大雪山",      alt:3530, lat:24.2675, lng:121.1733},
+  {rank:24, name:"品田山",      alt:3524, lat:24.4047, lng:121.2800},
+  {rank:25, name:"玉山西峰",    alt:3518, lat:23.4700, lng:120.9461},
+  {rank:26, name:"頭鷹山",      alt:3510, lat:24.2947, lng:121.4336},
+  {rank:27, name:"三叉山",      alt:3496, lat:23.2681, lng:120.8906},
+  {rank:28, name:"大霸尖山",    alt:3492, lat:24.4572, lng:121.2983},
+  {rank:29, name:"南湖大山南峰",alt:3475, lat:24.3500, lng:121.4783},
+  {rank:30, name:"東巒大山",    alt:3468, lat:23.6444, lng:121.0733},
+  {rank:31, name:"無明山",      alt:3451, lat:24.2461, lng:121.4411},
+  {rank:32, name:"巴巴山",      alt:3449, lat:24.2100, lng:121.3950},
+  {rank:33, name:"馬西山",      alt:3443, lat:23.5400, lng:121.0900},
+  {rank:34, name:"北合歡山",    alt:3422, lat:24.1561, lng:121.2714},
+  {rank:35, name:"合歡山東峰",  alt:3421, lat:24.1478, lng:121.2928},
+  {rank:36, name:"小霸尖山",    alt:3418, lat:24.4533, lng:121.3083},
+  {rank:37, name:"合歡山",      alt:3417, lat:24.1458, lng:121.2736},
+  {rank:38, name:"南玉山",      alt:3383, lat:23.4439, lng:120.9158},
+  {rank:39, name:"畢祿山",      alt:3371, lat:24.2094, lng:121.3083},
+  {rank:40, name:"卓社大山",    alt:3369, lat:24.0500, lng:121.2856},
+  {rank:41, name:"奇萊南峰",    alt:3358, lat:24.1544, lng:121.3408},
+  {rank:42, name:"南雙頭山",    alt:3356, lat:23.4700, lng:120.9350},
+  {rank:43, name:"能高山南峰",  alt:3349, lat:24.0919, lng:121.3808},
+  {rank:44, name:"志佳陽大山",  alt:3345, lat:24.3761, lng:121.2578},
+  {rank:45, name:"白姑大山",    alt:3342, lat:24.1469, lng:121.1711},
+  {rank:46, name:"八通關山",    alt:3335, lat:23.5083, lng:120.9828},
+  {rank:47, name:"新康山",      alt:3331, lat:23.3581, lng:121.0739},
+  {rank:48, name:"丹大山",      alt:3325, lat:23.7094, lng:121.0644},
+  {rank:49, name:"桃山",        alt:3325, lat:24.4275, lng:121.2692},
+  {rank:50, name:"佳陽山",      alt:3314, lat:24.3550, lng:121.2650},
+  {rank:51, name:"火石山",      alt:3310, lat:24.3700, lng:121.2900},
+  {rank:52, name:"池有山",      alt:3303, lat:24.4192, lng:121.2572},
+  {rank:53, name:"伊澤山",      alt:3297, lat:24.4117, lng:121.3172},
+  {rank:54, name:"卑南主山",    alt:3295, lat:23.2228, lng:120.9364},
+  {rank:55, name:"干卓萬山",    alt:3284, lat:23.9628, lng:121.2039},
+  {rank:56, name:"太魯閣大山",  alt:3283, lat:24.2736, lng:121.4792},
+  {rank:57, name:"轆轆山",      alt:3279, lat:23.2706, lng:120.8336},
+  {rank:58, name:"喀西帕南山",  alt:3276, lat:23.5394, lng:121.1119},
+  {rank:59, name:"內嶺爾山",    alt:3275, lat:23.8542, lng:121.0931},
+  {rank:60, name:"鈴鳴山",      alt:3272, lat:24.3028, lng:121.4444},
+  {rank:61, name:"郡大山",      alt:3265, lat:23.6300, lng:120.9950},
+  {rank:62, name:"能高山",      alt:3262, lat:24.1133, lng:121.3800},
+  {rank:63, name:"萬東山西峰",  alt:3258, lat:23.6953, lng:121.0742},
+  {rank:64, name:"劍山",        alt:3253, lat:24.2831, lng:121.2492},
+  {rank:65, name:"屏風山",      alt:3250, lat:24.2369, lng:121.4556},
+  {rank:66, name:"小關山",      alt:3249, lat:23.1650, lng:120.8820},
+  {rank:67, name:"義西請馬至山",alt:3245, lat:23.7378, lng:121.0742},
+  {rank:68, name:"牧山",        alt:3241, lat:23.2500, lng:120.8550},
+  {rank:69, name:"玉山前峰",    alt:3239, lat:23.4758, lng:120.9603},
+  {rank:70, name:"石門山",      alt:3237, lat:24.1403, lng:121.2994},
+  {rank:71, name:"無雙山",      alt:3231, lat:23.8800, lng:121.1700},
+  {rank:72, name:"塔關山",      alt:3222, lat:23.2667, lng:120.8381},
+  {rank:73, name:"馬比杉山",    alt:3211, lat:24.4539, lng:121.3750},
+  {rank:74, name:"達芬尖山",    alt:3208, lat:23.5317, lng:120.9628},
+  {rank:75, name:"雪山東峰",    alt:3201, lat:24.3950, lng:121.2336},
+  {rank:76, name:"南華山",      alt:3184, lat:24.1194, lng:121.3611},
+  {rank:77, name:"關山嶺山",    alt:3176, lat:23.1500, lng:120.8900},
+  {rank:78, name:"海諾南山",    alt:3174, lat:23.1647, lng:120.8792},
+  {rank:79, name:"中雪山",      alt:3173, lat:24.3050, lng:121.2700},
+  {rank:80, name:"閂山",        alt:3168, lat:24.2211, lng:121.4311},
+  {rank:81, name:"甘薯峰",      alt:3158, lat:24.2733, lng:121.4472},
+  {rank:82, name:"西合歡山",    alt:3145, lat:24.1375, lng:121.2564},
+  {rank:83, name:"審馬陣山",    alt:3141, lat:24.3136, lng:121.4264},
+  {rank:84, name:"喀拉業山",    alt:3133, lat:24.3814, lng:121.3400},
+  {rank:85, name:"庫哈諾辛山",  alt:3115, lat:23.2436, lng:120.8461},
+  {rank:86, name:"加利山",      alt:3112, lat:24.4319, lng:121.3358},
+  {rank:87, name:"白石山",      alt:3110, lat:24.1978, lng:121.3839},
+  {rank:88, name:"磐石山",      alt:3106, lat:24.2700, lng:121.3950},
+  {rank:89, name:"帕托魯山",    alt:3101, lat:24.2600, lng:121.4900},
+  {rank:90, name:"北大武山",    alt:3092, lat:22.5267, lng:120.8981},
+  {rank:91, name:"西巒大山",    alt:3081, lat:23.6444, lng:121.0000},
+  {rank:92, name:"塔芬山",      alt:3070, lat:24.3208, lng:121.3667},
+  {rank:93, name:"立霧主山",    alt:3069, lat:24.1858, lng:121.4508},
+  {rank:94, name:"安東軍山",    alt:3068, lat:24.0711, lng:121.4025},
+  {rank:95, name:"光頭山",      alt:3060, lat:24.0050, lng:121.3800},
+  {rank:96, name:"羊頭山",      alt:3035, lat:24.1878, lng:121.2733},
+  {rank:97, name:"布拉克桑山",  alt:3026, lat:24.3611, lng:121.3556},
+  {rank:98, name:"駒盆山",      alt:3022, lat:23.4900, lng:120.9100},
+  {rank:99, name:"六順山",      alt:2999, lat:23.8300, lng:121.0800},
+  {rank:100,name:"鹿山",        alt:2981, lat:23.0100, lng:120.8700},
+];
+
+// ═══════════════════════════════════════════════
+// 連動 localStorage
+// ═══════════════════════════════════════════════
+
+// 從 hikeRecords 找出符合 peakName 的紀錄
+function findRecord(peakName) {
+  const records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
+  // 雙向包含匹配：紀錄名稱 includes 山名，或 山名 includes 紀錄名稱
+  return records.find(r =>
+    r.name.includes(peakName) || peakName.includes(r.name)
+  ) || null;
+}
+
+// 把所有 hikeRecords 轉成 {peakName: record} 的查找表
+function buildVisitedMap() {
+  const records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
+  const map = {};
+  PEAKS.forEach(peak => {
+    const rec = records.find(r =>
+      r.name.includes(peak.name) || peak.name.includes(r.name)
+    );
+    if (rec) map[peak.name] = rec;
+  });
+  return map;
+}
+
+// VISITED = { peakName: hikeRecord }
+let VISITED = buildVisitedMap();
+
+// ═══════════════════════════════════════════════
+// 地圖初始化
+// ═══════════════════════════════════════════════
+const map = L.map('map', { center: [23.8, 121.0], zoom: 8 });
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO', maxZoom: 18,
+}).addTo(map);
+
+const markerMap = {};
+
+function minAltForZoom(z) {
+  if (z <= 8)  return 3500;
+  if (z <= 9)  return 3300;
+  if (z <= 10) return 3100;
+  if (z <= 11) return 2900;
+  return 0;
+}
+
+function updateMarkersForZoom() {
+  const z = map.getZoom();
+  const minAlt = minAltForZoom(z);
+  document.getElementById('zoom-hint').style.display = z >= 11 ? 'none' : 'block';
+  PEAKS.forEach(p => {
+    const entry = markerMap[p.name];
+    if (!entry) return;
+    const show = !!VISITED[p.name] || p.alt >= minAlt;
+    if (show && !map.hasLayer(entry.marker)) entry.marker.addTo(map);
+    if (!show && map.hasLayer(entry.marker)) map.removeLayer(entry.marker);
+  });
+}
+
+function makeIcon(peak) {
+  const rec = VISITED[peak.name];
+  const visited = !!rec;
+  const triClass = visited ? 'tri-visited' : 'tri-unvisited';
+  const nameClass = visited ? 'lbl-name visited' : 'lbl-name';
+  // Show first photo thumbnail if available
+  const photo = rec && rec.photos && rec.photos.length ? rec.photos[0] : null;
+  const thumbHtml = photo ? `<img class="marker-thumb" src="${photo}" />` : '';
+  return L.divIcon({
+    className: '',
+    html: `<div class="marker-triangle">
+      <span class="tri ${triClass}">▲</span>
+      <div class="label-wrap">
+        <span class="${nameClass}">${peak.name}</span>
+        <span class="lbl-alt">${peak.alt.toLocaleString()}m</span>
+      </div>
+      ${thumbHtml}
+    </div>`,
+    iconSize: [1, 1], iconAnchor: [0, 8],
+  });
+}
+
+function buildPopup(peak) {
+  const rec = VISITED[peak.name];
+  const statusLine = rec
+    ? `<div class="popup-date">✓ 已完成${rec.date ? ' · ' + rec.date : ''}</div>
+       ${rec.gain ? `<div class="popup-note">⬆️ ${Number(rec.gain).toLocaleString()} m · 📏 ${Number(rec.distance||0).toFixed(1)} km${rec.weight ? ' · 🎒 ' + rec.weight + ' kg' : ''}</div>` : ''}
+       ${rec.note ? `<div class="popup-note">${rec.note.slice(0,80)}${rec.note.length>80?'…':''}</div>` : ''}`
+    : `<div style="font-size:.75rem;color:var(--muted);margin-top:4px;">尚未記錄</div>`;
+
+  const photos = (rec && rec.photos && rec.photos.length)
+    ? `<div class="popup-photos">${rec.photos.slice(0,4).map(p => `<img src="${p}" onclick="openLightbox('${p}')" />`).join('')}</div>`
+    : '';
+
+  return `<div class="popup-inner">
+    <div class="popup-title">${peak.name}</div>
+    <div class="popup-sub">第 ${peak.rank} 名 · ${peak.alt.toLocaleString()} m</div>
+    ${statusLine}${photos}
+    <div class="popup-actions">
+      <button class="pbtn pbtn-primary" onclick="openEditModal('${peak.name}')">
+        ${rec ? '✏️ 編輯紀錄' : '＋ 新增紀錄'}
+      </button>
+      ${rec ? `<button class="pbtn pbtn-danger" onclick="confirmRemove('${peak.name}')">移除</button>` : ''}
+    </div>
+  </div>`;
+}
+
+function initMarkers() {
+  PEAKS.forEach(peak => {
+    const m = L.marker([peak.lat, peak.lng], { icon: makeIcon(peak) })
+      .bindPopup(() => buildPopup(peak), { maxWidth: 300 });
+    markerMap[peak.name] = { marker: m, peak };
+  });
+  updateMarkersForZoom();
+}
+
+map.on('zoomend', updateMarkersForZoom);
+
+function refreshMarker(name) {
+  const entry = markerMap[name];
+  if (!entry) return;
+  entry.marker.setIcon(makeIcon(entry.peak));
+  if (entry.marker.isPopupOpen()) entry.marker.setPopupContent(buildPopup(entry.peak));
+  updateMarkersForZoom();
+}
+
+function flyTo(name) {
+  const entry = markerMap[name];
+  if (!entry) return;
+  map.flyTo([entry.peak.lat, entry.peak.lng], 13, { duration: 0.8 });
+  setTimeout(() => entry.marker.openPopup(), 900);
+}
+
+// ═══════════════════════════════════════════════
+// 側欄
+// ═══════════════════════════════════════════════
+let currentFilter = 'all', searchQuery = '';
+
+function renderList() {
+  const list = document.getElementById('peak-list');
+  const filtered = PEAKS.filter(p => {
+    const vis = !!VISITED[p.name];
+    if (currentFilter === 'visited' && !vis) return false;
+    if (currentFilter === 'unvisited' && vis) return false;
+    if (searchQuery && !p.name.includes(searchQuery)) return false;
+    return true;
+  });
+  list.innerHTML = filtered.map(p => {
+    const rec = VISITED[p.name];
+    const vis = !!rec;
+    return `<div class="peak-item" onclick="flyTo('${p.name}')">
+      <div class="peak-dot ${vis ? 'visited' : ''}"></div>
+      <div class="peak-info">
+        <div class="peak-name">${p.name} <span class="peak-rank">#${p.rank}</span></div>
+        <div class="peak-meta">${p.alt.toLocaleString()} m${rec && rec.date ? ' · ' + rec.date : ''}</div>
+      </div>
+      ${vis ? '<span class="peak-badge">✓</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function updateStats() {
+  const count = Object.keys(VISITED).length;
+  const pct = Math.round(count / PEAKS.length * 100);
+  document.getElementById('count-visited').textContent = count;
+  document.getElementById('count-pct').textContent = pct + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.filter;
+    renderList();
+  });
+});
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderList();
+});
+
+// ═══════════════════════════════════════════════
+// Edit Modal（新增 / 編輯紀錄，存入 hikeRecords）
+// ═══════════════════════════════════════════════
+let currentPeak = null;
+let pendingPhotos = []; // [{dataURL, isExisting}]
+
+function openEditModal(name) {
+  map.closePopup();
+  currentPeak = PEAKS.find(p => p.name === name);
+  if (!currentPeak) return;
+
+  const rec = VISITED[name];
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-sub').textContent = `第 ${currentPeak.rank} 名 · ${currentPeak.alt.toLocaleString()} m`;
+  document.getElementById('input-date').value = rec ? (rec.date || '') : '';
+  document.getElementById('input-weight').value = rec ? (rec.weight || '') : '';
+  document.getElementById('input-days').value = rec ? (rec.days || '') : '';
+  document.getElementById('input-loc').value = rec ? (rec.location || '') : '';
+  document.getElementById('input-dist').value = rec ? (rec.distance || '') : '';
+  document.getElementById('input-gain').value = rec ? (rec.gain || '') : '';
+  document.getElementById('input-note').value = rec ? (rec.note || '') : '';
+  document.getElementById('gpx-input').value = '';
+  document.getElementById('gpx-result').classList.remove('show');
+  document.getElementById('btn-remove').style.display = rec ? 'block' : 'none';
+
+  pendingPhotos = rec && rec.photos ? rec.photos.map(p => ({ dataURL: p, isExisting: true })) : [];
+  renderPreviews();
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  currentPeak = null; pendingPhotos = [];
+}
+
+// Photos
+document.getElementById('photo-input').addEventListener('change', e => {
+  Array.from(e.target.files).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = ev => { pendingPhotos.push({ dataURL: ev.target.result, isExisting: false }); renderPreviews(); };
+    reader.readAsDataURL(f);
+  });
+  e.target.value = '';
+});
+
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag');
+  Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = ev => { pendingPhotos.push({ dataURL: ev.target.result, isExisting: false }); renderPreviews(); };
+    reader.readAsDataURL(f);
+  });
+});
+
+function renderPreviews() {
+  document.getElementById('photo-previews').innerHTML = pendingPhotos.map((p, i) =>
+    `<div class="preview-wrap">
+      <img src="${p.dataURL}" />
+      <button class="preview-remove" onclick="removePreview(${i})">✕</button>
+    </div>`).join('');
+}
+function removePreview(i) { pendingPhotos.splice(i, 1); renderPreviews(); }
+
+// GPX parsing
+function parseGPXModal(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const xml = new DOMParser().parseFromString(e.target.result, 'text/xml');
+      const pts = [...xml.querySelectorAll('trkpt')];
+      if (!pts.length) return;
+      let dist = 0, gain = 0, loss = 0, pLat = null, pLon = null, pEle = null;
+      pts.forEach(pt => {
+        const lat = +pt.getAttribute('lat'), lon = +pt.getAttribute('lon');
+        const eleEl = pt.querySelector('ele'); const ele = eleEl ? +eleEl.textContent : null;
+        if (pLat !== null) dist += haversine(pLat, pLon, lat, lon);
+        if (pEle !== null && ele !== null) { const d = ele - pEle; if (d > 0) gain += d; else loss += Math.abs(d); }
+        pLat = lat; pLon = lon; pEle = ele;
+      });
+      const dk = (dist/1000).toFixed(2), gm = Math.round(gain), lm = Math.round(loss);
+      document.getElementById('gpx-dist-val').textContent = dk;
+      document.getElementById('gpx-gain-val').textContent = gm.toLocaleString();
+      document.getElementById('gpx-loss-val').textContent = lm.toLocaleString();
+      document.getElementById('gpx-result').classList.add('show');
+      document.getElementById('input-dist').value = dk;
+      document.getElementById('input-gain').value = gm;
+    } catch(err) { showToast('GPX 解析失敗'); }
+  };
+  reader.readAsText(file);
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000, φ1 = lat1*Math.PI/180, φ2 = lat2*Math.PI/180;
+  const Δφ = (lat2-lat1)*Math.PI/180, Δλ = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// Save — writes to hikeRecords
+function savePeak() {
+  if (!currentPeak) return;
+  const date = document.getElementById('input-date').value;
+  if (!date) { alert('請填寫登頂日期'); return; }
+
+  const records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
+  const existingIdx = records.findIndex(r =>
+    r.name.includes(currentPeak.name) || currentPeak.name.includes(r.name)
+  );
+
+  const record = {
+    id: existingIdx >= 0 ? records[existingIdx].id : Date.now(),
+    name: currentPeak.name,
+    date,
+    category: '百岳',
+    days: document.getElementById('input-days').value.trim(),
+    location: document.getElementById('input-loc').value.trim(),
+    weight: document.getElementById('input-weight').value,
+    distance: document.getElementById('input-dist').value,
+    gain: document.getElementById('input-gain').value,
+    note: document.getElementById('input-note').value.trim(),
+    photos: pendingPhotos.map(p => p.dataURL),
+    emoji: '🏔',
+  };
+
+  if (existingIdx >= 0) records[existingIdx] = record;
+  else records.unshift(record);
+
+  localStorage.setItem('hikeRecords', JSON.stringify(records));
+
+  // Rebuild visited map and refresh UI
+  VISITED = buildVisitedMap();
+  refreshMarker(currentPeak.name);
+  updateStats();
+  renderList();
+  closeEditModal();
+  showToast('✅ 紀錄已儲存');
+}
+
+// Remove — removes from hikeRecords
+function confirmRemove(name) {
+  map.closePopup();
+  currentPeak = PEAKS.find(p => p.name === name);
+  if (!currentPeak || !confirm(`確定移除「${name}」的登山紀錄？`)) return;
+  removePeak();
+}
+
+function removePeak() {
+  if (!currentPeak) return;
+  let records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
+  records = records.filter(r => !r.name.includes(currentPeak.name) && !currentPeak.name.includes(r.name));
+  localStorage.setItem('hikeRecords', JSON.stringify(records));
+  VISITED = buildVisitedMap();
+  refreshMarker(currentPeak.name);
+  updateStats(); renderList();
+  closeEditModal();
+  showToast('已移除紀錄');
+}
+
+// ═══════════════════════════════════════════════
+// Lightbox / Toast
+// ═══════════════════════════════════════════════
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', closeLightbox);
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════
+initMarkers();
+updateStats();
+renderList();
+</script>
+</body>
+</html>

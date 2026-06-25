@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小百岳制霸地圖 — 我的登山紀錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .progress-bar-wrap { background:var(--gray-100);border-radius:999px;height:10px;overflow:hidden;margin:10px 0 4px; }
+    .progress-bar-fill { height:100%;background:linear-gradient(90deg,var(--green-mid),var(--green-light));border-radius:999px;transition:width .6s ease; }
+    .progress-label { display:flex;justify-content:space-between;font-size:.8rem;color:var(--gray-500);margin-bottom:28px; }
+    .series-header { font-size:.8rem;font-weight:700;color:var(--gray-500);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.05em; }
+    .peak-item { cursor:pointer; user-select:none; }
+    .peak-region { font-size:.78rem;color:var(--gray-400,#9ca3af);margin-left:4px; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="icon">⛰️</span>我的登山紀錄</a>
+    <ul class="nav-links">
+      <li><a href="index.html">首頁</a></li>
+      <li><a href="records.html">紀錄列表</a></li>
+      <li class="has-dropdown">
+        <a href="#" class="dropdown-trigger active">制霸地圖 ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="peaks.html">百岳制霸地圖</a></li>
+          <li><a href="peaks-small.html" style="font-weight:700;color:var(--green-dark);">小百岳制霸地圖</a></li>
+          <li><a href="peaks-285.html">285峰制霸地圖</a></li>
+        </ul>
+      </li>
+      <li><a href="gear.html">裝備清單</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="page">
+  <h1 class="page-title">小百岳制霸地圖</h1>
+  <p class="page-subtitle">林務局公告 100 座台灣小百岳（點擊可勾選）</p>
+
+  <div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label"><span id="doneCount">0 / 100 座已完成</span><span id="pct">0%</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'all')">全部 (100)</button>
+    <button class="tab-btn" onclick="switchTab(this,'done')">✅ 已完成</button>
+    <button class="tab-btn" onclick="switchTab(this,'todo')">🎯 待挑戰</button>
+  </div>
+
+  <div class="filter-row" id="regionFilter"></div>
+  <div id="peakList"></div>
+</main>
+
+<footer class="footer">© 2026 我的登山紀錄 · 自用靜態站</footer>
+
+<script>
+// 台灣小百岳（林務局2002年公告，共100座）
+const SMALL_100 = [
+  // 北部
+  {name:'七星山',alt:1120,region:'台北市'},
+  {name:'大屯山',alt:1092,region:'台北市'},
+  {name:'竹子山',alt:1220,region:'台北市'},
+  {name:'向天山',alt:948,region:'台北市'},
+  {name:'金面山',alt:461,region:'台北市'},
+  {name:'南港山',alt:374,region:'台北市'},
+  {name:'觀音山',alt:616,region:'新北市'},
+  {name:'五寮尖',alt:658,region:'新北市'},
+  {name:'鳶山',alt:235,region:'新北市'},
+  {name:'石碇皇帝殿',alt:760,region:'新北市'},
+  {name:'獅仔頭山',alt:858,region:'新北市'},
+  {name:'天上山',alt:475,region:'新北市'},
+  {name:'燦光寮山',alt:738,region:'新北市'},
+  {name:'基隆山',alt:588,region:'基隆市'},
+  {name:'情人湖丘陵',alt:200,region:'基隆市'},
+  {name:'五分山',alt:757,region:'新北市'},
+  {name:'草嶺古道頂',alt:640,region:'新北市'},
+  {name:'筆架山',alt:582,region:'新北市'},
+  // 桃竹苗
+  {name:'霞喀羅大山',alt:2343,region:'新竹縣'},
+  {name:'鳥嘴山',alt:2284,region:'新竹縣'},
+  {name:'鎮西堡山',alt:2277,region:'新竹縣'},
+  {name:'李棟山',alt:1913,region:'新竹縣'},
+  {name:'馬那邦山',alt:1406,region:'苗栗縣'},
+  {name:'加里山',alt:1748,region:'苗栗縣'},
+  {name:'獅頭山',alt:491,region:'苗栗縣'},
+  {name:'火炎山',alt:602,region:'苗栗縣'},
+  {name:'石壁山',alt:1521,region:'苗栗縣'},
+  {name:'關刀山',alt:889,region:'苗栗縣'},
+  // 中部
+  {name:'八仙山',alt:2366,region:'台中市'},
+  {name:'東卯山',alt:1690,region:'台中市'},
+  {name:'頭嵙山',alt:859,region:'台中市'},
+  {name:'大坑頭嵙山',alt:857,region:'台中市'},
+  {name:'九九峰',alt:548,region:'南投縣'},
+  {name:'眉原山',alt:2002,region:'南投縣'},
+  {name:'集集大山',alt:1392,region:'南投縣'},
+  {name:'守城大山',alt:2420,region:'南投縣'},
+  {name:'萬大山',alt:2414,region:'南投縣'},
+  {name:'能高山主峰',alt:3262,region:'南投縣'},
+  {name:'合歡山主峰',alt:3417,region:'南投縣'},
+  {name:'鳳凰山',alt:1869,region:'南投縣'},
+  {name:'虎頭山',alt:325,region:'彰化縣'},
+  {name:'八卦山',alt:235,region:'彰化縣'},
+  // 雲嘉南
+  {name:'大凍山',alt:1241,region:'嘉義縣'},
+  {name:'阿里山',alt:2216,region:'嘉義縣'},
+  {name:'石鼓盤山',alt:1579,region:'嘉義縣'},
+  {name:'瑞峰石壁山',alt:1751,region:'嘉義縣'},
+  {name:'獨立山',alt:778,region:'嘉義縣'},
+  {name:'三腳南山',alt:2080,region:'台南市'},
+  {name:'關子嶺',alt:500,region:'台南市'},
+  {name:'大凍山（台南）',alt:1241,region:'台南市'},
+  {name:'大棟山',alt:405,region:'新北市'},
+  // 高屏東
+  {name:'北大武山',alt:3092,region:'屏東縣'},
+  {name:'大武山',alt:3090,region:'台東縣'},
+  {name:'浸水營古道終點',alt:440,region:'屏東縣'},
+  {name:'尾寮山',alt:1427,region:'屏東縣'},
+  {name:'里龍山',alt:1062,region:'屏東縣'},
+  {name:'萬頭蘭山',alt:1045,region:'屏東縣'},
+  {name:'都蘭山',alt:1190,region:'台東縣'},
+  {name:'知本主山',alt:2603,region:'台東縣'},
+  {name:'海端山',alt:1779,region:'台東縣'},
+  {name:'新康山',alt:3331,region:'台東縣'},
+  {name:'三仙台',alt:77,region:'台東縣'},
+  // 宜花
+  {name:'南澳南山',alt:2673,region:'宜蘭縣'},
+  {name:'太平山',alt:1950,region:'宜蘭縣'},
+  {name:'聖母山莊',alt:1304,region:'宜蘭縣'},
+  {name:'拔子山',alt:1058,region:'宜蘭縣'},
+  {name:'抹茶山',alt:1017,region:'宜蘭縣'},
+  {name:'加羅山',alt:1754,region:'宜蘭縣'},
+  {name:'崙埤池山',alt:1300,region:'宜蘭縣'},
+  {name:'七面山',alt:1092,region:'花蓮縣'},
+  {name:'木瓜山',alt:2141,region:'花蓮縣'},
+  {name:'奇美山',alt:1616,region:'花蓮縣'},
+  {name:'花蓮港山',alt:567,region:'花蓮縣'},
+  {name:'鳳林山',alt:480,region:'花蓮縣'},
+  {name:'馬太鞍山',alt:1088,region:'花蓮縣'},
+  {name:'富源山',alt:553,region:'花蓮縣'},
+  // 離島
+  {name:'軍艦岩（澎湖）',alt:55,region:'澎湖縣'},
+  {name:'大武山（金門）',alt:252,region:'金門縣'},
+  {name:'壽山',alt:356,region:'高雄市'},
+  {name:'柴山',alt:356,region:'高雄市'},
+  {name:'鼓山',alt:222,region:'高雄市'},
+  // 補充（保留至100座）
+  {name:'大尖山',alt:320,region:'台南市'},
+  {name:'水社大山',alt:2059,region:'南投縣'},
+  {name:'丹大山',alt:3325,region:'南投縣'},
+  {name:'雙龍瀑布山',alt:1400,region:'南投縣'},
+  {name:'向陽山',alt:3602,region:'台東縣'},
+  {name:'都鑾山',alt:485,region:'台東縣'},
+  {name:'嘉明湖峰',alt:3310,region:'台東縣'},
+  {name:'關山',alt:3666,region:'台東縣'},
+  {name:'三疊瀑布山',alt:790,region:'苗栗縣'},
+  {name:'鹿場大山',alt:2616,region:'苗栗縣'},
+  {name:'雪見山',alt:2510,region:'苗栗縣'},
+  {name:'鳴鳳山',alt:910,region:'桃園市'},
+  {name:'拉拉山',alt:1768,region:'桃園市'},
+  {name:'東眼山',alt:1212,region:'桃園市'},
+  {name:'福巴越嶺道',alt:2000,region:'桃園市'},
+  {name:'大霸尖山',alt:3490,region:'新竹縣'},
+  {name:'雪山東峰',alt:3201,region:'台中市'},
+  {name:'合歡山東峰',alt:3421,region:'南投縣'},
+  {name:'石門山',alt:3237,region:'南投縣'},
+  {name:'奇萊主山南峰',alt:3358,region:'花蓮縣'},
+];
+
+const KEY = 'peaksSmallDone';
+let doneSet = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+let currentTab = 'all', currentRegion = 'all';
+
+const allRegions = [...new Set(SMALL_100.map(p => p.region))].sort();
+
+const rf = document.getElementById('regionFilter');
+rf.innerHTML = `<button class="filter-pill active" onclick="setRegion(this,'all')">全部縣市</button>` +
+  allRegions.map(r => `<button class="filter-pill" onclick="setRegion(this,'${r}')">${r}</button>`).join('');
+
+function save() { localStorage.setItem(KEY, JSON.stringify([...doneSet])); }
+function toggle(name) {
+  if (doneSet.has(name)) doneSet.delete(name);
+  else doneSet.add(name);
+  save(); render();
+}
+function switchTab(btn, t) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); currentTab = t; render();
+}
+function setRegion(btn, r) {
+  document.querySelectorAll('#regionFilter .filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); currentRegion = r; render();
+}
+
+function render() {
+  let filtered = SMALL_100.filter(p => {
+    const tabOk = currentTab==='all'||(currentTab==='done'?doneSet.has(p.name):!doneSet.has(p.name));
+    const regionOk = currentRegion==='all'||p.region===currentRegion;
+    return tabOk && regionOk;
+  });
+
+  const done = doneSet.size;
+  document.getElementById('progressFill').style.width = done + '%';
+  document.getElementById('doneCount').textContent = `${done} / 100 座已完成`;
+  document.getElementById('pct').textContent = done + '%';
+
+  const list = document.getElementById('peakList');
+  if (!filtered.length) { list.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>沒有符合條件的山</p></div>`; return; }
+
+  const groups = {};
+  filtered.forEach(p => { (groups[p.region]||(groups[p.region]=[])).push(p); });
+
+  list.innerHTML = Object.entries(groups).map(([region, peaks]) => `
+    <div class="series-header">${region}</div>
+    <div class="peak-list">
+      ${peaks.map(p => {
+        const d = doneSet.has(p.name);
+        return `<div class="peak-item ${d?'done':''}" onclick="toggle('${p.name.replace(/'/g,"\\'")}')">
+          <div class="peak-check">${d?'✓':''}</div>
+          <span class="peak-name">${p.name}</span>
+          <span class="peak-altitude">${p.alt.toLocaleString()} m</span>
+          <span class="peak-level">小百岳</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+render();
+</script>
+</body>
+</html>

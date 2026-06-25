@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>紀錄詳情 — 我的登山紀錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .back-link { display:inline-flex;align-items:center;gap:6px;color:var(--green-mid);font-size:.88rem;font-weight:500;margin-bottom:20px; }
+    .back-link:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="icon">⛰️</span>我的登山紀錄</a>
+    <ul class="nav-links">
+      <li><a href="index.html">首頁</a></li>
+      <li><a href="records.html" class="active">紀錄列表</a></li>
+      <li class="has-dropdown">
+        <a href="#" class="dropdown-trigger">制霸地圖 ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="peaks.html">百岳制霸地圖</a></li>
+          <li><a href="peaks-small.html">小百岳制霸地圖</a></li>
+          <li><a href="peaks-285.html">285峰制霸地圖</a></li>
+        </ul>
+      </li>
+      <li><a href="gear.html">裝備清單</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="page">
+  <a href="records.html" class="back-link">← 回紀錄列表</a>
+  <p style="color:var(--gray-500);text-align:center;margin-top:60px;">詳情頁面開發中 — 從紀錄列表點選單筆紀錄後顯示</p>
+</main>
+
+<footer class="footer">© 2026 我的登山紀錄 · 自用靜態站</footer>
+</body>
+</html>

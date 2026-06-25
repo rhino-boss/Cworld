@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>285峰制霸地圖 — 我的登山紀錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .progress-bar-wrap { background:var(--gray-100);border-radius:999px;height:10px;overflow:hidden;margin:10px 0 4px; }
+    .progress-bar-fill { height:100%;background:linear-gradient(90deg,var(--green-mid),var(--green-light));border-radius:999px;transition:width .6s ease; }
+    .progress-label { display:flex;justify-content:space-between;font-size:.8rem;color:var(--gray-500);margin-bottom:28px; }
+    .series-header { font-size:.8rem;font-weight:700;color:var(--gray-500);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.05em; }
+    .peak-item { cursor:pointer; user-select:none; }
+    .tag-100 { font-size:.72rem;padding:2px 8px;border-radius:999px;background:var(--green-pale);color:var(--green-dark);font-weight:700;flex-shrink:0; }
+    .tag-new { font-size:.72rem;padding:2px 8px;border-radius:999px;background:#fde8e3;color:#c0392b;font-weight:600;flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="icon">⛰️</span>我的登山紀錄</a>
+    <ul class="nav-links">
+      <li><a href="index.html">首頁</a></li>
+      <li><a href="records.html">紀錄列表</a></li>
+      <li class="has-dropdown">
+        <a href="#" class="dropdown-trigger active">制霸地圖 ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="peaks.html">百岳制霸地圖</a></li>
+          <li><a href="peaks-small.html">小百岳制霸地圖</a></li>
+          <li><a href="peaks-285.html" style="font-weight:700;color:var(--green-dark);">285峰制霸地圖</a></li>
+        </ul>
+      </li>
+      <li><a href="gear.html">裝備清單</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="page">
+  <h1 class="page-title">285峰制霸地圖</h1>
+  <p class="page-subtitle">台灣 3000m 以上高山（維基百科版本，含上河新增17座）· 資料來源：<a href="https://hiking.biji.co/index.php?q=review&act=info&review_id=23746" target="_blank" style="color:var(--green-mid)">健行筆記</a></p>
+
+  <div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label"><span id="doneCount">0 / 285 座已完成</span><span id="pct">0%</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'all')">全部 (285)</button>
+    <button class="tab-btn" onclick="switchTab(this,'done')">✅ 已完成</button>
+    <button class="tab-btn" onclick="switchTab(this,'todo')">🎯 待挑戰</button>
+    <button class="tab-btn" onclick="switchTab(this,'100only')">🏔 百岳</button>
+  </div>
+
+  <div class="filter-row" id="seriesFilter"></div>
+  <div id="peakList"></div>
+</main>
+
+<footer class="footer">© 2026 我的登山紀錄 · 自用靜態站</footer>
+
+<script>
+// Source: 健行筆記 https://hiking.biji.co/index.php?q=review&act=info&review_id=23746
+// 285 = 268(舊) + 17(上河新增) - 10(上河取消) + 10(保留) = 268+17 = 285
+// new = true 表示上河2020新增
+const PEAKS_285 = [
+  // 玉山系列 13座
+  {name:'玉山',alt:3952,series:'玉山系列',is100:true},
+  {name:'玉山東峰',alt:3874,series:'玉山系列',is100:true},
+  {name:'玉山北峰',alt:3858,series:'玉山系列',is100:true},
+  {name:'玉山南峰',alt:3852,series:'玉山系列',is100:true},
+  {name:'玉山東小南山',alt:3709,series:'玉山系列',is100:true},
+  {name:'玉山西峰',alt:3512,series:'玉山系列',is100:true},
+  {name:'南玉山',alt:3379,series:'玉山系列',is100:true},
+  {name:'玉山前峰',alt:3233,series:'玉山系列',is100:true},
+  {name:'鹿山',alt:2981,series:'玉山系列',is100:true,isNew:true},
+  {name:'玉山小南山',alt:3585,series:'玉山系列',is100:false},
+  {name:'玉山北北峰',alt:3830,series:'玉山系列',is100:false},
+  {name:'玉山三叉峰',alt:3818,series:'玉山系列',is100:false},
+  {name:'玉山圓峰',alt:3760,series:'玉山系列',is100:false},
+  // 雪山&聖稜線 13座
+  {name:'雪山主峰',alt:3886,series:'雪山&聖稜線',is100:true},
+  {name:'雪山北峰',alt:3703,series:'雪山&聖稜線',is100:true},
+  {name:'雪山東峰',alt:3199,series:'雪山&聖稜線',is100:true},
+  {name:'北稜角',alt:3882,series:'雪山&聖稜線',is100:false},
+  {name:'凱蘭特崑山',alt:3729,series:'雪山&聖稜線',is100:false},
+  {name:'凱蘭特崑山北峰',alt:3707,series:'雪山&聖稜線',is100:false},
+  {name:'馬特蘭山',alt:3666,series:'雪山&聖稜線',is100:false},
+  {name:'穆特勒布山',alt:3623,series:'雪山&聖稜線',is100:false},
+  {name:'雲達卡山',alt:3619,series:'雪山&聖稜線',is100:false,isNew:true},
+  {name:'素密達山',alt:3500,series:'雪山&聖稜線',is100:false},
+  {name:'布秀蘭山',alt:3452,series:'雪山&聖稜線',is100:false},
+  {name:'巴紗拉雲山',alt:3407,series:'雪山&聖稜線',is100:false},
+  {name:'林專山',alt:3045,series:'雪山&聖稜線',is100:false},
+  // 雪山西稜 23座
+  {name:'大雪山',alt:3530,series:'雪山西稜',is100:true},
+  {name:'頭鷹山',alt:3509,series:'雪山西稜',is100:true},
+  {name:'火石山',alt:3309,series:'雪山西稜',is100:true},
+  {name:'中雪山',alt:3172,series:'雪山西稜',is100:true},
+  {name:'翠池三叉山',alt:3577,series:'雪山西稜',is100:false},
+  {name:'奇峻山',alt:3520,series:'雪山西稜',is100:false},
+  {name:'大雪山南峰',alt:3503,series:'雪山西稜',is100:false},
+  {name:'大雪山北峰',alt:3441,series:'雪山西稜',is100:false},
+  {name:'匹匹達山',alt:3436,series:'雪山西稜',is100:false},
+  {name:'釜碗山西峰',alt:3420,series:'雪山西稜',is100:false},
+  {name:'弓水山',alt:3374,series:'雪山西稜',is100:false},
+  {name:'博可爾山',alt:3264,series:'雪山西稜',is100:false},
+  {name:'博可爾山基點峰',alt:3261,series:'雪山西稜',is100:false},
+  {name:'大南山',alt:3237,series:'雪山西稜',is100:false},
+  {name:'頭鷹山北峰',alt:3194,series:'雪山西稜',is100:false},
+  {name:'大南山北峰',alt:3166,series:'雪山西稜',is100:false},
+  {name:'志摩山',alt:3162,series:'雪山西稜',is100:false},
+  {name:'火石山西峰',alt:3158,series:'雪山西稜',is100:false,isNew:true},
+  {name:'知馬漢山北峰',alt:3105,series:'雪山西稜',is100:false},
+  {name:'志摩山西峰',alt:3087,series:'雪山西稜',is100:false},
+  {name:'可汗山',alt:3087,series:'雪山西稜',is100:false},
+  {name:'可汗山東峰',alt:3034,series:'雪山西稜',is100:false},
+  {name:'釜碗山',alt:3001,series:'雪山西稜',is100:false},
+  // 武陵四秀 7座
+  {name:'品田山',alt:3528,series:'武陵四秀',is100:true},
+  {name:'桃山',alt:3323,series:'武陵四秀',is100:true},
+  {name:'池有山',alt:3300,series:'武陵四秀',is100:true},
+  {name:'喀拉葉山',alt:3132,series:'武陵四秀',is100:true},
+  {name:'品田山前峰',alt:3445,series:'武陵四秀',is100:false},
+  {name:'新達山',alt:3387,series:'武陵四秀',is100:false,isNew:true},
+  {name:'詩崙山',alt:3193,series:'武陵四秀',is100:false},
+  // 雪劍線 7座
+  {name:'大劍山',alt:3593,series:'雪劍線',is100:true},
+  {name:'佳陽山',alt:3314,series:'雪劍線',is100:true},
+  {name:'劍山',alt:3256,series:'雪劍線',is100:true},
+  {name:'雪山西南峰',alt:3478,series:'雪劍線',is100:false},
+  {name:'油婆蘭山',alt:3308,series:'雪劍線',is100:false},
+  {name:'劍南尖山',alt:3298,series:'雪劍線',is100:false},
+  {name:'布伕奇寒山',alt:3295,series:'雪劍線',is100:false},
+  // 志佳陽 3座
+  {name:'志佳陽山',alt:3285,series:'志佳陽',is100:true},
+  {name:'雪山南峰',alt:3518,series:'志佳陽',is100:false},
+  {name:'志佳陽山最高峰',alt:3346,series:'志佳陽',is100:false},
+  // 大霸群峰 7座
+  {name:'大霸尖山',alt:3490,series:'大霸群峰',is100:true},
+  {name:'小霸尖山',alt:3419,series:'大霸群峰',is100:true},
+  {name:'伊澤山',alt:3296,series:'大霸群峰',is100:true},
+  {name:'加利山',alt:3112,series:'大霸群峰',is100:true},
+  {name:'中霸尖山',alt:3393,series:'大霸群峰',is100:false},
+  {name:'東霸尖山',alt:3363,series:'大霸群峰',is100:false},
+  {name:'耶巴奧山',alt:3194,series:'大霸群峰',is100:false},
+  // 干卓萬群峰 9座
+  {name:'卓社大山',alt:3368,series:'干卓萬群峰',is100:true},
+  {name:'干卓萬山',alt:3284,series:'干卓萬群峰',is100:true},
+  {name:'萬東山西峰',alt:3257,series:'干卓萬群峰',is100:true},
+  {name:'牧山',alt:3241,series:'干卓萬群峰',is100:true},
+  {name:'牧山東峰',alt:3253,series:'干卓萬群峰',is100:false,isNew:true},
+  {name:'干卓萬三叉峰',alt:3244,series:'干卓萬群峰',is100:false},
+  {name:'卓社大山東峰',alt:3238,series:'干卓萬群峰',is100:false},
+  {name:'干卓萬山東南峰',alt:3135,series:'干卓萬群峰',is100:false},
+  {name:'雙子山',alt:3051,series:'干卓萬群峰',is100:false},
+  // 合歡群峰 10座
+  {name:'北合歡山',alt:3422,series:'合歡群峰',is100:true},
+  {name:'合歡山東峰',alt:3419,series:'合歡群峰',is100:true},
+  {name:'合歡山',alt:3417,series:'合歡群峰',is100:true},
+  {name:'石門山',alt:3236,series:'合歡群峰',is100:true},
+  {name:'西合歡山',alt:3144,series:'合歡群峰',is100:true},
+  {name:'石門山北峰',alt:3280,series:'合歡群峰',is100:false},
+  {name:'合歡尖山',alt:3220,series:'合歡群峰',is100:false},
+  {name:'南合歡山',alt:3218,series:'合歡群峰',is100:false,isNew:true},
+  {name:'十字峰',alt:3206,series:'合歡群峰',is100:false,isNew:true},
+  {name:'巴魯莫安山',alt:3087,series:'合歡群峰',is100:false,isNew:true},
+  // 白姑群峰 7座
+  {name:'白姑大山',alt:3341,series:'白姑群峰',is100:true},
+  {name:'白姑大山西峰',alt:3252,series:'白姑群峰',is100:false},
+  {name:'白姑大山三叉峰',alt:3216,series:'白姑群峰',is100:false},
+  {name:'白姑大山西南峰',alt:3172,series:'白姑群峰',is100:false},
+  {name:'白姑大山中峰',alt:3044,series:'白姑群峰',is100:false},
+  {name:'白姑大山東南峰',alt:3044,series:'白姑群峰',is100:false},
+  {name:'白姑大山東峰',alt:3010,series:'白姑群峰',is100:false},
+  // 奇萊東稜 7座
+  {name:'太魯閣大山',alt:3282,series:'奇萊東稜',is100:true},
+  {name:'盤石山',alt:3105,series:'奇萊東稜',is100:true},
+  {name:'帕托魯山',alt:3102,series:'奇萊東稜',is100:true},
+  {name:'立霧主山',alt:3071,series:'奇萊東稜',is100:true},
+  {name:'盤石山西峰',alt:3337,series:'奇萊東稜',is100:false},
+  {name:'盤石山中峰',alt:3149,series:'奇萊東稜',is100:false},
+  {name:'太魯閣大山西峰',alt:3113,series:'奇萊東稜',is100:false},
+  // 郡大+西巒 7座
+  {name:'郡大山',alt:3278,series:'郡大系列',is100:true},
+  {name:'西巒大山',alt:3085,series:'郡大系列',is100:true},
+  {name:'郡大山北峰',alt:3252,series:'郡大系列',is100:false},
+  {name:'清水山',alt:3052,series:'郡大系列',is100:false},
+  {name:'清水山南峰',alt:3029,series:'郡大系列',is100:false},
+  {name:'望鄉山',alt:3018,series:'郡大系列',is100:false},
+  {name:'金子山',alt:3012,series:'郡大系列',is100:false},
+  // 北一段 18座
+  {name:'南湖大山',alt:3741,series:'北一段',is100:true},
+  {name:'中央尖山',alt:3698,series:'北一段',is100:true},
+  {name:'南湖大山東峰',alt:3639,series:'北一段',is100:true},
+  {name:'南湖北山',alt:3534,series:'北一段',is100:true},
+  {name:'南湖大山南峰',alt:3505,series:'北一段',is100:true},
+  {name:'巴巴山',alt:3448,series:'北一段',is100:true},
+  {name:'馬比衫山',alt:3211,series:'北一段',is100:true},
+  {name:'審馬陣山',alt:3140,series:'北一段',is100:true},
+  {name:'南湖大山北峰',alt:3595,series:'北一段',is100:false},
+  {name:'中央尖山東峰',alt:3581,series:'北一段',is100:false},
+  {name:'南湖大山中南峰',alt:3572,series:'北一段',is100:false},
+  {name:'南湖大山東北峰',alt:3563,series:'北一段',is100:false},
+  {name:'陶塞峰',alt:3519,series:'北一段',is100:false},
+  {name:'南湖大山東南峰',alt:3478,series:'北一段',is100:false},
+  {name:'中央尖山西峰',alt:3412,series:'北一段',is100:false},
+  {name:'巴都服山',alt:3347,series:'北一段',is100:false},
+  {name:'巴巴山南峰',alt:3295,series:'北一段',is100:false},
+  {name:'拔托諾府山',alt:3167,series:'北一段',is100:false},
+  // 北二段 17座
+  {name:'無明山',alt:3449,series:'北二段',is100:true},
+  {name:'畢祿山',alt:3370,series:'北二段',is100:true},
+  {name:'玲鳴山',alt:3272,series:'北二段',is100:true},
+  {name:'閂山',alt:3168,series:'北二段',is100:true},
+  {name:'甘藷峰',alt:3157,series:'北二段',is100:true},
+  {name:'羊頭山',alt:3033,series:'北二段',is100:true},
+  {name:'鬼門關峰',alt:3374,series:'北二段',is100:false},
+  {name:'鋸山',alt:3322,series:'北二段',is100:false},
+  {name:'無明山西峰',alt:3232,series:'北二段',is100:false},
+  {name:'北畢祿山',alt:3197,series:'北二段',is100:false},
+  {name:'無明山東峰',alt:3190,series:'北二段',is100:false},
+  {name:'甘藷南峰',alt:3160,series:'北二段',is100:false},
+  {name:'人待山',alt:3114,series:'北二段',is100:false},
+  {name:'鋸山東峰',alt:3060,series:'北二段',is100:false},
+  {name:'畢祿山南峰',alt:3029,series:'北二段',is100:false},
+  {name:'人待山北峰',alt:3074,series:'北二段',is100:false,isNew:true},
+  {name:'黑岩山',alt:3013,series:'北二段',is100:false,isNew:true},
+  // 北三段 21座
+  {name:'奇萊北峰',alt:3606,series:'北三段',is100:true},
+  {name:'奇萊主山',alt:3562,series:'北三段',is100:true},
+  {name:'奇萊主山南峰',alt:3357,series:'北三段',is100:true},
+  {name:'能高山南峰',alt:3348,series:'北三段',is100:true},
+  {name:'能高山',alt:3261,series:'北三段',is100:true},
+  {name:'屏風山',alt:3248,series:'北三段',is100:true},
+  {name:'南華山',alt:3182,series:'北三段',is100:true},
+  {name:'白石山',alt:3106,series:'北三段',is100:true},
+  {name:'安東軍山',alt:3066,series:'北三段',is100:true},
+  {name:'光頭山',alt:3060,series:'北三段',is100:true},
+  {name:'奇萊池山',alt:3436,series:'北三段',is100:false},
+  {name:'卡羅樓山',alt:3413,series:'北三段',is100:false},
+  {name:'奇萊主山東峰',alt:3394,series:'北三段',is100:false},
+  {name:'奇萊裡山',alt:3385,series:'北三段',is100:false},
+  {name:'深掘山',alt:3313,series:'北三段',is100:false},
+  {name:'屏風山中峰',alt:3246,series:'北三段',is100:false,isNew:true},
+  {name:'屏風山南峰',alt:3180,series:'北三段',is100:false},
+  {name:'卡賀爾山',alt:3104,series:'北三段',is100:false},
+  {name:'東白石山',alt:3084,series:'北三段',is100:false},
+  {name:'巴沙灣山',alt:3027,series:'北三段',is100:false},
+  {name:'安東軍山北峰',alt:3022,series:'北三段',is100:false,isNew:true},
+  // 馬博系列 29座
+  {name:'秀姑巒山',alt:3829,series:'馬博系列',is100:true},
+  {name:'馬博拉斯山',alt:3776,series:'馬博系列',is100:true},
+  {name:'馬利加南山',alt:3561,series:'馬博系列',is100:true},
+  {name:'馬西山',alt:3443,series:'馬博系列',is100:true},
+  {name:'八通關山',alt:3331,series:'馬博系列',is100:true},
+  {name:'喀西帕南山',alt:3278,series:'馬博系列',is100:true},
+  {name:'盆駒山',alt:3030,series:'馬博系列',is100:true},
+  {name:'馬利亞文路山',alt:3491,series:'馬博系列',is100:false},
+  {name:'馬利亞文路山東峰',alt:3454,series:'馬博系列',is100:false},
+  {name:'盆駒山南峰',alt:3438,series:'馬博系列',is100:false},
+  {name:'馬利加南山東峰',alt:3379,series:'馬博系列',is100:false},
+  {name:'黃當擴山南峰',alt:3352,series:'馬博系列',is100:false},
+  {name:'布干山',alt:3338,series:'馬博系列',is100:false},
+  {name:'巴奈伊克山',alt:3328,series:'馬博系列',is100:false},
+  {name:'太魯那斯山',alt:3258,series:'馬博系列',is100:false},
+  {name:'八通關山西峰',alt:3244,series:'馬博系列',is100:false},
+  {name:'馬利亞文路山北峰',alt:3237,series:'馬博系列',is100:false},
+  {name:'黃當擴山',alt:3203,series:'馬博系列',is100:false},
+  {name:'喀西帕南山西峰',alt:3194,series:'馬博系列',is100:false},
+  {name:'馬西山北峰',alt:3183,series:'馬博系列',is100:false},
+  {name:'八通關山東峰',alt:3181,series:'馬博系列',is100:false,isNew:true},
+  {name:'黃當擴山中峰',alt:3179,series:'馬博系列',is100:false},
+  {name:'喀西帕南山南峰',alt:3166,series:'馬博系列',is100:false},
+  {name:'馬利加南山北峰',alt:3121,series:'馬博系列',is100:false},
+  {name:'盆駒山中峰',alt:3117,series:'馬博系列',is100:false},
+  {name:'僕落西擴山',alt:3062,series:'馬博系列',is100:false},
+  {name:'烏妹浪胖山',alt:3038,series:'馬博系列',is100:false},
+  {name:'烏可冬克山',alt:3026,series:'馬博系列',is100:false},
+  {name:'喀西帕南山北峰',alt:3023,series:'馬博系列',is100:false},
+  // 丹大東郡+六順 35座
+  {name:'東郡大山',alt:3617,series:'丹大東郡',is100:true},
+  {name:'東巒大山',alt:3479,series:'丹大東郡',is100:true},
+  {name:'丹大山',alt:3329,series:'丹大東郡',is100:true},
+  {name:'內嶺爾山',alt:3275,series:'丹大東郡',is100:true},
+  {name:'義西請馬至山',alt:3252,series:'丹大東郡',is100:true},
+  {name:'無雙山基點峰',alt:3243,series:'丹大東郡',is100:true},
+  {name:'六順山',alt:3009,series:'丹大東郡',is100:true},
+  {name:'烏達佩山',alt:3533,series:'丹大東郡',is100:false},
+  {name:'可樂可樂安山',alt:3505,series:'丹大東郡',is100:false},
+  {name:'郡東山',alt:3489,series:'丹大東郡',is100:false},
+  {name:'本鄉山',alt:3458,series:'丹大東郡',is100:false},
+  {name:'櫧山',alt:3449,series:'丹大東郡',is100:false},
+  {name:'天南可蘭山',alt:3412,series:'丹大東郡',is100:false},
+  {name:'裡門山',alt:3349,series:'丹大東郡',is100:false},
+  {name:'斷稜西山',alt:3325,series:'丹大東郡',is100:false},
+  {name:'望崖山',alt:3316,series:'丹大東郡',is100:false},
+  {name:'斷稜東山',alt:3297,series:'丹大東郡',is100:false},
+  {name:'馬路巴拉讓山',alt:3263,series:'丹大東郡',is100:false},
+  {name:'無雙山東峰',alt:3239,series:'丹大東郡',is100:false},
+  {name:'紅崖山',alt:3222,series:'丹大東郡',is100:false},
+  {name:'馬路巴拉讓山西峰',alt:3212,series:'丹大東郡',is100:false},
+  {name:'盧利拉駱山',alt:3182,series:'丹大東郡',is100:false},
+  {name:'九華山西峰',alt:3172,series:'丹大東郡',is100:false},
+  {name:'九華山',alt:3148,series:'丹大東郡',is100:false},
+  {name:'丹大山東峰',alt:3143,series:'丹大東郡',is100:false},
+  {name:'紅崖山北峰',alt:3138,series:'丹大東郡',is100:false},
+  {name:'盧利拉駱山西峰',alt:3132,series:'丹大東郡',is100:false},
+  {name:'裡門山南峰',alt:3107,series:'丹大東郡',is100:false,isNew:true},
+  {name:'本鄉山西峰',alt:3079,series:'丹大東郡',is100:false},
+  {name:'郡北山',alt:3061,series:'丹大東郡',is100:false},
+  {name:'阿屘那來山',alt:3058,series:'丹大東郡',is100:false},
+  {name:'大石公山',alt:3054,series:'丹大東郡',is100:false},
+  {name:'阿巴拉山',alt:3048,series:'丹大東郡',is100:false},
+  {name:'關門北山',alt:3044,series:'丹大東郡',is100:false},
+  {name:'大理石峰',alt:3017,series:'丹大東郡',is100:false},
+  // 新康+南二段 32座
+  {name:'大水窟山',alt:3643,series:'新康南二段',is100:true},
+  {name:'向陽山',alt:3603,series:'新康南二段',is100:true},
+  {name:'雲峰',alt:3562,series:'新康南二段',is100:true},
+  {name:'三叉山',alt:3496,series:'新康南二段',is100:true},
+  {name:'南雙頭山',alt:3359,series:'新康南二段',is100:true},
+  {name:'新康山',alt:3338,series:'新康南二段',is100:true},
+  {name:'轆轆山',alt:3278,series:'新康南二段',is100:true},
+  {name:'達芬尖山',alt:3206,series:'新康南二段',is100:true},
+  {name:'塔芬山',alt:3070,series:'新康南二段',is100:true},
+  {name:'布拉克桑山',alt:3021,series:'新康南二段',is100:true},
+  {name:'大水窟山北峰',alt:3631,series:'新康南二段',is100:false},
+  {name:'雲峰中峰',alt:3520,series:'新康南二段',is100:false},
+  {name:'向陽山北峰',alt:3458,series:'新康南二段',is100:false},
+  {name:'雲峰東峰',alt:3454,series:'新康南二段',is100:false},
+  {name:'南大水窟山',alt:3386,series:'新康南二段',is100:false},
+  {name:'南雙頭山東峰',alt:3352,series:'新康南二段',is100:false},
+  {name:'天空堡壘山',alt:3345,series:'新康南二段',is100:false},
+  {name:'摩保來山',alt:3298,series:'新康南二段',is100:false},
+  {name:'溪頭山',alt:3273,series:'新康南二段',is100:false},
+  {name:'轆轆山東峰',alt:3272,series:'新康南二段',is100:false},
+  {name:'雲峰東北峰',alt:3262,series:'新康南二段',is100:false},
+  {name:'北面山',alt:3168,series:'新康南二段',is100:false},
+  {name:'連理山西峰',alt:3165,series:'新康南二段',is100:false},
+  {name:'雲峰西北峰',alt:3159,series:'新康南二段',is100:false,isNew:true},
+  {name:'連理山',alt:3145,series:'新康南二段',is100:false},
+  {name:'新仙山',alt:3128,series:'新康南二段',is100:false},
+  {name:'轆轆山南峰',alt:3095,series:'新康南二段',is100:false},
+  {name:'大芬富士山',alt:3060,series:'新康南二段',is100:false,isNew:true},
+  {name:'玉穗山',alt:3044,series:'新康南二段',is100:false},
+  {name:'達芬尖山北峰',alt:3041,series:'新康南二段',is100:false},
+  {name:'塔芬山南峰',alt:3025,series:'新康南二段',is100:false},
+  {name:'躑躅山',alt:3002,series:'新康南二段',is100:false},
+  // 南一段+北大武 20座
+  {name:'關山',alt:3668,series:'南一段+北大武',is100:true},
+  {name:'卑南主山',alt:3292,series:'南一段+北大武',is100:true},
+  {name:'小關山',alt:3249,series:'南一段+北大武',is100:true},
+  {name:'塔關山',alt:3222,series:'南一段+北大武',is100:true},
+  {name:'關山嶺山',alt:3176,series:'南一段+北大武',is100:true},
+  {name:'海諾南山',alt:3173,series:'南一段+北大武',is100:true},
+  {name:'庫哈諾辛山',alt:3114,series:'南一段+北大武',is100:true},
+  {name:'北大武山',alt:3091,series:'南一段+北大武',is100:true},
+  {name:'關山北峰',alt:3425,series:'南一段+北大武',is100:false},
+  {name:'鷹仔嘴山',alt:3306,series:'南一段+北大武',is100:false},
+  {name:'卑南主山北峰',alt:3261,series:'南一段+北大武',is100:false},
+  {name:'恐龍尖山',alt:3234,series:'南一段+北大武',is100:false},
+  {name:'卑南主山西北峰',alt:3228,series:'南一段+北大武',is100:false},
+  {name:'小關山北峰',alt:3227,series:'南一段+北大武',is100:false},
+  {name:'卑南主山南峰',alt:3152,series:'南一段+北大武',is100:false},
+  {name:'塔關山北峰',alt:3131,series:'南一段+北大武',is100:false,isNew:true},
+  {name:'卑南主山西峰',alt:3106,series:'南一段+北大武',is100:false},
+  {name:'卑南主山東峰',alt:3062,series:'南一段+北大武',is100:false},
+  {name:'馬西巴秀山',alt:3024,series:'南一段+北大武',is100:false},
+  {name:'雲水山',alt:3006,series:'南一段+北大武',is100:false},
+];
+
+const KEY = 'peaks285done';
+let doneSet = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+let currentTab = 'all', currentSeries = 'all';
+
+const allSeries = [...new Set(PEAKS_285.map(p => p.series))];
+
+// Build series filter
+const sf = document.getElementById('seriesFilter');
+sf.innerHTML = `<button class="filter-pill active" onclick="setSeries(this,'all')">全部山系</button>` +
+  allSeries.map(s => `<button class="filter-pill" onclick="setSeries(this,'${s}')">${s}</button>`).join('');
+
+function save() { localStorage.setItem(KEY, JSON.stringify([...doneSet])); }
+
+function toggle(name) {
+  if (doneSet.has(name)) doneSet.delete(name);
+  else doneSet.add(name);
+  save(); render();
+}
+
+function switchTab(btn, t) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = t; render();
+}
+function setSeries(btn, s) {
+  document.querySelectorAll('#seriesFilter .filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSeries = s; render();
+}
+
+function render() {
+  let filtered = PEAKS_285.filter(p => {
+    const tabOk = currentTab==='all'
+      || (currentTab==='done'?doneSet.has(p.name)
+      :currentTab==='todo'?!doneSet.has(p.name)
+      :p.is100);
+    const seriesOk = currentSeries==='all' || p.series===currentSeries;
+    return tabOk && seriesOk;
+  });
+
+  const done = doneSet.size;
+  const pct = ((done/285)*100).toFixed(1);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('doneCount').textContent = `${done} / 285 座已完成`;
+  document.getElementById('pct').textContent = pct + '%';
+
+  const groups = {};
+  filtered.forEach(p => { (groups[p.series]||(groups[p.series]=[])).push(p); });
+
+  const list = document.getElementById('peakList');
+  if (!filtered.length) { list.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>沒有符合條件的山</p></div>`; return; }
+
+  list.innerHTML = Object.entries(groups).map(([series, peaks]) => `
+    <div class="series-header">${series}（${peaks.length}座）</div>
+    <div class="peak-list">
+      ${peaks.map(p => {
+        const d = doneSet.has(p.name);
+        return `<div class="peak-item ${d?'done':''}" onclick="toggle('${p.name.replace(/'/g,"\\'")}')">
+          <div class="peak-check">${d?'✓':''}</div>
+          <span class="peak-name">${p.name}</span>
+          <span class="peak-altitude">${p.alt.toLocaleString()} m</span>
+          ${p.is100 ? `<span class="tag-100">百岳</span>` : ''}
+          ${p.isNew ? `<span class="tag-new">上河新增</span>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+render();
+</script>
+</body>
+</html>

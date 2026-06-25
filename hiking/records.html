@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>紀錄列表 — 我的登山紀錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .search-bar {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--white); border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius-sm); padding: 8px 14px; margin-bottom: 16px;
+      transition: border-color var(--transition);
+    }
+    .search-bar:focus-within { border-color: var(--green-main); }
+    .search-bar input {
+      border: none; outline: none; font: inherit; font-size: .9rem;
+      color: var(--gray-900); flex: 1; background: transparent;
+    }
+    .search-bar input::placeholder { color: var(--gray-500); }
+    .result-count { font-size: .85rem; color: var(--gray-500); margin-bottom: 16px; }
+
+    /* Photo previews in card */
+    .card-photos { display: flex; gap: 4px; margin-top: 8px; }
+    .card-photo-thumb {
+      width: 44px; height: 44px; border-radius: 6px;
+      object-fit: cover; background: var(--green-pale);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .card-photo-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+    .card-photo-more { font-size: .7rem; color: var(--gray-500); align-self: center; }
+
+    /* GPX badge */
+    .gpx-badge {
+      font-size: .72rem; padding: 2px 8px; border-radius: 999px;
+      background: #e0f2fe; color: #0369a1; font-weight: 600;
+    }
+
+    /* Delete button on card */
+    .card-delete-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(220,38,38,.85); color: white;
+      border: none; border-radius: 50%; width: 26px; height: 26px;
+      font-size: .8rem; cursor: pointer; display: none;
+      align-items: center; justify-content: center;
+      transition: background var(--transition);
+    }
+    .record-card:hover .card-delete-btn { display: flex; }
+    .record-card { position: relative; }
+    .card-delete-btn:hover { background: #b91c1c; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="icon">⛰️</span>我的登山紀錄</a>
+    <ul class="nav-links">
+      <li><a href="index.html">首頁</a></li>
+      <li><a href="records.html" class="active">紀錄列表</a></li>
+      <li class="has-dropdown">
+        <a href="#" class="dropdown-trigger">制霸地圖 ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="peaks.html">百岳制霸地圖</a></li>
+          <li><a href="peaks-small.html">小百岳制霸地圖</a></li>
+          <li><a href="peaks-285.html">285峰制霸地圖</a></li>
+        </ul>
+      </li>
+      <li><a href="gear.html">裝備清單</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="section-header">
+    <div>
+      <h1 class="page-title">紀錄列表</h1>
+      <p class="page-subtitle" id="totalCount">共 0 筆紀錄</p>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">＋ 新增紀錄</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'all')">📋 全部</button>
+    <button class="tab-btn" onclick="switchTab(this,'百岳')">🏔 百岳</button>
+    <button class="tab-btn" onclick="switchTab(this,'中級山')">🌲 中級山</button>
+    <button class="tab-btn" onclick="switchTab(this,'郊山')">🌿 郊山</button>
+  </div>
+
+  <div class="search-bar">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="搜尋山名、地點…" oninput="renderCards()" />
+  </div>
+
+  <div class="filter-row" id="yearFilter"></div>
+
+  <p class="result-count" id="resultCount"></p>
+  <div class="cards-grid" id="cardGrid"></div>
+</main>
+
+<footer class="footer">© 2026 我的登山紀錄 · 自用靜態站</footer>
+
+<!-- ADD RECORD MODAL -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <h2>＋ 新增登山紀錄</h2>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>山名 *</label>
+        <input type="text" id="f-name" placeholder="例：玉山主峰" />
+      </div>
+      <div class="form-group">
+        <label>日期 *</label>
+        <input type="date" id="f-date" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>分類</label>
+        <select id="f-cat">
+          <option value="">選擇分類</option>
+          <option value="百岳">百岳</option>
+          <option value="中級山">中級山</option>
+          <option value="郊山">郊山</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>行程天數</label>
+        <input type="text" id="f-days" placeholder="例：當日來回 / 2天1夜" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>地點 / 縣市</label>
+        <input type="text" id="f-loc" placeholder="例：嘉義" />
+      </div>
+      <div class="form-group">
+        <label>背包負重 (kg)</label>
+        <input type="number" id="f-weight" placeholder="例：12" min="0" step="0.5" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>📂 上傳 GPX（自動計算距離 / 爬升 / 下降）</label>
+      <input type="file" id="f-gpx" accept=".gpx" onchange="parseGPX(this)" />
+      <div class="gpx-parsed" id="gpxResult">
+        <div class="gpx-stat">距離 <strong id="gpx-dist">—</strong> km</div>
+        <div class="gpx-stat">爬升 <strong id="gpx-gain">—</strong> m</div>
+        <div class="gpx-stat">下降 <strong id="gpx-loss">—</strong> m</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>總距離 (km)</label>
+        <input type="number" id="f-dist" placeholder="自動填入或手動" step="0.1" min="0" />
+      </div>
+      <div class="form-group">
+        <label>總爬升 (m)</label>
+        <input type="number" id="f-gain" placeholder="自動填入或手動" min="0" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>📷 照片（可多選）</label>
+      <input type="file" id="f-photos" accept="image/*" multiple onchange="previewPhotos(this)" />
+      <div id="photoPreviewRow" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
+    </div>
+
+    <div class="form-group">
+      <label>備註 / 心得</label>
+      <textarea id="f-note" placeholder="這次登山的感受、路況、天氣…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAddModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveRecord()">儲存紀錄</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────
+let records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
+let currentTab = 'all';
+let photoDataURLs = []; // base64 photos for current form
+
+// ── Modal ──────────────────────────────────────────
+function openAddModal() {
+  resetForm();
+  document.getElementById('addModal').classList.add('open');
+}
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('open');
+}
+function resetForm() {
+  ['f-name','f-date','f-days','f-loc','f-weight','f-dist','f-gain','f-note'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-cat').value = '';
+  document.getElementById('f-gpx').value = '';
+  document.getElementById('f-photos').value = '';
+  document.getElementById('gpxResult').classList.remove('show');
+  document.getElementById('photoPreviewRow').innerHTML = '';
+  photoDataURLs = [];
+}
+
+// ── GPX Parsing ────────────────────────────────────
+function parseGPX(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(e.target.result, 'text/xml');
+      const trkpts = [...xml.querySelectorAll('trkpt')];
+      if (!trkpts.length) { alert('GPX 檔案中找不到軌跡點'); return; }
+
+      let dist = 0, gain = 0, loss = 0;
+      let prevLat = null, prevLon = null, prevEle = null;
+
+      trkpts.forEach(pt => {
+        const lat = parseFloat(pt.getAttribute('lat'));
+        const lon = parseFloat(pt.getAttribute('lon'));
+        const eleEl = pt.querySelector('ele');
+        const ele = eleEl ? parseFloat(eleEl.textContent) : null;
+
+        if (prevLat !== null) {
+          dist += haversine(prevLat, prevLon, lat, lon);
+        }
+        if (prevEle !== null && ele !== null) {
+          const diff = ele - prevEle;
+          if (diff > 0) gain += diff;
+          else loss += Math.abs(diff);
+        }
+        prevLat = lat; prevLon = lon; prevEle = ele;
+      });
+
+      const distKm = (dist / 1000).toFixed(2);
+      const gainM = Math.round(gain);
+      const lossM = Math.round(loss);
+
+      document.getElementById('gpx-dist').textContent = distKm;
+      document.getElementById('gpx-gain').textContent = gainM.toLocaleString();
+      document.getElementById('gpx-loss').textContent = lossM.toLocaleString();
+      document.getElementById('gpxResult').classList.add('show');
+
+      // Auto-fill fields
+      document.getElementById('f-dist').value = distKm;
+      document.getElementById('f-gain').value = gainM;
+    } catch(err) {
+      alert('GPX 解析失敗：' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ── Photo Preview ──────────────────────────────────
+function previewPhotos(input) {
+  const files = [...input.files];
+  photoDataURLs = [];
+  const row = document.getElementById('photoPreviewRow');
+  row.innerHTML = '';
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      photoDataURLs.push(e.target.result);
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:6px;';
+      row.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Save Record ────────────────────────────────────
+function saveRecord() {
+  const name = document.getElementById('f-name').value.trim();
+  const date = document.getElementById('f-date').value;
+  if (!name || !date) { alert('請填寫山名和日期'); return; }
+
+  const emojis = ['🏔','🌲','🌿','🌄','❄️','🗻','⛰️','🌅'];
+  const record = {
+    id: Date.now(),
+    name,
+    date,
+    category: document.getElementById('f-cat').value,
+    days: document.getElementById('f-days').value.trim(),
+    location: document.getElementById('f-loc').value.trim(),
+    weight: document.getElementById('f-weight').value,
+    distance: document.getElementById('f-dist').value,
+    gain: document.getElementById('f-gain').value,
+    note: document.getElementById('f-note').value.trim(),
+    photos: photoDataURLs.slice(0, 9), // limit storage
+    emoji: emojis[Math.floor(Math.random() * emojis.length)],
+  };
+
+  records.unshift(record);
+  localStorage.setItem('hikeRecords', JSON.stringify(records));
+  closeAddModal();
+  renderAll();
+}
+
+// ── Delete Record ──────────────────────────────────
+function deleteRecord(id, e) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (!confirm('確定刪除這筆紀錄？')) return;
+  records = records.filter(r => r.id !== id);
+  localStorage.setItem('hikeRecords', JSON.stringify(records));
+  renderAll();
+}
+
+// ── Render ─────────────────────────────────────────
+function switchTab(btn, cat) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = cat;
+  renderCards();
+}
+
+function renderAll() {
+  renderYearFilter();
+  renderCards();
+  document.getElementById('totalCount').textContent = `共 ${records.length} 筆紀錄`;
+}
+
+function renderYearFilter() {
+  const years = [...new Set(records.map(r => r.date.slice(0,4)))].sort((a,b)=>b-a);
+  const row = document.getElementById('yearFilter');
+  row.innerHTML = `<button class="filter-pill active" onclick="setYear(this,'all')">全部時間</button>` +
+    years.map(y => `<button class="filter-pill" onclick="setYear(this,'${y}')">${y}</button>`).join('');
+}
+
+let currentYear = 'all';
+function setYear(btn, y) {
+  document.querySelectorAll('#yearFilter .filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentYear = y;
+  renderCards();
+}
+
+function renderCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = records.filter(r => {
+    const catOk = currentTab === 'all' || r.category === currentTab;
+    const yearOk = currentYear === 'all' || r.date.startsWith(currentYear);
+    const textOk = !q || r.name.toLowerCase().includes(q) || (r.location||'').toLowerCase().includes(q);
+    return catOk && yearOk && textOk;
+  });
+
+  const grid = document.getElementById('cardGrid');
+  document.getElementById('resultCount').textContent = `顯示 ${filtered.length} 筆`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="icon">🔍</div><p>${records.length ? '沒有符合條件的紀錄' : '還沒有紀錄，點右上角「新增紀錄」開始吧！'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(r => `
+    <div class="record-card" style="cursor:default;">
+      <div class="record-card-img">${
+        r.photos && r.photos.length
+          ? `<img src="${r.photos[0]}" style="width:100%;height:160px;object-fit:cover;" />`
+          : r.emoji || '🏔'
+      }</div>
+      <button class="card-delete-btn" onclick="deleteRecord(${r.id}, event)" title="刪除">✕</button>
+      <div class="record-card-body">
+        <div class="record-card-title">${r.name}</div>
+        <div class="record-card-meta">
+          <span class="meta-chip">📅 ${r.date}</span>
+          ${r.days ? `<span class="meta-chip">⏱ ${r.days}</span>` : ''}
+          ${r.location ? `<span class="meta-chip">📍 ${r.location}</span>` : ''}
+        </div>
+        <div class="record-card-meta" style="margin-top:4px;">
+          ${r.distance ? `<span class="meta-chip">📏 ${Number(r.distance).toFixed(1)} km</span>` : ''}
+          ${r.gain ? `<span class="meta-chip">⬆️ ${Number(r.gain).toLocaleString()} m</span>` : ''}
+          ${r.weight ? `<span class="meta-chip">🎒 ${r.weight} kg</span>` : ''}
+        </div>
+        <div class="record-card-tags">
+          ${r.category ? `<span class="tag">${r.category}</span>` : ''}
+          ${r.photos && r.photos.length > 1 ? `<span class="gpx-badge">📷 ${r.photos.length}</span>` : ''}
+          ${r.distance ? `<span class="gpx-badge">GPX</span>` : ''}
+        </div>
+        ${r.photos && r.photos.length ? `
+          <div class="card-photos">
+            ${r.photos.slice(0,3).map(p => `<div class="card-photo-thumb"><img src="${p}" /></div>`).join('')}
+            ${r.photos.length > 3 ? `<span class="card-photo-more">+${r.photos.length - 3}</span>` : ''}
+          </div>` : ''}
+        ${r.note ? `<p style="font-size:.8rem;color:var(--gray-500);margin-top:8px;line-height:1.5;">${r.note.slice(0,80)}${r.note.length>80?'…':''}</p>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>

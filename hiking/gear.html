@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>裝備清單 — 我的登山紀錄</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .gear-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px; }
+    .gear-category {
+      background: var(--white); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm); overflow: hidden;
+    }
+    .gear-cat-header {
+      background: var(--green-dark); color: var(--white);
+      padding: 12px 16px; display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .gear-cat-title { font-weight: 700; font-size: .95rem; }
+    .gear-cat-count { font-size: .78rem; opacity: .7; }
+    .gear-items { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .gear-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--gray-100); background: var(--gray-100);
+      transition: all var(--transition);
+      cursor: pointer; user-select: none;
+    }
+    .gear-item:hover { border-color: var(--green-light); background: var(--green-pale); }
+    .gear-item.owned { border-color: var(--green-light); background: var(--green-pale); }
+    .gear-check {
+      width: 20px; height: 20px; border-radius: 4px;
+      border: 2px solid var(--gray-300); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; color: var(--white); background: var(--white);
+      transition: all var(--transition);
+    }
+    .gear-item.owned .gear-check { background: var(--green-main); border-color: var(--green-main); }
+    .gear-name { flex: 1; font-size: .88rem; color: var(--gray-700); }
+    .gear-item.owned .gear-name { color: var(--green-dark); font-weight: 500; }
+    .gear-weight-badge {
+      font-size: .72rem; padding: 2px 8px; border-radius: 999px;
+      background: var(--gray-300); color: var(--gray-700); flex-shrink: 0;
+    }
+    .gear-item.owned .gear-weight-badge { background: var(--green-light); color: var(--white); }
+    .gear-add-btn {
+      width: 100%; margin-top: 8px; padding: 8px;
+      border-radius: var(--radius-sm); border: 1.5px dashed var(--gray-300);
+      color: var(--gray-500); font-size: .83rem; font: inherit;
+      cursor: pointer; background: transparent;
+      transition: all var(--transition);
+    }
+    .gear-add-btn:hover { border-color: var(--green-main); color: var(--green-main); background: var(--green-pale); }
+
+    .summary-bar {
+      background: var(--white); border-radius: var(--radius-md);
+      padding: 16px 20px; box-shadow: var(--shadow-sm);
+      display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .summary-item { display: flex; flex-direction: column; gap: 2px; }
+    .summary-item .val { font-size: 1.3rem; font-weight: 700; color: var(--green-main); }
+    .summary-item .key { font-size: .75rem; color: var(--gray-500); }
+
+    /* Add gear modal inputs */
+    .form-row-3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="icon">⛰️</span>我的登山紀錄</a>
+    <ul class="nav-links">
+      <li><a href="index.html">首頁</a></li>
+      <li><a href="records.html">紀錄列表</a></li>
+      <li class="has-dropdown">
+        <a href="#" class="dropdown-trigger">制霸地圖 ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="peaks.html">百岳制霸地圖</a></li>
+          <li><a href="peaks-small.html">小百岳制霸地圖</a></li>
+          <li><a href="peaks-285.html">285峰制霸地圖</a></li>
+        </ul>
+      </li>
+      <li><a href="gear.html" class="active">裝備清單</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="section-header">
+    <div>
+      <h1 class="page-title">裝備清單</h1>
+      <p class="page-subtitle">管理你的登山裝備庫存</p>
+    </div>
+    <button class="btn btn-primary" onclick="openAddGear()">＋ 新增裝備</button>
+  </div>
+
+  <div class="summary-bar" id="summaryBar">
+    <div class="summary-item"><span class="val" id="sum-total">0</span><span class="key">件裝備</span></div>
+    <div class="summary-item"><span class="val" id="sum-owned">0</span><span class="key">已擁有</span></div>
+    <div class="summary-item"><span class="val" id="sum-weight">0</span><span class="key">總重量 (g)</span></div>
+    <div class="summary-item"><span class="val" id="sum-missing">0</span><span class="key">待購入</span></div>
+  </div>
+
+  <div class="gear-grid" id="gearGrid"></div>
+</main>
+
+<footer class="footer">© 2026 我的登山紀錄 · 自用靜態站</footer>
+
+<!-- ADD GEAR MODAL -->
+<div class="modal-overlay" id="gearModal" onclick="if(event.target===this)closeAddGear()">
+  <div class="modal">
+    <h2>＋ 新增裝備</h2>
+    <div class="form-row-3">
+      <div class="form-group">
+        <label>裝備名稱 *</label>
+        <input type="text" id="g-name" placeholder="例：防水外套" />
+      </div>
+      <div class="form-group">
+        <label>重量 (g)</label>
+        <input type="number" id="g-weight" placeholder="350" min="0" />
+      </div>
+      <div class="form-group">
+        <label>已擁有</label>
+        <select id="g-owned">
+          <option value="true">✅ 是</option>
+          <option value="false">❌ 否</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>分類</label>
+      <select id="g-cat">
+        <option value="服裝與保暖">服裝與保暖</option>
+        <option value="背包與收納">背包與收納</option>
+        <option value="安全與導航">安全與導航</option>
+        <option value="飲食與炊具">飲食與炊具</option>
+        <option value="睡眠">睡眠</option>
+        <option value="急救">急救</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>備註</label>
+      <input type="text" id="g-note" placeholder="品牌、型號、購買連結…" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAddGear()">取消</button>
+      <button class="btn btn-primary" onclick="saveGear()">新增</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY = 'gearList';
+
+// Default gear list
+const DEFAULT_GEAR = [
+  // 服裝與保暖
+  {id:1,name:'排汗衫',cat:'服裝與保暖',weight:200,owned:false,note:''},
+  {id:2,name:'刷毛中層',cat:'服裝與保暖',weight:350,owned:false,note:''},
+  {id:3,name:'羽絨外套',cat:'服裝與保暖',weight:400,owned:false,note:''},
+  {id:4,name:'防水硬殼外套',cat:'服裝與保暖',weight:600,owned:false,note:''},
+  {id:5,name:'防水褲',cat:'服裝與保暖',weight:350,owned:false,note:''},
+  {id:6,name:'保暖帽',cat:'服裝與保暖',weight:80,owned:false,note:''},
+  {id:7,name:'手套',cat:'服裝與保暖',weight:120,owned:false,note:''},
+  {id:8,name:'登山襪 ×3',cat:'服裝與保暖',weight:200,owned:false,note:''},
+  // 背包與收納
+  {id:9,name:'登山背包 50L',cat:'背包與收納',weight:1500,owned:false,note:''},
+  {id:10,name:'背包雨套',cat:'背包與收納',weight:180,owned:false,note:''},
+  {id:11,name:'防水袋',cat:'背包與收納',weight:80,owned:false,note:''},
+  {id:12,name:'登山杖（一對）',cat:'背包與收納',weight:500,owned:false,note:''},
+  // 安全與導航
+  {id:13,name:'頭燈',cat:'安全與導航',weight:150,owned:false,note:''},
+  {id:14,name:'備用電池',cat:'安全與導航',weight:80,owned:false,note:''},
+  {id:15,name:'哨子',cat:'安全與導航',weight:20,owned:false,note:''},
+  {id:16,name:'地圖 / 離線地圖',cat:'安全與導航',weight:0,owned:false,note:''},
+  {id:17,name:'指南針',cat:'安全與導航',weight:30,owned:false,note:''},
+  {id:18,name:'行動電源',cat:'安全與導航',weight:220,owned:false,note:''},
+  // 飲食與炊具
+  {id:19,name:'爐頭',cat:'飲食與炊具',weight:100,owned:false,note:''},
+  {id:20,name:'瓦斯罐',cat:'飲食與炊具',weight:380,owned:false,note:''},
+  {id:21,name:'鍋具組',cat:'飲食與炊具',weight:300,owned:false,note:''},
+  {id:22,name:'餐具',cat:'飲食與炊具',weight:80,owned:false,note:''},
+  {id:23,name:'水壺 1L',cat:'飲食與炊具',weight:180,owned:false,note:''},
+  {id:24,name:'濾水器',cat:'飲食與炊具',weight:100,owned:false,note:''},
+  // 睡眠
+  {id:25,name:'睡袋（－5°C）',cat:'睡眠',weight:900,owned:false,note:''},
+  {id:26,name:'睡墊',cat:'睡眠',weight:500,owned:false,note:''},
+  {id:27,name:'帳篷',cat:'睡眠',weight:1800,owned:false,note:''},
+  // 急救
+  {id:28,name:'急救包',cat:'急救',weight:200,owned:false,note:''},
+  {id:29,name:'止痛藥',cat:'急救',weight:50,owned:false,note:''},
+  {id:30,name:'高山反應藥',cat:'急救',weight:30,owned:false,note:''},
+];
+
+let gearList = JSON.parse(localStorage.getItem(KEY) || 'null') || DEFAULT_GEAR;
+let nextId = Math.max(...gearList.map(g=>g.id), 0) + 1;
+
+function save() { localStorage.setItem(KEY, JSON.stringify(gearList)); }
+
+function toggleOwned(id) {
+  const g = gearList.find(g=>g.id===id);
+  if (g) { g.owned = !g.owned; save(); render(); }
+}
+
+function deleteGear(id) {
+  if (!confirm('確定刪除此裝備？')) return;
+  gearList = gearList.filter(g=>g.id!==id);
+  save(); render();
+}
+
+function openAddGear() {
+  document.getElementById('g-name').value = '';
+  document.getElementById('g-weight').value = '';
+  document.getElementById('g-note').value = '';
+  document.getElementById('g-owned').value = 'true';
+  document.getElementById('gearModal').classList.add('open');
+}
+function closeAddGear() { document.getElementById('gearModal').classList.remove('open'); }
+
+function saveGear() {
+  const name = document.getElementById('g-name').value.trim();
+  if (!name) { alert('請輸入裝備名稱'); return; }
+  gearList.push({
+    id: nextId++,
+    name,
+    cat: document.getElementById('g-cat').value,
+    weight: parseInt(document.getElementById('g-weight').value)||0,
+    owned: document.getElementById('g-owned').value === 'true',
+    note: document.getElementById('g-note').value.trim(),
+  });
+  save(); closeAddGear(); render();
+}
+
+function render() {
+  const totalOwned = gearList.filter(g=>g.owned).length;
+  const totalWeight = gearList.filter(g=>g.owned).reduce((s,g)=>s+g.weight,0);
+  document.getElementById('sum-total').textContent = gearList.length;
+  document.getElementById('sum-owned').textContent = totalOwned;
+  document.getElementById('sum-weight').textContent = totalWeight.toLocaleString();
+  document.getElementById('sum-missing').textContent = gearList.length - totalOwned;
+
+  const cats = {};
+  gearList.forEach(g => { (cats[g.cat]||(cats[g.cat]=[])).push(g); });
+
+  document.getElementById('gearGrid').innerHTML = Object.entries(cats).map(([cat, items]) => {
+    const ownedCount = items.filter(g=>g.owned).length;
+    return `
+    <div class="gear-category">
+      <div class="gear-cat-header">
+        <span class="gear-cat-title">🎒 ${cat}</span>
+        <span class="gear-cat-count">${ownedCount}/${items.length}</span>
+      </div>
+      <div class="gear-items">
+        ${items.map(g => `
+          <div class="gear-item ${g.owned?'owned':''}" onclick="toggleOwned(${g.id})">
+            <div class="gear-check">${g.owned?'✓':''}</div>
+            <span class="gear-name">${g.name}${g.note?` <span style="font-size:.75rem;color:var(--gray-500);">(${g.note})</span>`:''}</span>
+            ${g.weight ? `<span class="gear-weight-badge">${g.weight}g</span>` : ''}
+            <button onclick="event.stopPropagation();deleteGear(${g.id})" title="刪除"
+              style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:.85rem;padding:2px 4px;line-height:1;"
+              onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='var(--gray-300)'">✕</button>
+          </div>
+        `).join('')}
+        <button class="gear-add-btn" onclick="openAddGear()">＋ 新增裝備至此分類</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+render();
+</script>
+</body>
+</html>
