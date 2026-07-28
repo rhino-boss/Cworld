@@ -122,7 +122,7 @@
 <script>
 const REPO_OWNER = 'rhino-boss';
 const REPO_NAME  = 'Jumbo';
-const SLOTS_PATH = 'Project_AI/Slots';
+const SLOTS_PATH = 'Project/Slots';
 const PAGES_BASE = `https://${REPO_OWNER}.github.io/${REPO_NAME}`;
 
 // 從資料夾名稱解析 id 和顯示名稱
@@ -184,11 +184,14 @@ async function init() {
     statusText.textContent = `共 ${folders.length} 款遊戲，${demoCount} 款可遊玩`;
 
     grid.innerHTML = results.map(g => {
-      const playUrl = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}/`;
+      const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
+      const playUrl  = `${gameBase}/`;
+      const coverUrl = `${gameBase}/cover.png`;
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           <div class="card-cover">
             🎰
+            <img src="${coverUrl}" alt="${g.title}" loading="lazy" onerror="this.remove()">
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
