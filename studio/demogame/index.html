@@ -139,26 +139,29 @@ async function fetchJson(url) {
   return res.json();
 }
 
-async function checkHasDemo(folderName) {
-  try {
-    const files = await fetchJson(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SLOTS_PATH}/${encodeURIComponent(folderName)}`
-    );
-    return Array.isArray(files) && files.some(f => f.name.toLowerCase() === 'index.html');
-  } catch { return false; }
-}
-
 async function init() {
   const grid = document.getElementById('game-grid');
   const dot  = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
 
   try {
-    // 取得 Slots 目錄下所有資料夾
-    const items = await fetchJson(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${SLOTS_PATH}`
+    // 1) 取得 Slots 目錄的 tree sha（第 1 次 API）
+    const projItems = await fetchJson(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/Project`
     );
-    const folders = items.filter(i => i.type === 'dir');
+    const slotsDir = projItems.find(i => i.type === 'dir' && i.name === 'Slots');
+    if (!slotsDir) throw new Error('找不到 Slots 目錄');
+
+    // 2) 一次抓整棵 Slots 子樹（第 2 次 API）——避免逐資料夾呼叫觸發速率限制
+    const tree = await fetchJson(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${slotsDir.sha}?recursive=1`
+    );
+    const nodes = tree.tree || [];
+
+    // 只取頂層符合「H###_名稱」格式的遊戲資料夾（排除 其他／未完成 等）
+    const folders = nodes
+      .filter(n => n.type === 'tree' && /^[A-Za-z0-9]+_[^/]+$/.test(n.path))
+      .map(n => n.path);
 
     if (folders.length === 0) {
       grid.innerHTML = '<div class="error-msg"><div class="icon">📭</div><p>目前還沒有遊戲</p></div>';
@@ -166,22 +169,22 @@ async function init() {
       return;
     }
 
-    statusText.textContent = `找到 ${folders.length} 個遊戲，檢查 Demo 中…`;
+    // 從同一棵樹判斷每個資料夾是否有 index.html（不再逐一打 API）
+    const hasFile = (folder, file) =>
+      nodes.some(n => n.type === 'blob' && n.path.toLowerCase() === `${folder}/${file}`.toLowerCase());
 
-    // 並行檢查每個資料夾是否有 index.html
-    const results = await Promise.all(
-      folders.map(async f => {
-        const hasDemo = await checkHasDemo(f.name);
-        return { ...parseFolderName(f.name), folderName: f.name, hasDemo };
-      })
-    );
+    const results = folders.map(folder => ({
+      ...parseFolderName(folder),
+      folderName: folder,
+      hasDemo: hasFile(folder, 'index.html'),
+    }));
 
     // 有 demo 的排前面
     results.sort((a, b) => b.hasDemo - a.hasDemo);
 
     const demoCount = results.filter(r => r.hasDemo).length;
     dot.className = 'dot done';
-    statusText.textContent = `共 ${folders.length} 款遊戲，${demoCount} 款可遊玩`;
+    statusText.textContent = `共 ${results.length} 款遊戲，${demoCount} 款可遊玩`;
 
     grid.innerHTML = results.map(g => {
       const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
