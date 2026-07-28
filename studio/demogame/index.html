@@ -189,7 +189,7 @@ async function init() {
     grid.innerHTML = results.map(g => {
       const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
       const playUrl  = `${gameBase}/`;
-      const coverUrl = `${gameBase}/cover.png`;
+      const coverUrl = `${gameBase}/Source/Image/cover.png`;
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           <div class="card-cover">
