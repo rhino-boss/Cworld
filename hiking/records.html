@@ -22,16 +22,6 @@
     .search-bar input::placeholder { color: var(--gray-500); }
     .result-count { font-size: .85rem; color: var(--gray-500); margin-bottom: 16px; }
 
-    /* Photo previews in card */
-    .card-photos { display: flex; gap: 4px; margin-top: 8px; }
-    .card-photo-thumb {
-      width: 44px; height: 44px; border-radius: 6px;
-      object-fit: cover; background: var(--green-pale);
-      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-    }
-    .card-photo-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-    .card-photo-more { font-size: .7rem; color: var(--gray-500); align-self: center; }
-
     /* GPX badge */
     .gpx-badge {
       font-size: .72rem; padding: 2px 8px; border-radius: 999px;
@@ -88,18 +78,70 @@
       background: var(--green-main); color: var(--white);
     }
 
-    /* Delete button on card */
-    .card-delete-btn {
-      position: absolute; top: 8px; right: 8px;
-      background: rgba(220,38,38,.85); color: white;
-      border: none; border-radius: 50%; width: 26px; height: 26px;
-      font-size: .8rem; cursor: pointer; display: none;
-      align-items: center; justify-content: center;
-      transition: background var(--transition);
+    /* 卡片操作按鈕（滑過才出現） */
+    .record-card { position: relative; cursor: pointer; }
+    .card-actions {
+      position: absolute; top: 8px; right: 8px; display: flex; gap: 6px;
+      opacity: 0; transition: opacity var(--transition);
     }
-    .record-card:hover .card-delete-btn { display: flex; }
-    .record-card { position: relative; }
-    .card-delete-btn:hover { background: #b91c1c; }
+    .record-card:hover .card-actions, .card-actions:focus-within { opacity: 1; }
+    .card-act-btn {
+      width: 28px; height: 28px; border: none; border-radius: 50%;
+      cursor: pointer; font-size: .85rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.94); color: var(--gray-900);
+      box-shadow: var(--shadow-sm); transition: background var(--transition), color var(--transition);
+    }
+    .card-act-btn:hover { background: var(--green-main); color: var(--white); }
+    .card-act-btn.danger:hover { background: #dc2626; color: var(--white); }
+
+    /* 詳情視窗 */
+    .detail-sub { font-size: .85rem; color: var(--gray-500); margin: -12px 0 18px; }
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px; margin-bottom: 20px;
+    }
+    .detail-cell { background: var(--green-bg); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .detail-cell .k { display: block; font-size: .72rem; color: var(--gray-500); margin-bottom: 3px; }
+    .detail-cell .v { font-size: .95rem; font-weight: 700; color: var(--green-dark); }
+    .detail-section { margin-bottom: 20px; }
+    .detail-section h3 { font-size: .8rem; font-weight: 600; color: var(--gray-500); margin-bottom: 8px; }
+    .detail-note { font-size: .88rem; line-height: 1.75; color: var(--gray-900); white-space: pre-wrap; }
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+    .photo-grid img {
+      width: 100%; height: 104px; object-fit: cover;
+      border-radius: var(--radius-sm); cursor: zoom-in;
+    }
+
+    /* 照片放大 */
+    #lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 1000;
+      display: none; align-items: center; justify-content: center;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 92vw; max-height: 88vh; border-radius: 8px; }
+    #lightbox .close { position: absolute; top: 16px; right: 24px; color: #fff; font-size: 1.7rem; cursor: pointer; }
+
+    /* 編輯視窗裡可移除的照片 / 山頭 */
+    .edit-photos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .edit-photo { position: relative; width: 64px; height: 64px; }
+    .edit-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+    .edit-photo button {
+      position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+      border: none; border-radius: 50%; background: #dc2626; color: #fff;
+      font-size: .62rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .chip-removable {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .78rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+      background: var(--green-pale); color: var(--green-dark);
+    }
+    .chip-removable button {
+      border: none; background: transparent; color: var(--green-main);
+      cursor: pointer; font-size: .8rem; line-height: 1; padding: 0;
+    }
+    .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .hint { font-size: .78rem; color: var(--gray-500); margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -206,6 +248,90 @@
   </div>
 </div>
 
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeDetail()">
+  <div class="modal" id="detailBody"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <h2>✏️ 編輯紀錄</h2>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>紀錄名稱 *</label>
+        <input type="text" id="e-name" />
+      </div>
+      <div class="form-group">
+        <label>日期 *</label>
+        <input type="date" id="e-date" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>分類</label>
+        <select id="e-cat">
+          <option value="百岳">百岳</option>
+          <option value="中級山">中級山</option>
+          <option value="郊山">郊山</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>行程天數</label>
+        <input type="text" id="e-days" placeholder="當日來回 / 2天1夜" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>總距離 (km)</label>
+        <input type="number" id="e-dist" step="0.01" min="0" />
+      </div>
+      <div class="form-group">
+        <label>總爬升 (m)</label>
+        <input type="number" id="e-gain" min="0" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>🎒 背包負重 (kg)</label>
+      <input type="number" id="e-weight" min="0" step="0.5" />
+    </div>
+
+    <div class="form-group">
+      <label>🏔 走過的山頭</label>
+      <div class="chip-row" id="e-peaks"></div>
+      <label style="margin-top:12px;">📂 重新上傳 GPX（會重算日期 / 山頭 / 距離 / 爬升）</label>
+      <input type="file" id="e-gpx" accept=".gpx" onchange="reparseGpxForEdit(this)" />
+      <p class="hint" id="e-gpx-hint"></p>
+    </div>
+
+    <div class="form-group">
+      <label>📷 照片</label>
+      <div class="edit-photos" id="e-photos"></div>
+      <input type="file" id="e-photo-add" accept="image/*" multiple onchange="addEditPhotos(this)" style="margin-top:8px;" />
+    </div>
+
+    <div class="form-group">
+      <label>備註 / 心得</label>
+      <textarea id="e-note"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveEdit()">儲存變更</button>
+    </div>
+  </div>
+</div>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <span class="close">✕</span>
+  <img id="lightbox-img" src="" alt="" />
+</div>
+
 <script src="peaks-data.js"></script>
 <script>
 // ── State ──────────────────────────────────────────
@@ -247,95 +373,102 @@ function resetForm() {
 }
 
 // ── GPX Parsing ────────────────────────────────────
+// 純解析：吃 GPX 文字，吐出軌跡點與統計，新增與編輯兩邊共用
+function analyzeGpx(text, fileName) {
+  const xml = new DOMParser().parseFromString(text, 'text/xml');
+  if (xml.querySelector('parsererror')) throw new Error('檔案格式不是有效的 XML');
+
+  // 逐段（trkseg）讀點，段與段之間不累加距離，避免斷點造成假距離
+  const segs = [...xml.querySelectorAll('trkseg')];
+  const segments = segs.length
+    ? segs.map(s => [...s.querySelectorAll('trkpt')])
+    : [[...xml.querySelectorAll('trkpt, rtept')]]; // 只有路線（route）時的退路
+
+  let dist = 0, gain = 0, loss = 0, maxAlt = -Infinity;
+  const points = [];
+
+  segments.forEach(pts => {
+    let prev = null;       // 上一個點（算距離）
+    let refEle = null;     // 爬升門檻的基準高度（濾掉 GPS 高度雜訊）
+    pts.forEach(pt => {
+      const lat = parseFloat(pt.getAttribute('lat'));
+      const lon = parseFloat(pt.getAttribute('lon'));
+      if (!isFinite(lat) || !isFinite(lon)) return;
+      const eleEl = pt.querySelector('ele');
+      const ele = eleEl ? parseFloat(eleEl.textContent) : null;
+      const timeEl = pt.querySelector('time');
+      const time = timeEl ? new Date(timeEl.textContent) : null;
+      const p = { lat, lon, ele, time: (time && !isNaN(time)) ? time : null };
+
+      if (prev) dist += haversine(prev.lat, prev.lon, lat, lon);
+      if (ele !== null && isFinite(ele)) {
+        if (ele > maxAlt) maxAlt = ele;
+        if (refEle === null) refEle = ele;
+        const diff = ele - refEle;
+        // 只在累積變化超過 3 公尺才計入，避免 GPS 抖動把爬升灌水
+        if (diff > 3) { gain += diff; refEle = ele; }
+        else if (diff < -3) { loss += -diff; refEle = ele; }
+      }
+      prev = p;
+      points.push(p);
+    });
+  });
+
+  if (!points.length) throw new Error('GPX 檔案中找不到軌跡點');
+
+  // 時間：起訖、耗時、跨越天數
+  const times = points.map(p => p.time).filter(Boolean);
+  const t0 = times[0] || null, t1 = times[times.length - 1] || null;
+  let durationH = null, startDate = '', dayCount = 0;
+  if (t0) {
+    startDate = toDateInputValue(t0);
+    if (t1) {
+      durationH = (t1 - t0) / 3600000;
+      const d0 = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
+      const d1 = new Date(t1.getFullYear(), t1.getMonth(), t1.getDate());
+      dayCount = Math.round((d1 - d0) / 86400000) + 1;
+    }
+  }
+
+  const trkNameEl = xml.querySelector('trk > name');
+  return {
+    points,
+    // 航點名稱（有些 GPX 會把山頭放在 <wpt>）
+    wptNames: [...xml.querySelectorAll('wpt > name')].map(n => n.textContent.trim()).filter(Boolean),
+    stats: {
+      distKm: (dist / 1000).toFixed(2),
+      gainM: Math.round(gain),
+      lossM: Math.round(loss),
+      maxAlt: isFinite(maxAlt) ? Math.round(maxAlt) : null,
+      durationH, startDate, dayCount,
+      trkName: trkNameEl ? trkNameEl.textContent.trim() : '',
+      fileName,
+    },
+  };
+}
+
 function parseGPX(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const xml = new DOMParser().parseFromString(e.target.result, 'text/xml');
-      if (xml.querySelector('parsererror')) throw new Error('檔案格式不是有效的 XML');
-
-      // 逐段（trkseg）讀點，段與段之間不累加距離，避免斷點造成假距離
-      const segs = [...xml.querySelectorAll('trkseg')];
-      const segments = segs.length
-        ? segs.map(s => [...s.querySelectorAll('trkpt')])
-        : [[...xml.querySelectorAll('trkpt, rtept')]]; // 只有路線（route）時的退路
-
-      let dist = 0, gain = 0, loss = 0;
-      let maxAlt = -Infinity, minAlt = Infinity;
-      const allPoints = [];
-
-      segments.forEach(pts => {
-        let prev = null;       // 上一個點（算距離）
-        let refEle = null;     // 爬升門檻的基準高度（濾掉 GPS 高度雜訊）
-        pts.forEach(pt => {
-          const lat = parseFloat(pt.getAttribute('lat'));
-          const lon = parseFloat(pt.getAttribute('lon'));
-          if (!isFinite(lat) || !isFinite(lon)) return;
-          const eleEl = pt.querySelector('ele');
-          const ele = eleEl ? parseFloat(eleEl.textContent) : null;
-          const timeEl = pt.querySelector('time');
-          const time = timeEl ? new Date(timeEl.textContent) : null;
-          const p = { lat, lon, ele, time: (time && !isNaN(time)) ? time : null };
-
-          if (prev) dist += haversine(prev.lat, prev.lon, lat, lon);
-          if (ele !== null && isFinite(ele)) {
-            if (ele > maxAlt) maxAlt = ele;
-            if (ele < minAlt) minAlt = ele;
-            if (refEle === null) refEle = ele;
-            const diff = ele - refEle;
-            // 只在累積變化超過 3 公尺才計入，避免 GPS 抖動把爬升灌水
-            if (diff > 3) { gain += diff; refEle = ele; }
-            else if (diff < -3) { loss += -diff; refEle = ele; }
-          }
-          prev = p;
-          allPoints.push(p);
-        });
-      });
-
-      if (!allPoints.length) { alert('GPX 檔案中找不到軌跡點'); return; }
-
-      // 航點名稱（有些 GPX 會把山頭放在 <wpt>）
-      gpxWptNames = [...xml.querySelectorAll('wpt > name')].map(n => n.textContent.trim()).filter(Boolean);
-      gpxPoints = allPoints;
-
-      // 時間：起訖、耗時、跨越天數
-      const times = allPoints.map(p => p.time).filter(Boolean);
-      const t0 = times[0] || null, t1 = times[times.length - 1] || null;
-      let durationH = null, startDate = '', dayCount = 0;
-      if (t0) {
-        startDate = toDateInputValue(t0);
-        if (t1) {
-          durationH = (t1 - t0) / 3600000;
-          const d0 = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
-          const d1 = new Date(t1.getFullYear(), t1.getMonth(), t1.getDate());
-          dayCount = Math.round((d1 - d0) / 86400000) + 1;
-        }
-      }
-
-      const trkNameEl = xml.querySelector('trk > name');
-      gpxStats = {
-        distKm: (dist / 1000).toFixed(2),
-        gainM: Math.round(gain),
-        lossM: Math.round(loss),
-        maxAlt: isFinite(maxAlt) ? Math.round(maxAlt) : null,
-        durationH, startDate, dayCount,
-        trkName: trkNameEl ? trkNameEl.textContent.trim() : '',
-        fileName: file.name,
-      };
+      const res = analyzeGpx(e.target.result, file.name);
+      gpxPoints = res.points;
+      gpxWptNames = res.wptNames;
+      gpxStats = res.stats;
 
       // 摘要列
       document.getElementById('gpx-dist').textContent = gpxStats.distKm;
       document.getElementById('gpx-gain').textContent = gpxStats.gainM.toLocaleString();
       document.getElementById('gpx-loss').textContent = gpxStats.lossM.toLocaleString();
       document.getElementById('gpx-maxalt').textContent = gpxStats.maxAlt !== null ? gpxStats.maxAlt.toLocaleString() : '—';
-      document.getElementById('gpx-dur').textContent = durationH !== null ? formatDuration(durationH) : '—';
+      document.getElementById('gpx-dur').textContent = gpxStats.durationH !== null ? formatDuration(gpxStats.durationH) : '—';
       document.getElementById('gpxResult').classList.add('show');
 
       // 日期 / 天數（沒有時間戳的 GPX 就退回檔案修改日）
-      derived.date = startDate || toDateInputValue(new Date(file.lastModified));
-      derived.days = dayCount > 1 ? `${dayCount}天${dayCount - 1}夜` : '當日來回';
+      derived.date = gpxStats.startDate || toDateInputValue(new Date(file.lastModified));
+      derived.days = gpxStats.dayCount > 1 ? `${gpxStats.dayCount}天${gpxStats.dayCount - 1}夜` : '當日來回';
 
       // 偵測山頭 → 決定紀錄名稱與分類
       redetectPeaks();
@@ -501,11 +634,222 @@ function saveRecord() {
 
 // ── Delete Record ──────────────────────────────────
 function deleteRecord(id, e) {
-  e.preventDefault();
-  e.stopPropagation();
+  if (e) { e.preventDefault(); e.stopPropagation(); }
   if (!confirm('確定刪除這筆紀錄？')) return;
   records = records.filter(r => r.id !== id);
   localStorage.setItem('hikeRecords', JSON.stringify(records));
+  closeDetail();
+  renderAll();
+}
+
+// ── Detail：點開卡片看完整資訊 ─────────────────────
+function openDetail(id) {
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+
+  const cell = (k, v) => v || v === 0
+    ? `<div class="detail-cell"><span class="k">${k}</span><span class="v">${v}</span></div>` : '';
+
+  document.getElementById('detailBody').innerHTML = `
+    <h2>${r.name}</h2>
+    <p class="detail-sub">${[r.date, r.days, r.category].filter(Boolean).join(' · ')}</p>
+
+    <div class="detail-grid">
+      ${cell('距離', r.distance ? `${Number(r.distance).toFixed(2)} km` : '')}
+      ${cell('總爬升', r.gain ? `${Number(r.gain).toLocaleString()} m` : '')}
+      ${cell('總下降', r.loss ? `${Number(r.loss).toLocaleString()} m` : '')}
+      ${cell('最高點', r.maxAlt ? `${Number(r.maxAlt).toLocaleString()} m` : '')}
+      ${cell('耗時', r.duration)}
+      ${cell('背包負重', r.weight ? `${r.weight} kg` : '')}
+      ${cell('地點', r.location)}
+    </div>
+
+    ${r.peaks && r.peaks.length ? `
+      <div class="detail-section">
+        <h3>走過的山頭（${r.peaks.length}）</h3>
+        <div class="card-peaks">
+          ${r.peaks.map(p => {
+            const rank = peakRankOf(p);
+            const alt = PEAKS.find(x => x.name === p);
+            return `<span class="card-peak">${rank ? `<span class="peak-no">NO.${rank}</span>` : '🏔'} ${p}${alt ? ` <span style="font-weight:400;opacity:.7">${alt.alt.toLocaleString()}m</span>` : ''}</span>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
+    ${r.photos && r.photos.length ? `
+      <div class="detail-section">
+        <h3>照片（${r.photos.length}）</h3>
+        <div class="photo-grid">
+          ${r.photos.map(p => `<img src="${p}" onclick="openLightbox(this.src)" />`).join('')}
+        </div>
+      </div>` : ''}
+
+    ${r.note ? `
+      <div class="detail-section">
+        <h3>備註 / 心得</h3>
+        <p class="detail-note">${escapeHtml(r.note)}</p>
+      </div>` : ''}
+
+    ${r.gpxFile ? `<p class="hint">📂 ${r.gpxFile}</p>` : ''}
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="deleteRecord(${r.id})">刪除</button>
+      <button class="btn btn-outline" onclick="closeDetail()">關閉</button>
+      <button class="btn btn-primary" onclick="openEditModal(${r.id})">✏️ 編輯</button>
+    </div>`;
+
+  document.getElementById('detailModal').classList.add('open');
+}
+function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+}
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── Edit ───────────────────────────────────────────
+let editing = null; // {id, photos: [], peaks: [], gpx: {...} | null}
+
+function openEditModal(id, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+
+  editing = { id, photos: [...(r.photos || [])], peaks: [...(r.peaks || [])], gpx: null };
+
+  document.getElementById('e-name').value = r.name || '';
+  document.getElementById('e-date').value = r.date || '';
+  document.getElementById('e-cat').value = r.category || '其他';
+  document.getElementById('e-days').value = r.days || '';
+  document.getElementById('e-dist').value = r.distance || '';
+  document.getElementById('e-gain').value = r.gain || '';
+  document.getElementById('e-weight').value = r.weight || '';
+  document.getElementById('e-note').value = r.note || '';
+  document.getElementById('e-gpx').value = '';
+  document.getElementById('e-photo-add').value = '';
+  document.getElementById('e-gpx-hint').textContent = r.gpxFile ? `目前：${r.gpxFile}` : '這筆紀錄沒有附 GPX';
+  renderEditPeaks();
+  renderEditPhotos();
+
+  closeDetail();
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editing = null;
+}
+
+function renderEditPeaks() {
+  const box = document.getElementById('e-peaks');
+  if (!editing.peaks.length) {
+    box.innerHTML = `<span class="hint">沒有山頭 — 重新上傳 GPX 可自動偵測</span>`;
+    return;
+  }
+  box.innerHTML = editing.peaks.map(p => {
+    const rank = peakRankOf(p);
+    return `<span class="chip-removable">${rank ? `<span class="peak-no">NO.${rank}</span>` : '🏔'} ${p}
+      <button type="button" onclick="removeEditPeak('${p}')" title="移除">✕</button></span>`;
+  }).join('');
+}
+function removeEditPeak(name) {
+  editing.peaks = editing.peaks.filter(p => p !== name);
+  renderEditPeaks();
+}
+
+function renderEditPhotos() {
+  const box = document.getElementById('e-photos');
+  box.innerHTML = editing.photos.length
+    ? editing.photos.map((p, i) => `
+        <div class="edit-photo">
+          <img src="${p}" onclick="openLightbox(this.src)" />
+          <button type="button" onclick="removeEditPhoto(${i})" title="移除">✕</button>
+        </div>`).join('')
+    : `<span class="hint">還沒有照片</span>`;
+}
+function removeEditPhoto(i) {
+  editing.photos.splice(i, 1);
+  renderEditPhotos();
+}
+function addEditPhotos(input) {
+  const files = [...input.files];
+  if (!files.length) return;
+  Promise.all(files.map(f => compressImage(f))).then(urls => {
+    editing.photos = [...editing.photos, ...urls.filter(Boolean)].slice(0, 9);
+    input.value = '';
+    renderEditPhotos();
+  });
+}
+
+// 編輯時重新上傳 GPX：重算日期 / 天數 / 距離 / 爬升 / 山頭
+function reparseGpxForEdit(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const res = analyzeGpx(e.target.result, file.name);
+      const s = res.stats;
+      editing.gpx = s;
+      editing.peaks = detectPeaksNearTrack(res.points, 400).map(p => p.name);
+
+      document.getElementById('e-date').value = s.startDate || toDateInputValue(new Date(file.lastModified));
+      document.getElementById('e-days').value = s.dayCount > 1 ? `${s.dayCount}天${s.dayCount - 1}夜` : '當日來回';
+      document.getElementById('e-dist').value = s.distKm;
+      document.getElementById('e-gain').value = s.gainM;
+      document.getElementById('e-gpx-hint').textContent =
+        `已重算：${s.fileName}｜下降 ${s.lossM.toLocaleString()} m·最高點 ${s.maxAlt !== null ? s.maxAlt.toLocaleString() + ' m' : '—'}` +
+        (s.durationH !== null ? `·耗時 ${formatDuration(s.durationH)}` : '');
+      renderEditPeaks();
+    } catch (err) {
+      alert('GPX 解析失敗：' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function saveEdit() {
+  const name = document.getElementById('e-name').value.trim();
+  const date = document.getElementById('e-date').value;
+  if (!name || !date) { alert('紀錄名稱和日期不能空白'); return; }
+
+  const idx = records.findIndex(r => r.id === editing.id);
+  if (idx < 0) return;
+  const old = records[idx];
+  const s = editing.gpx;
+
+  const updated = {
+    ...old,
+    name, date,
+    category: document.getElementById('e-cat').value,
+    days: document.getElementById('e-days').value.trim(),
+    distance: document.getElementById('e-dist').value,
+    gain: document.getElementById('e-gain').value,
+    weight: document.getElementById('e-weight').value,
+    note: document.getElementById('e-note').value.trim(),
+    photos: editing.photos,
+    peaks: editing.peaks,
+    // 只有重新上傳 GPX 時才覆寫這幾項
+    loss: s ? s.lossM : old.loss,
+    maxAlt: s ? s.maxAlt : old.maxAlt,
+    duration: s ? (s.durationH !== null ? formatDuration(s.durationH) : undefined) : old.duration,
+    gpxFile: s ? s.fileName : old.gpxFile,
+  };
+
+  const backup = records;
+  records = records.map((r, i) => i === idx ? updated : r);
+  try {
+    localStorage.setItem('hikeRecords', JSON.stringify(records));
+  } catch (err) {
+    records = backup;
+    alert('儲存失敗：瀏覽器儲存空間已滿（照片太多或太大）。請減少照片張數後再試。');
+    return;
+  }
+  closeEditModal();
   renderAll();
 }
 
@@ -558,13 +902,16 @@ function renderCards() {
   }
 
   grid.innerHTML = filtered.map(r => `
-    <div class="record-card" style="cursor:default;">
+    <div class="record-card" onclick="openDetail(${r.id})" title="點開看完整資訊">
       <div class="record-card-img">${
         r.photos && r.photos.length
           ? `<img src="${r.photos[0]}" style="width:100%;height:160px;object-fit:cover;" />`
           : r.emoji || '🏔'
       }</div>
-      <button class="card-delete-btn" onclick="deleteRecord(${r.id}, event)" title="刪除">✕</button>
+      <div class="card-actions">
+        <button class="card-act-btn" onclick="openEditModal(${r.id}, event)" title="編輯">✏️</button>
+        <button class="card-act-btn danger" onclick="deleteRecord(${r.id}, event)" title="刪除">✕</button>
+      </div>
       <div class="record-card-body">
         <div class="record-card-title">${r.name}</div>
         <div class="record-card-meta">
@@ -591,11 +938,6 @@ function renderCards() {
           ${r.photos && r.photos.length > 1 ? `<span class="gpx-badge">📷 ${r.photos.length}</span>` : ''}
           ${r.gpxFile ? `<span class="gpx-badge">GPX</span>` : ''}
         </div>
-        ${r.photos && r.photos.length ? `
-          <div class="card-photos">
-            ${r.photos.slice(0,3).map(p => `<div class="card-photo-thumb"><img src="${p}" /></div>`).join('')}
-            ${r.photos.length > 3 ? `<span class="card-photo-more">+${r.photos.length - 3}</span>` : ''}
-          </div>` : ''}
         ${r.note ? `<p style="font-size:.8rem;color:var(--gray-500);margin-top:8px;line-height:1.5;">${r.note.slice(0,80)}${r.note.length>80?'…':''}</p>` : ''}
       </div>
     </div>
