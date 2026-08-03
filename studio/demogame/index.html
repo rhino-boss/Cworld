@@ -10,6 +10,7 @@
       --bg: #f7f7f5; --surface: #fff; --border: #e8e8e4;
       --text: #1a1a1a; --muted: #6b6b6b;
       --accent-dark: #4a3828; --accent-mid: #7a5c3a;
+      --card-edge: #f3d7dd;
       --radius: 14px;
     }
     body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -33,19 +34,36 @@
     .dot.error { background: #c0392b; }
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px; }
 
+    /* ── 卡片：PG 風格（白底、粉色描邊、緞帶、雙按鈕） ── */
     .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      background: var(--surface);
+      border: 1px solid var(--card-edge);
+      border-radius: 18px; padding: 12px 12px 16px;
+      box-shadow: 0 0 0 4px rgba(233,168,180,.13), 0 6px 18px rgba(0,0,0,.07);
       transition: box-shadow .2s, transform .2s;
       display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
     }
-    .card.has-demo:hover { box-shadow: 0 8px 28px rgba(0,0,0,.13); transform: translateY(-3px); }
+    .card.has-demo:hover { box-shadow: 0 0 0 4px rgba(233,168,180,.28), 0 12px 30px rgba(0,0,0,.14); transform: translateY(-4px); }
+
+    /* 右上角金色 NEW 緞帶 */
+    .ribbon {
+      position: absolute; top: 0; right: 0; width: 92px; height: 92px;
+      overflow: hidden; pointer-events: none; z-index: 2;
+    }
+    .ribbon span {
+      position: absolute; top: 18px; right: -26px; width: 120px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, #f6d365, #c9962f);
+      color: #fff; font-size: .68rem; font-weight: 800; letter-spacing: 1px;
+      text-align: center; padding: 4px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,.22);
+    }
 
     .card-cover {
-      width: 100%; aspect-ratio: 16/9;
+      width: 100%; aspect-ratio: 16/9; border-radius: 12px;
       background: linear-gradient(135deg, #3a2c1a, #6b4e2a);
       display: flex; align-items: center; justify-content: center;
       font-size: 2.5rem; position: relative; overflow: hidden;
@@ -58,28 +76,33 @@
       letter-spacing: .5px;
     }
 
-    .card-body { padding: 14px 16px 10px; flex: 1; }
-    .card-id { font-size: .72rem; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
-    .card-title { font-size: .95rem; font-weight: 700; }
+    .card-body { padding: 14px 8px 0; flex: 1; text-align: center; }
+    .card-title {
+      font-size: 1rem; font-weight: 800; letter-spacing: .5px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    }
+    .card-desc {
+      padding: 12px 4px 14px; font-size: .8rem; color: var(--muted);
+      line-height: 1.5; min-height: 62px;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-    .card-footer { padding: 10px 16px 14px; }
-    .play-btn {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      width: 100%; padding: 9px; border-radius: 10px;
-      background: var(--accent-dark); color: #fff;
-      text-decoration: none; font-size: .85rem; font-weight: 700;
-      transition: background .15s;
+    .card-footer { display: flex; gap: 10px; padding: 0 8px; }
+    .btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 8px; border-radius: 8px;
+      text-decoration: none; font-size: .82rem; font-weight: 700;
+      transition: background .15s, opacity .15s;
     }
-    .play-btn:hover { background: var(--accent-mid); }
-    .no-demo-btn {
-      width: 100%; padding: 9px; border-radius: 10px;
-      background: var(--bg); border: 1px dashed var(--border);
-      font-size: .82rem; color: var(--muted); text-align: center;
-    }
+    .btn-info { background: #1a1a1a; color: #fff; }
+    .btn-info:hover { background: #333; }
+    .btn-play { background: #d32020; color: #fff; }
+    .btn-play:hover { background: #ef3a3a; }
+    .btn.disabled { background: var(--bg); border: 1px dashed var(--border); color: var(--muted); cursor: default; }
 
     .skeleton { animation: shimmer 1.2s infinite linear; background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; border-radius: var(--radius); }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .skel-card { height: 200px; }
+    .skel-card { height: 320px; }
 
     .error-msg { text-align: center; padding: 60px 24px; color: var(--muted); }
     .error-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
@@ -124,6 +147,8 @@ const REPO_OWNER = 'rhino-boss';
 const REPO_NAME  = 'Jumbo';
 const SLOTS_PATH = 'Project/Slots';
 const PAGES_BASE = `https://${REPO_OWNER}.github.io/${REPO_NAME}`;
+// 遊戲封面圖統一放在 Slots/其他/遊戲資源/，檔名為遊戲代號（H013.png）
+const ASSETS_BASE = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent('其他')}/${encodeURIComponent('遊戲資源')}`;
 
 // 從資料夾名稱解析 id 和顯示名稱
 // 格式：H026_彩罐熱舞 → { id: 'H026', title: '彩罐熱舞' }
@@ -186,25 +211,37 @@ async function init() {
     dot.className = 'dot done';
     statusText.textContent = `共 ${results.length} 款遊戲，${demoCount} 款可遊玩`;
 
+    // 依 id 由大到小取最新的 3 款，掛上 NEW 緞帶
+    const newIds = new Set(
+      [...results].map(r => r.id).filter(Boolean).sort().reverse().slice(0, 3)
+    );
+
     grid.innerHTML = results.map(g => {
       const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
       const playUrl  = `${gameBase}/`;
-      const coverUrl = `${gameBase}/Source/Image/cover.png`;
+      // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
+      const coverUrl = `${ASSETS_BASE}/${encodeURIComponent(g.id)}.png`;
+      const infoUrl  = `https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/main/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
+      const desc = g.hasDemo
+        ? `${g.id ? g.id + '　' : ''}點進去直接玩，免安裝。 🎰`
+        : `${g.id ? g.id + '　' : ''}Demo 製作中，敬請期待。 🚧`;
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
+          ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
           <div class="card-cover">
             🎰
             <img src="${coverUrl}" alt="${g.title}" loading="lazy" onerror="this.remove()">
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
-            ${g.id ? `<div class="card-id">${g.id}</div>` : ''}
             <div class="card-title">${g.title}</div>
+            <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
+            <a class="btn btn-info" href="${infoUrl}" target="_blank">遊戲資訊 <span>›</span></a>
             ${g.hasDemo
-              ? `<a class="play-btn" href="${playUrl}" target="_blank">▶ 開始遊玩</a>`
-              : `<div class="no-demo-btn">🚧 製作中</div>`
+              ? `<a class="btn btn-play" href="${playUrl}" target="_blank">開始遊玩 <span>🎮</span></a>`
+              : `<div class="btn disabled">製作中</div>`
             }
           </div>
         </div>`;
