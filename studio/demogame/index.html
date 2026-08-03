@@ -62,13 +62,17 @@
       box-shadow: 0 2px 6px rgba(0,0,0,.22);
     }
 
+    /* 封面依原圖比例顯示，不裁切 */
     .card-cover {
-      width: 100%; aspect-ratio: 16/9; border-radius: 12px;
+      width: 100%; min-height: 130px; border-radius: 12px;
       background: linear-gradient(135deg, #3a2c1a, #6b4e2a);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.5rem; position: relative; overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .card-cover img { display: block; width: 100%; height: auto; }
+    .card-cover .ph {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+    }
     .card-cover .no-demo-overlay {
       position: absolute; inset: 0; background: rgba(0,0,0,.45);
       display: flex; align-items: center; justify-content: center;
@@ -97,6 +101,8 @@
     .btn .ico { padding-left: 10px; border-left: 1px solid rgba(255,255,255,.25); line-height: 1; }
     .btn-info { background: #1a1a1a; color: #fff; }
     .btn-info:hover { background: #333; }
+    .btn.is-static { cursor: default; }        /* 遊戲資訊目前只是版位，不連結 */
+    .btn.is-static:hover { background: #1a1a1a; }
     .btn-play { background: #d32020; color: #fff; }
     .btn-play:hover { background: #ef3a3a; }
     .btn.disabled { background: var(--bg); border: 1px dashed var(--border); color: var(--muted); cursor: default; }
@@ -249,13 +255,12 @@ async function init() {
       const playUrl  = `${gameBase}/`;
       // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
       const coverUrl = `${ASSETS_BASE}/${encodeURIComponent(g.id)}.png`;
-      const infoUrl  = `https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/main/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
       const desc = g.gameType || (g.hasDemo ? 'Video Slot' : 'Demo 製作中，敬請期待。 🚧');
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
           <div class="card-cover">
-            🎰
+            <span class="ph">🎰</span>
             <img src="${coverUrl}" alt="${g.title}" loading="lazy" onerror="this.remove()">
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
@@ -264,7 +269,7 @@ async function init() {
             <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
-            <a class="btn btn-info" href="${infoUrl}" target="_blank">遊戲資訊 <span class="ico">›</span></a>
+            <div class="btn btn-info is-static">遊戲資訊 <span class="ico">›</span></div>
             ${g.hasDemo
               ? `<a class="btn btn-play" href="${playUrl}" target="_blank">開始遊玩 <span class="ico">🎮</span></a>`
               : `<div class="btn disabled">製作中</div>`
