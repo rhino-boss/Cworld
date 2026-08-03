@@ -68,9 +68,11 @@
       background: linear-gradient(135deg, #3a2c1a, #6b4e2a);
       position: relative; overflow: hidden;
     }
-    .card-cover img { display: block; width: 100%; height: auto; }
+    .card-cover img { display: block; width: 100%; height: auto; position: relative; z-index: 1; }
+    /* 只有沒圖時才看得到的佔位 icon；有 banner 時直接移除 */
     .card-cover .ph {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      position: absolute; inset: 0; z-index: 0;
+      display: flex; align-items: center; justify-content: center;
       font-size: 2.5rem;
     }
     .card-cover .no-demo-overlay {
@@ -261,7 +263,9 @@ async function init() {
           ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
           <div class="card-cover">
             <span class="ph">🎰</span>
-            <img src="${coverUrl}" alt="${g.title}" loading="lazy" onerror="this.remove()">
+            <img src="${coverUrl}" alt="${g.title}" loading="lazy"
+                 onload="this.parentNode.querySelector('.ph')?.remove()"
+                 onerror="this.remove()">
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
