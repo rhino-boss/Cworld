@@ -64,7 +64,7 @@
 
     /* 封面依原圖比例顯示，不裁切 */
     .card-cover {
-      width: 100%; min-height: 130px; border-radius: 12px;
+      width: 100%; aspect-ratio: 330/250; border-radius: 12px;
       background: linear-gradient(135deg, #3a2c1a, #6b4e2a);
       position: relative; overflow: hidden;
     }
@@ -93,7 +93,7 @@
       display: flex; align-items: center; justify-content: center;
     }
 
-    .card-footer { display: flex; gap: 10px; padding: 0 8px; }
+    .card-footer { display: flex; gap: 10px; padding: 0 8px; margin-top: auto; }
     .btn {
       flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
       padding: 11px 10px; border-radius: 8px; white-space: nowrap;
