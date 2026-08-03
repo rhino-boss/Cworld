@@ -59,6 +59,7 @@
 
 <footer class="footer">© 2026 我的登山紀錄 · 自用靜態站</footer>
 
+<script src="peaks-data.js"></script>
 <script>
   // Load stats from localStorage
   const records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
@@ -68,6 +69,9 @@
   document.getElementById('s-gain').textContent = totalGain.toLocaleString();
   document.getElementById('s-dist').textContent = totalDist.toFixed(1);
 
+  // 百岳完成數（比對規則見 peaks-data.js）
+  document.getElementById('s-100').textContent = completedPeakSet(records).size;
+
   // Recent 3 records
   const recent = [...records].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3);
   if (recent.length) {
@@ -75,7 +79,11 @@
       <div class="cards-grid">
         ${recent.map((r,i) => `
           <a href="records.html" class="record-card">
-            <div class="record-card-img">${r.emoji||'🏔'}</div>
+            <div class="record-card-img">${
+              r.photos && r.photos.length
+                ? `<img src="${r.photos[0]}" alt="${r.name}" style="width:100%;height:160px;object-fit:cover;" />`
+                : (r.emoji || '🏔')
+            }</div>
             <div class="record-card-body">
               <div class="record-card-title">${r.name}</div>
               <div class="record-card-meta">
@@ -86,6 +94,7 @@
               <div class="record-card-tags">
                 ${r.category ? `<span class="tag">${r.category}</span>` : ''}
                 ${r.weight ? `<span class="tag">🎒 ${r.weight}kg</span>` : ''}
+                ${r.photos && r.photos.length > 1 ? `<span class="tag">📷 ${r.photos.length}</span>` : ''}
               </div>
             </div>
           </a>`).join('')}

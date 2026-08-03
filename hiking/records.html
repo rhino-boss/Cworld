@@ -38,6 +38,39 @@
       background: #e0f2fe; color: #0369a1; font-weight: 600;
     }
 
+    /* GPX 偵測到的山頭 */
+    .peak-detect {
+      display: none; margin-top: 10px; padding: 12px 14px;
+      background: #f0f9ff; border: 1px solid #bae6fd;
+      border-radius: var(--radius-sm);
+    }
+    .peak-detect.show { display: block; }
+    .peak-detect-head {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 10px; flex-wrap: wrap; margin-bottom: 10px;
+      font-size: .82rem; font-weight: 600; color: #0369a1;
+    }
+    .peak-detect-head small { font-weight: 400; color: var(--gray-500); margin-left: 6px; }
+    .peak-detect-head label { display: flex; align-items: center; gap: 6px; font-weight: 400; color: var(--gray-500); }
+    .peak-detect-head select { font: inherit; font-size: .78rem; padding: 3px 6px; border: 1px solid var(--gray-300); border-radius: 6px; }
+    .peak-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .peak-chip {
+      font: inherit; font-size: .78rem; cursor: pointer;
+      padding: 4px 11px; border-radius: 999px;
+      border: 1.5px solid var(--gray-300); background: var(--white);
+      color: var(--gray-500); transition: all var(--transition);
+    }
+    .peak-chip .alt { font-size: .7rem; opacity: .75; margin-left: 4px; }
+    .peak-chip.on { border-color: var(--green-main); background: var(--green-pale); color: var(--green-dark); font-weight: 600; }
+    .peak-detect-empty { font-size: .8rem; color: var(--gray-500); }
+
+    /* 卡片上的山頭標籤 */
+    .card-peaks { display: flex; gap: 4px; flex-wrap: wrap; }
+    .card-peak {
+      font-size: .72rem; padding: 2px 8px; border-radius: 999px;
+      background: var(--green-pale); color: var(--green-dark); font-weight: 600;
+    }
+
     /* Delete button on card */
     .card-delete-btn {
       position: absolute; top: 8px; right: 8px;
@@ -147,12 +180,27 @@
     </div>
 
     <div class="form-group">
-      <label>📂 上傳 GPX（自動計算距離 / 爬升 / 下降）</label>
+      <label>📂 上傳 GPX（自動抓 日期 / 山頭 / 距離 / 爬升）</label>
       <input type="file" id="f-gpx" accept=".gpx" onchange="parseGPX(this)" />
       <div class="gpx-parsed" id="gpxResult">
         <div class="gpx-stat">距離 <strong id="gpx-dist">—</strong> km</div>
         <div class="gpx-stat">爬升 <strong id="gpx-gain">—</strong> m</div>
         <div class="gpx-stat">下降 <strong id="gpx-loss">—</strong> m</div>
+        <div class="gpx-stat">最高點 <strong id="gpx-maxalt">—</strong> m</div>
+        <div class="gpx-stat">耗時 <strong id="gpx-dur">—</strong></div>
+      </div>
+      <div class="peak-detect" id="peakDetect">
+        <div class="peak-detect-head">
+          <span>🏔 偵測到的山頭<small>點一下可加入 / 排除</small></span>
+          <label>判定範圍
+            <select id="peakThreshold" onchange="redetectPeaks()" title="百岳座標為近似值，實測誤差可達 300 m 左右">
+              <option value="200">200 m（嚴格）</option>
+              <option value="400" selected>400 m（標準）</option>
+              <option value="800">800 m（寬鬆）</option>
+            </select>
+          </label>
+        </div>
+        <div class="peak-chips" id="peakChips"></div>
       </div>
     </div>
 
@@ -185,11 +233,20 @@
   </div>
 </div>
 
+<script src="peaks-data.js"></script>
 <script>
 // ── State ──────────────────────────────────────────
 let records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
 let currentTab = 'all';
 let photoDataURLs = []; // base64 photos for current form
+
+// GPX 解析結果（供調整判定範圍時重算山頭，不必重讀檔案）
+let gpxPoints = [];      // [{lat, lon, ele, time}]
+let gpxWptNames = [];    // GPX 內的航點名稱
+let gpxStats = null;     // {distKm, gainM, lossM, maxAlt, durationH, startDate, dayCount}
+let detectedPeaks = [];  // detectPeaksNearTrack() 的結果
+let selectedPeaks = new Set();
+let autoFilledName = ''; // 上次由 GPX 自動填入的山名（用來判斷可否覆寫）
 
 // ── Modal ──────────────────────────────────────────
 function openAddModal() {
@@ -207,8 +264,13 @@ function resetForm() {
   document.getElementById('f-gpx').value = '';
   document.getElementById('f-photos').value = '';
   document.getElementById('gpxResult').classList.remove('show');
+  document.getElementById('peakDetect').classList.remove('show');
+  document.getElementById('peakChips').innerHTML = '';
+  document.getElementById('peakThreshold').value = '400';
   document.getElementById('photoPreviewRow').innerHTML = '';
   photoDataURLs = [];
+  gpxPoints = []; gpxWptNames = []; gpxStats = null;
+  detectedPeaks = []; selectedPeaks = new Set(); autoFilledName = '';
 }
 
 // ── GPX Parsing ────────────────────────────────────
@@ -218,43 +280,97 @@ function parseGPX(input) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(e.target.result, 'text/xml');
-      const trkpts = [...xml.querySelectorAll('trkpt')];
-      if (!trkpts.length) { alert('GPX 檔案中找不到軌跡點'); return; }
+      const xml = new DOMParser().parseFromString(e.target.result, 'text/xml');
+      if (xml.querySelector('parsererror')) throw new Error('檔案格式不是有效的 XML');
+
+      // 逐段（trkseg）讀點，段與段之間不累加距離，避免斷點造成假距離
+      const segs = [...xml.querySelectorAll('trkseg')];
+      const segments = segs.length
+        ? segs.map(s => [...s.querySelectorAll('trkpt')])
+        : [[...xml.querySelectorAll('trkpt, rtept')]]; // 只有路線（route）時的退路
 
       let dist = 0, gain = 0, loss = 0;
-      let prevLat = null, prevLon = null, prevEle = null;
+      let maxAlt = -Infinity, minAlt = Infinity;
+      const allPoints = [];
 
-      trkpts.forEach(pt => {
-        const lat = parseFloat(pt.getAttribute('lat'));
-        const lon = parseFloat(pt.getAttribute('lon'));
-        const eleEl = pt.querySelector('ele');
-        const ele = eleEl ? parseFloat(eleEl.textContent) : null;
+      segments.forEach(pts => {
+        let prev = null;       // 上一個點（算距離）
+        let refEle = null;     // 爬升門檻的基準高度（濾掉 GPS 高度雜訊）
+        pts.forEach(pt => {
+          const lat = parseFloat(pt.getAttribute('lat'));
+          const lon = parseFloat(pt.getAttribute('lon'));
+          if (!isFinite(lat) || !isFinite(lon)) return;
+          const eleEl = pt.querySelector('ele');
+          const ele = eleEl ? parseFloat(eleEl.textContent) : null;
+          const timeEl = pt.querySelector('time');
+          const time = timeEl ? new Date(timeEl.textContent) : null;
+          const p = { lat, lon, ele, time: (time && !isNaN(time)) ? time : null };
 
-        if (prevLat !== null) {
-          dist += haversine(prevLat, prevLon, lat, lon);
-        }
-        if (prevEle !== null && ele !== null) {
-          const diff = ele - prevEle;
-          if (diff > 0) gain += diff;
-          else loss += Math.abs(diff);
-        }
-        prevLat = lat; prevLon = lon; prevEle = ele;
+          if (prev) dist += haversine(prev.lat, prev.lon, lat, lon);
+          if (ele !== null && isFinite(ele)) {
+            if (ele > maxAlt) maxAlt = ele;
+            if (ele < minAlt) minAlt = ele;
+            if (refEle === null) refEle = ele;
+            const diff = ele - refEle;
+            // 只在累積變化超過 3 公尺才計入，避免 GPS 抖動把爬升灌水
+            if (diff > 3) { gain += diff; refEle = ele; }
+            else if (diff < -3) { loss += -diff; refEle = ele; }
+          }
+          prev = p;
+          allPoints.push(p);
+        });
       });
 
-      const distKm = (dist / 1000).toFixed(2);
-      const gainM = Math.round(gain);
-      const lossM = Math.round(loss);
+      if (!allPoints.length) { alert('GPX 檔案中找不到軌跡點'); return; }
 
-      document.getElementById('gpx-dist').textContent = distKm;
-      document.getElementById('gpx-gain').textContent = gainM.toLocaleString();
-      document.getElementById('gpx-loss').textContent = lossM.toLocaleString();
+      // 航點名稱（有些 GPX 會把山頭放在 <wpt>）
+      gpxWptNames = [...xml.querySelectorAll('wpt > name')].map(n => n.textContent.trim()).filter(Boolean);
+      gpxPoints = allPoints;
+
+      // 時間：起訖、耗時、跨越天數
+      const times = allPoints.map(p => p.time).filter(Boolean);
+      const t0 = times[0] || null, t1 = times[times.length - 1] || null;
+      let durationH = null, startDate = '', dayCount = 0;
+      if (t0) {
+        startDate = toDateInputValue(t0);
+        if (t1) {
+          durationH = (t1 - t0) / 3600000;
+          const d0 = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
+          const d1 = new Date(t1.getFullYear(), t1.getMonth(), t1.getDate());
+          dayCount = Math.round((d1 - d0) / 86400000) + 1;
+        }
+      }
+
+      gpxStats = {
+        distKm: (dist / 1000).toFixed(2),
+        gainM: Math.round(gain),
+        lossM: Math.round(loss),
+        maxAlt: isFinite(maxAlt) ? Math.round(maxAlt) : null,
+        durationH, startDate, dayCount,
+        fileName: file.name,
+      };
+
+      // 摘要列
+      document.getElementById('gpx-dist').textContent = gpxStats.distKm;
+      document.getElementById('gpx-gain').textContent = gpxStats.gainM.toLocaleString();
+      document.getElementById('gpx-loss').textContent = gpxStats.lossM.toLocaleString();
+      document.getElementById('gpx-maxalt').textContent = gpxStats.maxAlt !== null ? gpxStats.maxAlt.toLocaleString() : '—';
+      document.getElementById('gpx-dur').textContent = durationH !== null ? formatDuration(durationH) : '—';
       document.getElementById('gpxResult').classList.add('show');
 
-      // Auto-fill fields
-      document.getElementById('f-dist').value = distKm;
-      document.getElementById('f-gain').value = gainM;
+      // 自動填入：距離 / 爬升 / 日期 / 天數
+      document.getElementById('f-dist').value = gpxStats.distKm;
+      document.getElementById('f-gain').value = gpxStats.gainM;
+      if (startDate) document.getElementById('f-date').value = startDate;
+      if (dayCount) {
+        const daysField = document.getElementById('f-days');
+        if (!daysField.value.trim()) {
+          daysField.value = dayCount <= 1 ? '當日來回' : `${dayCount}天${dayCount - 1}夜`;
+        }
+      }
+
+      // 偵測山頭
+      redetectPeaks();
     } catch(err) {
       alert('GPX 解析失敗：' + err.message);
     }
@@ -262,30 +378,108 @@ function parseGPX(input) {
   reader.readAsText(file);
 }
 
+// 依目前的判定範圍重新比對百岳座標
+function redetectPeaks() {
+  if (!gpxPoints.length) return;
+  const th = Number(document.getElementById('peakThreshold').value);
+  detectedPeaks = detectPeaksNearTrack(gpxPoints, th);
+
+  // GPX 航點名稱裡有百岳山名的，也一併列入候選
+  gpxWptNames.forEach(n => {
+    PEAKS.forEach(p => {
+      if (n.includes(p.name) && !detectedPeaks.some(d => d.name === p.name)) {
+        detectedPeaks.push({ rank: p.rank, name: p.name, alt: p.alt, distM: null, time: null, viaWpt: true });
+      }
+    });
+  });
+
+  selectedPeaks = new Set(detectedPeaks.map(d => d.name));
+  renderPeakChips();
+  applyPeaksToName();
+}
+
+function renderPeakChips() {
+  const box = document.getElementById('peakDetect');
+  const chips = document.getElementById('peakChips');
+  box.classList.add('show');
+  if (!detectedPeaks.length) {
+    chips.innerHTML = `<span class="peak-detect-empty">這條軌跡沒有經過百岳（或放寬判定範圍再試）— 山名請手動填寫</span>`;
+    return;
+  }
+  chips.innerHTML = detectedPeaks.map(p => `
+    <button type="button" class="peak-chip ${selectedPeaks.has(p.name) ? 'on' : ''}"
+      onclick="togglePeak('${p.name}')"
+      title="${p.viaWpt ? 'GPX 航點名稱' : '最近距離 ' + p.distM + ' m'}">
+      ${p.name}<span class="alt">${p.alt.toLocaleString()}m</span>
+    </button>`).join('');
+}
+
+function togglePeak(name) {
+  if (selectedPeaks.has(name)) selectedPeaks.delete(name);
+  else selectedPeaks.add(name);
+  renderPeakChips();
+  applyPeaksToName();
+}
+
+// 把選中的山頭寫進山名欄；使用者若自己改過就不覆寫
+function applyPeaksToName() {
+  const names = detectedPeaks.filter(p => selectedPeaks.has(p.name)).map(p => p.name);
+  const field = document.getElementById('f-name');
+  const joined = names.join('、');
+  if (field.value.trim() === '' || field.value.trim() === autoFilledName) {
+    field.value = joined;
+    autoFilledName = joined;
+  }
+  const cat = document.getElementById('f-cat');
+  if (names.length && !cat.value) cat.value = '百岳';
+}
+
+function toDateInputValue(d) {
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+function formatDuration(hours) {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  return h >= 24 ? `${Math.floor(h/24)}天${h%24}小時` : (h ? `${h}小時${m}分` : `${m}分`);
+}
+
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
-  const Δφ = (lat2 - lat1) * Math.PI / 180;
-  const Δλ = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return haversineM(lat1, lon1, lat2, lon2); // 共用 peaks-data.js 的實作
 }
 
 // ── Photo Preview ──────────────────────────────────
+// 上傳後先縮圖再轉 base64，否則幾張原圖就會撐爆 localStorage（約 5MB）
 function previewPhotos(input) {
-  const files = [...input.files];
-  photoDataURLs = [];
+  const files = [...input.files].slice(0, 9);
   const row = document.getElementById('photoPreviewRow');
-  row.innerHTML = '';
-  files.forEach(file => {
+  row.innerHTML = files.length ? '<span style="font-size:.8rem;color:var(--gray-500)">處理中…</span>' : '';
+  photoDataURLs = [];
+  Promise.all(files.map(f => compressImage(f))).then(urls => {
+    photoDataURLs = urls.filter(Boolean); // 保持原本選取順序
+    row.innerHTML = photoDataURLs
+      .map(u => `<img src="${u}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;" />`)
+      .join('');
+  });
+}
+
+function compressImage(file, maxDim = 1400, quality = 0.72) {
+  return new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = e => {
-      photoDataURLs.push(e.target.result);
-      const img = document.createElement('img');
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * scale);
+        cv.height = Math.round(img.height * scale);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        resolve(cv.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => resolve(null);
       img.src = e.target.result;
-      img.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:6px;';
-      row.appendChild(img);
     };
+    reader.onerror = () => resolve(null);
     reader.readAsDataURL(file);
   });
 }
@@ -310,10 +504,23 @@ function saveRecord() {
     note: document.getElementById('f-note').value.trim(),
     photos: photoDataURLs.slice(0, 9), // limit storage
     emoji: emojis[Math.floor(Math.random() * emojis.length)],
+    // GPX 帶出來的資料
+    peaks: [...selectedPeaks],
+    loss: gpxStats ? gpxStats.lossM : undefined,
+    maxAlt: gpxStats ? gpxStats.maxAlt : undefined,
+    duration: gpxStats && gpxStats.durationH !== null ? formatDuration(gpxStats.durationH) : undefined,
+    gpxFile: gpxStats ? gpxStats.fileName : undefined,
   };
 
-  records.unshift(record);
-  localStorage.setItem('hikeRecords', JSON.stringify(records));
+  const backup = records;
+  records = [record, ...records];
+  try {
+    localStorage.setItem('hikeRecords', JSON.stringify(records));
+  } catch (err) {
+    records = backup;
+    alert('儲存失敗：瀏覽器儲存空間已滿（照片太多或太大）。請減少照片張數後再試。');
+    return;
+  }
   closeAddModal();
   renderAll();
 }
@@ -362,7 +569,9 @@ function renderCards() {
   let filtered = records.filter(r => {
     const catOk = currentTab === 'all' || r.category === currentTab;
     const yearOk = currentYear === 'all' || r.date.startsWith(currentYear);
-    const textOk = !q || r.name.toLowerCase().includes(q) || (r.location||'').toLowerCase().includes(q);
+    const textOk = !q || r.name.toLowerCase().includes(q)
+      || (r.location||'').toLowerCase().includes(q)
+      || (r.peaks||[]).some(p => p.toLowerCase().includes(q));
     return catOk && yearOk && textOk;
   });
 
@@ -392,12 +601,18 @@ function renderCards() {
         <div class="record-card-meta" style="margin-top:4px;">
           ${r.distance ? `<span class="meta-chip">📏 ${Number(r.distance).toFixed(1)} km</span>` : ''}
           ${r.gain ? `<span class="meta-chip">⬆️ ${Number(r.gain).toLocaleString()} m</span>` : ''}
+          ${r.maxAlt ? `<span class="meta-chip">🗻 ${Number(r.maxAlt).toLocaleString()} m</span>` : ''}
+          ${r.duration ? `<span class="meta-chip">⌛ ${r.duration}</span>` : ''}
           ${r.weight ? `<span class="meta-chip">🎒 ${r.weight} kg</span>` : ''}
         </div>
+        ${r.peaks && r.peaks.length ? `
+          <div class="card-peaks">
+            ${r.peaks.map(p => `<span class="card-peak">🏔 ${p}</span>`).join('')}
+          </div>` : ''}
         <div class="record-card-tags">
           ${r.category ? `<span class="tag">${r.category}</span>` : ''}
           ${r.photos && r.photos.length > 1 ? `<span class="gpx-badge">📷 ${r.photos.length}</span>` : ''}
-          ${r.distance ? `<span class="gpx-badge">GPX</span>` : ''}
+          ${r.gpxFile ? `<span class="gpx-badge">GPX</span>` : ''}
         </div>
         ${r.photos && r.photos.length ? `
           <div class="card-photos">
