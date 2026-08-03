@@ -64,6 +64,16 @@
     .peak-chip.on { border-color: var(--green-main); background: var(--green-pale); color: var(--green-dark); font-weight: 600; }
     .peak-detect-empty { font-size: .8rem; color: var(--gray-500); }
 
+    /* 由 GPX 推導出來的欄位（僅顯示，不需填寫） */
+    .derived-row {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px dashed #bae6fd;
+      font-size: .8rem; color: var(--gray-500);
+    }
+    .derived-row:empty { display: none; }
+    .derived-item strong { color: var(--green-dark); font-weight: 600; margin-left: 3px; }
+
     /* 卡片上的山頭標籤 */
     .card-peaks { display: flex; gap: 4px; flex-wrap: wrap; }
     .card-peak {
@@ -140,47 +150,8 @@
   <div class="modal">
     <h2>＋ 新增登山紀錄</h2>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label>山名 *</label>
-        <input type="text" id="f-name" placeholder="例：玉山主峰" />
-      </div>
-      <div class="form-group">
-        <label>日期 *</label>
-        <input type="date" id="f-date" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>分類</label>
-        <select id="f-cat">
-          <option value="">選擇分類</option>
-          <option value="百岳">百岳</option>
-          <option value="中級山">中級山</option>
-          <option value="郊山">郊山</option>
-          <option value="其他">其他</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>行程天數</label>
-        <input type="text" id="f-days" placeholder="例：當日來回 / 2天1夜" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>地點 / 縣市</label>
-        <input type="text" id="f-loc" placeholder="例：嘉義" />
-      </div>
-      <div class="form-group">
-        <label>背包負重 (kg)</label>
-        <input type="number" id="f-weight" placeholder="例：12" min="0" step="0.5" />
-      </div>
-    </div>
-
     <div class="form-group">
-      <label>📂 上傳 GPX（自動抓 日期 / 山頭 / 距離 / 爬升）</label>
+      <label>📂 上傳 GPX *（日期 / 山頭 / 距離 / 爬升全部自動帶入）</label>
       <input type="file" id="f-gpx" accept=".gpx" onchange="parseGPX(this)" />
       <div class="gpx-parsed" id="gpxResult">
         <div class="gpx-stat">距離 <strong id="gpx-dist">—</strong> km</div>
@@ -201,18 +172,13 @@
           </label>
         </div>
         <div class="peak-chips" id="peakChips"></div>
+        <div class="derived-row" id="derivedRow"></div>
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label>總距離 (km)</label>
-        <input type="number" id="f-dist" placeholder="自動填入或手動" step="0.1" min="0" />
-      </div>
-      <div class="form-group">
-        <label>總爬升 (m)</label>
-        <input type="number" id="f-gain" placeholder="自動填入或手動" min="0" />
-      </div>
+    <div class="form-group">
+      <label>🎒 背包負重 (kg)</label>
+      <input type="number" id="f-weight" placeholder="例：12" min="0" step="0.5" />
     </div>
 
     <div class="form-group">
@@ -243,10 +209,11 @@ let photoDataURLs = []; // base64 photos for current form
 // GPX 解析結果（供調整判定範圍時重算山頭，不必重讀檔案）
 let gpxPoints = [];      // [{lat, lon, ele, time}]
 let gpxWptNames = [];    // GPX 內的航點名稱
-let gpxStats = null;     // {distKm, gainM, lossM, maxAlt, durationH, startDate, dayCount}
+let gpxStats = null;     // {distKm, gainM, lossM, maxAlt, durationH, startDate, dayCount, trkName, fileName}
 let detectedPeaks = [];  // detectPeaksNearTrack() 的結果
 let selectedPeaks = new Set();
-let autoFilledName = ''; // 上次由 GPX 自動填入的山名（用來判斷可否覆寫）
+// 表單只收 GPX / 負重 / 照片 / 心得，其餘欄位都由 GPX 推導後存進紀錄
+let derived = { name: '', date: '', days: '', category: '' };
 
 // ── Modal ──────────────────────────────────────────
 function openAddModal() {
@@ -257,20 +224,19 @@ function closeAddModal() {
   document.getElementById('addModal').classList.remove('open');
 }
 function resetForm() {
-  ['f-name','f-date','f-days','f-loc','f-weight','f-dist','f-gain','f-note'].forEach(id => {
+  ['f-weight','f-note','f-gpx','f-photos'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  document.getElementById('f-cat').value = '';
-  document.getElementById('f-gpx').value = '';
-  document.getElementById('f-photos').value = '';
   document.getElementById('gpxResult').classList.remove('show');
   document.getElementById('peakDetect').classList.remove('show');
   document.getElementById('peakChips').innerHTML = '';
+  document.getElementById('derivedRow').innerHTML = '';
   document.getElementById('peakThreshold').value = '400';
   document.getElementById('photoPreviewRow').innerHTML = '';
   photoDataURLs = [];
   gpxPoints = []; gpxWptNames = []; gpxStats = null;
-  detectedPeaks = []; selectedPeaks = new Set(); autoFilledName = '';
+  detectedPeaks = []; selectedPeaks = new Set();
+  derived = { name: '', date: '', days: '', category: '' };
 }
 
 // ── GPX Parsing ────────────────────────────────────
@@ -341,12 +307,14 @@ function parseGPX(input) {
         }
       }
 
+      const trkNameEl = xml.querySelector('trk > name');
       gpxStats = {
         distKm: (dist / 1000).toFixed(2),
         gainM: Math.round(gain),
         lossM: Math.round(loss),
         maxAlt: isFinite(maxAlt) ? Math.round(maxAlt) : null,
         durationH, startDate, dayCount,
+        trkName: trkNameEl ? trkNameEl.textContent.trim() : '',
         fileName: file.name,
       };
 
@@ -358,18 +326,11 @@ function parseGPX(input) {
       document.getElementById('gpx-dur').textContent = durationH !== null ? formatDuration(durationH) : '—';
       document.getElementById('gpxResult').classList.add('show');
 
-      // 自動填入：距離 / 爬升 / 日期 / 天數
-      document.getElementById('f-dist').value = gpxStats.distKm;
-      document.getElementById('f-gain').value = gpxStats.gainM;
-      if (startDate) document.getElementById('f-date').value = startDate;
-      if (dayCount) {
-        const daysField = document.getElementById('f-days');
-        if (!daysField.value.trim()) {
-          daysField.value = dayCount <= 1 ? '當日來回' : `${dayCount}天${dayCount - 1}夜`;
-        }
-      }
+      // 日期 / 天數（沒有時間戳的 GPX 就退回檔案修改日）
+      derived.date = startDate || toDateInputValue(new Date(file.lastModified));
+      derived.days = dayCount > 1 ? `${dayCount}天${dayCount - 1}夜` : '當日來回';
 
-      // 偵測山頭
+      // 偵測山頭 → 決定紀錄名稱與分類
       redetectPeaks();
     } catch(err) {
       alert('GPX 解析失敗：' + err.message);
@@ -395,7 +356,7 @@ function redetectPeaks() {
 
   selectedPeaks = new Set(detectedPeaks.map(d => d.name));
   renderPeakChips();
-  applyPeaksToName();
+  updateDerived();
 }
 
 function renderPeakChips() {
@@ -403,7 +364,7 @@ function renderPeakChips() {
   const chips = document.getElementById('peakChips');
   box.classList.add('show');
   if (!detectedPeaks.length) {
-    chips.innerHTML = `<span class="peak-detect-empty">這條軌跡沒有經過百岳（或放寬判定範圍再試）— 山名請手動填寫</span>`;
+    chips.innerHTML = `<span class="peak-detect-empty">這條軌跡沒有經過百岳（可放寬判定範圍再試）— 紀錄會用軌跡名稱命名</span>`;
     return;
   }
   chips.innerHTML = detectedPeaks.map(p => `
@@ -418,20 +379,28 @@ function togglePeak(name) {
   if (selectedPeaks.has(name)) selectedPeaks.delete(name);
   else selectedPeaks.add(name);
   renderPeakChips();
-  applyPeaksToName();
+  updateDerived();
 }
 
-// 把選中的山頭寫進山名欄；使用者若自己改過就不覆寫
-function applyPeaksToName() {
+// 由 GPX + 選中的山頭推導紀錄名稱與分類，並顯示出來讓人確認
+function updateDerived() {
+  if (!gpxStats) return;
   const names = detectedPeaks.filter(p => selectedPeaks.has(p.name)).map(p => p.name);
-  const field = document.getElementById('f-name');
-  const joined = names.join('、');
-  if (field.value.trim() === '' || field.value.trim() === autoFilledName) {
-    field.value = joined;
-    autoFilledName = joined;
-  }
-  const cat = document.getElementById('f-cat');
-  if (names.length && !cat.value) cat.value = '百岳';
+
+  // 名稱：選中的山頭 → 軌跡名稱 → 檔名
+  derived.name = names.join('、')
+    || gpxStats.trkName
+    || gpxStats.fileName.replace(/\.gpx$/i, '');
+
+  // 分類：有百岳就是百岳，否則按最高點粗分（慣例：郊山 <1000 m、中級山 1000 m 以上）
+  derived.category = names.length ? '百岳'
+    : (gpxStats.maxAlt >= 1000 ? '中級山' : '郊山');
+
+  document.getElementById('derivedRow').innerHTML = `
+    <span class="derived-item">紀錄名稱 <strong>${derived.name}</strong></span>
+    <span class="derived-item">日期 <strong>${derived.date}</strong></span>
+    <span class="derived-item">天數 <strong>${derived.days}</strong></span>
+    <span class="derived-item">分類 <strong>${derived.category}</strong></span>`;
 }
 
 function toDateInputValue(d) {
@@ -486,30 +455,28 @@ function compressImage(file, maxDim = 1400, quality = 0.72) {
 
 // ── Save Record ────────────────────────────────────
 function saveRecord() {
-  const name = document.getElementById('f-name').value.trim();
-  const date = document.getElementById('f-date').value;
-  if (!name || !date) { alert('請填寫山名和日期'); return; }
+  if (!gpxStats) { alert('請先上傳 GPX — 日期、山頭、距離、爬升都從裡面取得'); return; }
 
   const emojis = ['🏔','🌲','🌿','🌄','❄️','🗻','⛰️','🌅'];
   const record = {
     id: Date.now(),
-    name,
-    date,
-    category: document.getElementById('f-cat').value,
-    days: document.getElementById('f-days').value.trim(),
-    location: document.getElementById('f-loc').value.trim(),
+    // 以下由 GPX 推導（見 updateDerived）
+    name: derived.name,
+    date: derived.date,
+    category: derived.category,
+    days: derived.days,
+    distance: gpxStats.distKm,
+    gain: gpxStats.gainM,
+    peaks: [...selectedPeaks],
+    loss: gpxStats.lossM,
+    maxAlt: gpxStats.maxAlt,
+    duration: gpxStats.durationH !== null ? formatDuration(gpxStats.durationH) : undefined,
+    gpxFile: gpxStats.fileName,
+    // 手動輸入的部分
     weight: document.getElementById('f-weight').value,
-    distance: document.getElementById('f-dist').value,
-    gain: document.getElementById('f-gain').value,
     note: document.getElementById('f-note').value.trim(),
     photos: photoDataURLs.slice(0, 9), // limit storage
     emoji: emojis[Math.floor(Math.random() * emojis.length)],
-    // GPX 帶出來的資料
-    peaks: [...selectedPeaks],
-    loss: gpxStats ? gpxStats.lossM : undefined,
-    maxAlt: gpxStats ? gpxStats.maxAlt : undefined,
-    duration: gpxStats && gpxStats.durationH !== null ? formatDuration(gpxStats.durationH) : undefined,
-    gpxFile: gpxStats ? gpxStats.fileName : undefined,
   };
 
   const backup = records;
