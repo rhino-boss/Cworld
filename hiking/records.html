@@ -79,6 +79,13 @@
     .card-peak {
       font-size: .72rem; padding: 2px 8px; border-radius: 999px;
       background: var(--green-pale); color: var(--green-dark); font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    /* 百岳排名（依海拔），取代原本的山岳 emoji */
+    .card-peak .peak-no {
+      font-size: .66rem; font-weight: 700; letter-spacing: .02em;
+      padding: 1px 5px; border-radius: 999px;
+      background: var(--green-main); color: var(--white);
     }
 
     /* Delete button on card */
@@ -574,7 +581,10 @@ function renderCards() {
         </div>
         ${r.peaks && r.peaks.length ? `
           <div class="card-peaks">
-            ${r.peaks.map(p => `<span class="card-peak">🏔 ${p}</span>`).join('')}
+            ${r.peaks.map(p => {
+              const rank = peakRankOf(p);
+              return `<span class="card-peak">${rank ? `<span class="peak-no">NO.${rank}</span>` : '🏔'} ${p}</span>`;
+            }).join('')}
           </div>` : ''}
         <div class="record-card-tags">
           ${r.category ? `<span class="tag">${r.category}</span>` : ''}

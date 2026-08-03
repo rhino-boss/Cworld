@@ -115,6 +115,12 @@ function recordMatchesPeak(r, peakName) {
   return typeof r.name === 'string' && r.name.includes(peakName);
 }
 
+// 查某座山的百岳排名（依海拔），查不到回傳 null
+function peakRankOf(name) {
+  const p = PEAKS.find(p => p.name === name);
+  return p ? p.rank : null;
+}
+
 // 從所有紀錄算出已完成的百岳名稱集合
 function completedPeakSet(records) {
   const set = new Set();
