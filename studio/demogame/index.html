@@ -89,11 +89,12 @@
 
     .card-footer { display: flex; gap: 10px; padding: 0 8px; }
     .btn {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px 8px; border-radius: 8px;
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 11px 10px; border-radius: 8px; white-space: nowrap;
       text-decoration: none; font-size: .82rem; font-weight: 700;
       transition: background .15s, opacity .15s;
     }
+    .btn .ico { padding-left: 10px; border-left: 1px solid rgba(255,255,255,.25); line-height: 1; }
     .btn-info { background: #1a1a1a; color: #fff; }
     .btn-info:hover { background: #333; }
     .btn-play { background: #d32020; color: #fff; }
@@ -107,10 +108,15 @@
     .error-msg { text-align: center; padding: 60px 24px; color: var(--muted); }
     .error-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
 
-    @media (max-width: 640px) {
+    @media (max-width: 720px) {
       .hero { padding: 28px 24px; }
-      .container { padding: 24px 20px 60px; }
-      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+      .container { padding: 24px 16px 60px; }
+      /* 手機一排一張大卡，避免按鈕被擠成直排 */
+      .grid { grid-template-columns: 1fr; gap: 20px; }
+      .card { padding: 14px 14px 18px; }
+      .card-title { font-size: 1.15rem; }
+      .card-desc { font-size: .88rem; min-height: 0; padding: 14px 4px 18px; }
+      .btn { padding: 13px 12px; font-size: .9rem; }
     }
   </style>
 </head>
@@ -164,6 +170,19 @@ async function fetchJson(url) {
   return res.json();
 }
 
+// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」欄位
+// 對應表格列：| 遊戲類型 | Video Slot - Ways / Cascade |
+async function fetchGameType(gameBase) {
+  try {
+    const res = await fetch(`${gameBase}/game_rule.md`);
+    if (!res.ok) return '';
+    const text = await res.text();
+    const m = text.match(/\|\s*遊戲類型\s*\|([^|\n]*)\|/);
+    const v = m ? m[1].trim() : '';
+    return (!v || v === '-') ? '' : v;
+  } catch { return ''; }
+}
+
 async function init() {
   const grid = document.getElementById('game-grid');
   const dot  = document.getElementById('status-dot');
@@ -202,6 +221,15 @@ async function init() {
       ...parseFolderName(folder),
       folderName: folder,
       hasDemo: hasFile(folder, 'index.html'),
+      hasRule: hasFile(folder, 'game_rule.md'),
+    }));
+
+    // 讀各遊戲的 game_rule.md 取遊戲類型（與本頁同網域，無 CORS 問題）
+    await Promise.all(results.map(async g => {
+      if (!g.hasRule) return;
+      g.gameType = await fetchGameType(
+        `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`
+      );
     }));
 
     // 有 demo 的排前面
@@ -222,9 +250,7 @@ async function init() {
       // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
       const coverUrl = `${ASSETS_BASE}/${encodeURIComponent(g.id)}.png`;
       const infoUrl  = `https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/main/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
-      const desc = g.hasDemo
-        ? `${g.id ? g.id + '　' : ''}點進去直接玩，免安裝。 🎰`
-        : `${g.id ? g.id + '　' : ''}Demo 製作中，敬請期待。 🚧`;
+      const desc = g.gameType || (g.hasDemo ? 'Video Slot' : 'Demo 製作中，敬請期待。 🚧');
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
@@ -238,9 +264,9 @@ async function init() {
             <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
-            <a class="btn btn-info" href="${infoUrl}" target="_blank">遊戲資訊 <span>›</span></a>
+            <a class="btn btn-info" href="${infoUrl}" target="_blank">遊戲資訊 <span class="ico">›</span></a>
             ${g.hasDemo
-              ? `<a class="btn btn-play" href="${playUrl}" target="_blank">開始遊玩 <span>🎮</span></a>`
+              ? `<a class="btn btn-play" href="${playUrl}" target="_blank">開始遊玩 <span class="ico">🎮</span></a>`
               : `<div class="btn disabled">製作中</div>`
             }
           </div>
