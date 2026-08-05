@@ -17,12 +17,6 @@
     }
     body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    nav { background: var(--accent-dark); padding: 0 32px; display: flex; align-items: center; gap: 8px; height: 52px; }
-    nav a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
-    nav a:hover { color: #fff; }
-    nav .sep { color: rgba(255,255,255,.3); font-size: .85rem; }
-    nav .current { color: #fff; font-weight: 600; }
-
     .hero { background: linear-gradient(135deg, var(--accent-dark), var(--accent-mid)); padding: 40px 48px 36px; color: #fff; }
     .hero h1 { font-size: 1.75rem; font-weight: 700; }
     .hero p { margin-top: 6px; font-size: .9rem; opacity: .7; }
@@ -101,7 +95,8 @@
 
     .card-footer { display: flex; gap: 10px; padding: 0 8px; margin-top: auto; }
     .btn {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
+      flex: 1; border: 0; font-family: inherit; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
       padding: 11px 10px; border-radius: 8px; white-space: nowrap;
       text-decoration: none; font-size: .82rem; font-weight: 700;
       transition: background .15s, opacity .15s;
@@ -122,6 +117,24 @@
     .error-msg { text-align: center; padding: 60px 24px; color: var(--muted); }
     .error-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
 
+    /* ── 遊戲播放層：同頁 iframe 開啟，不另開分頁 ── */
+    .player { position: fixed; inset: 0; z-index: 100; background: #111; display: none; flex-direction: column; }
+    .player.open { display: flex; }
+    .player-bar {
+      flex-shrink: 0; height: 52px; background: var(--accent-dark); color: #fff;
+      display: flex; align-items: center; gap: 12px; padding: 0 14px;
+    }
+    .player-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.14); color: #fff; border: 0;
+      padding: 8px 14px; border-radius: 8px; font-size: .85rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+    }
+    .player-back:hover { background: rgba(255,255,255,.26); }
+    .player-title { font-size: .9rem; font-weight: 700; opacity: .9; }
+    .player iframe { flex: 1; width: 100%; border: 0; background: #000; }
+    body.playing { overflow: hidden; }
+
     @media (max-width: 720px) {
       .hero { padding: 28px 24px; }
       .container { padding: 24px 16px 60px; }
@@ -136,13 +149,7 @@
 </head>
 <body>
 
-<nav>
-  <a href="../../index.html">Cworld</a>
-  <span class="sep">/</span>
-  <a href="../../index.html">工作室</a>
-  <span class="sep">/</span>
-  <span class="current">Demogame</span>
-</nav>
+<!-- 這頁會分享給外部，不放任何回到 Cworld 其他頁面的連結 -->
 
 <div class="hero">
   <h1>🎰 Demogame</h1>
@@ -160,6 +167,14 @@
     <div class="skeleton skel-card"></div>
     <div class="skeleton skel-card"></div>
   </div>
+</div>
+
+<div class="player" id="player">
+  <div class="player-bar">
+    <button class="player-back" id="player-back" type="button">← 返回遊戲列表</button>
+    <span class="player-title" id="player-title"></span>
+  </div>
+  <iframe id="player-frame" title="遊戲" allow="autoplay; fullscreen" allowfullscreen></iframe>
 </div>
 
 <script>
@@ -281,7 +296,7 @@ async function init() {
           <div class="card-footer">
             <div class="btn btn-info is-static">遊戲資訊 <span class="ico">›</span></div>
             ${g.hasDemo
-              ? `<a class="btn btn-play" href="${playUrl}" target="_blank">開始遊玩 <span class="ico">🎮</span></a>`
+              ? `<button class="btn btn-play" type="button" data-play="${playUrl}" data-title="${g.title}">開始遊玩 <span class="ico">🎮</span></button>`
               : `<div class="btn disabled">製作中</div>`
             }
           </div>
@@ -296,6 +311,38 @@ async function init() {
 }
 
 init();
+
+// ── 遊戲以 iframe 在同一頁開啟，並支援上一頁 / Esc 返回列表 ──
+const player      = document.getElementById('player');
+const playerFrame = document.getElementById('player-frame');
+const playerTitle = document.getElementById('player-title');
+
+function openGame(url, title) {
+  playerFrame.src = url;
+  playerTitle.textContent = title || '';
+  player.classList.add('open');
+  document.body.classList.add('playing');
+  // 推一筆歷史，讓瀏覽器「上一頁」是關閉遊戲而不是離開本站
+  history.pushState({ game: url }, '', '#play');
+}
+
+function closeGame(fromPop) {
+  if (!player.classList.contains('open')) return;
+  player.classList.remove('open');
+  document.body.classList.remove('playing');
+  playerFrame.src = 'about:blank';
+  if (!fromPop && location.hash === '#play') history.back();
+}
+
+document.getElementById('game-grid').addEventListener('click', e => {
+  const btn = e.target.closest('[data-play]');
+  if (!btn) return;
+  openGame(btn.dataset.play, btn.dataset.title);
+});
+
+document.getElementById('player-back').addEventListener('click', () => closeGame(false));
+window.addEventListener('popstate', () => closeGame(true));
+window.addEventListener('keydown', e => { if (e.key === 'Escape') closeGame(false); });
 </script>
 </body>
 </html>
