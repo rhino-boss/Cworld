@@ -221,6 +221,44 @@ async function fetchGameType(gameBase) {
   } catch { return ''; }
 }
 
+// 「數學最後更新時間」＝該遊戲 Source/ 資料夾的最後一筆 commit 時間
+// 查不到（沒有 Source、或 API 額度用完）回 0，排序時會沉到最後
+// 結果快取 6 小時，避免每次進頁面都吃掉 GitHub API 額度（未登入每小時 60 次）
+const MATH_CACHE_KEY = 'demogame-math-dates';
+const MATH_CACHE_TTL = 6 * 60 * 60 * 1000;
+
+const mathCache = (() => {
+  try {
+    const c = JSON.parse(localStorage.getItem(MATH_CACHE_KEY) || '{}');
+    return (Date.now() - (c.at || 0) < MATH_CACHE_TTL) ? (c.dates || {}) : {};
+  } catch { return {}; }
+})();
+
+function saveMathCache() {
+  try {
+    localStorage.setItem(MATH_CACHE_KEY, JSON.stringify({ at: Date.now(), dates: mathCache }));
+  } catch { /* localStorage 不可用就算了 */ }
+}
+
+async function fetchMathDate(folder) {
+  if (folder in mathCache) return mathCache[folder];
+  let ts = 0;
+  try {
+    const path = `${SLOTS_PATH}/${folder}/Source`;
+    const res = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${encodeURIComponent(path)}&per_page=1`,
+      { headers: { Accept: 'application/vnd.github+json' } }
+    );
+    if (res.ok) {
+      const arr = await res.json();
+      ts = arr[0] ? Date.parse(arr[0].commit.committer.date) || 0 : 0;
+    }
+  } catch { /* 失敗就當作沒有時間 */ }
+  mathCache[folder] = ts;
+  saveMathCache();
+  return ts;
+}
+
 async function init() {
   const grid = document.getElementById('game-grid');
   const dot  = document.getElementById('status-dot');
@@ -263,15 +301,20 @@ async function init() {
     }));
 
     // 讀各遊戲的 game_rule.md 取遊戲類型（與本頁同網域，無 CORS 問題）
+    // 同時查各遊戲 Source/ 的最後 commit 時間，當作「數學最後更新時間」
     await Promise.all(results.map(async g => {
-      if (!g.hasRule) return;
-      g.gameType = await fetchGameType(
-        `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`
-      );
+      const [type, mathDate] = await Promise.all([
+        g.hasRule
+          ? fetchGameType(`${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`)
+          : Promise.resolve(''),
+        fetchMathDate(g.folderName),
+      ]);
+      g.gameType = type;
+      g.mathDate = mathDate;
     }));
 
-    // 有 demo 的排前面
-    results.sort((a, b) => b.hasDemo - a.hasDemo);
+    // 數學越新的排越前面；查不到時間的沉底，最後才看有沒有 demo
+    results.sort((a, b) => (b.mathDate - a.mathDate) || (b.hasDemo - a.hasDemo));
 
     const demoCount = results.filter(r => r.hasDemo).length;
     dot.className = 'dot done';
