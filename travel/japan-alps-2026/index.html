@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 :root{
-  --bg:#F1EFE4;
-  --paper:#FAF8EE;
+  --bg:#ffffff;
+  --paper:#fdfdfb;
   --ink:#333126;
   --muted:#84816e;
   --faint:#a5a28c;
-  --line:#d9d5bd;
-  --grid:#e6e3cd;
+  --line:#e2e2dd;
+  --grid:#ececea;
   --water:#7fb5cc;
   --waterlabel:#5d93ab;
   --ref:#a3a08a;
@@ -23,28 +23,10 @@
   --stayicon:#d97316;
   --hut:#fffdf5;
   --warn:#b3261e;
-  --card:#f7f5e9;
-  --cardline:#e0dcc4;
+  --card:#f7f7f5;
+  --cardline:#e8e8e4;
   --d1:#c93c3c; --d2:#db7a1c; --d3:#a08a10; --d4:#3f8f55; --d5:#17879c; --d6:#3e63c4; --d7:#8e4fbf;
   --transport:#9a9784;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#191a14; --paper:#20211a; --ink:#e8e5d5; --muted:#a09d88; --faint:#7a7764;
-    --line:#3a3b2e; --grid:#2b2c22; --water:#4b8299; --waterlabel:#6fa9c0; --ref:#6e6c59;
-    --staybg:rgba(240,150,50,.22); --stayborder:rgba(240,150,50,.5); --stayicon:#efa04e;
-    --hut:#2a2b21; --warn:#ff8a80; --card:#22231b; --cardline:#35362a;
-    --d1:#ef7272; --d2:#f0a052; --d3:#cdb33a; --d4:#6fc98c; --d5:#54bdd2; --d6:#89a2ee; --d7:#bd8ce6;
-    --transport:#6e6c5c;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#191a14; --paper:#20211a; --ink:#e8e5d5; --muted:#a09d88; --faint:#7a7764;
-  --line:#3a3b2e; --grid:#2b2c22; --water:#4b8299; --waterlabel:#6fa9c0; --ref:#6e6c59;
-  --staybg:rgba(240,150,50,.22); --stayborder:rgba(240,150,50,.5); --stayicon:#efa04e;
-  --hut:#2a2b21; --warn:#ff8a80; --card:#22231b; --cardline:#35362a;
-  --d1:#ef7272; --d2:#f0a052; --d3:#cdb33a; --d4:#6fc98c; --d5:#54bdd2; --d6:#89a2ee; --d7:#bd8ce6;
-  --transport:#6e6c5c;
 }
 *{box-sizing:border-box}
 body{
