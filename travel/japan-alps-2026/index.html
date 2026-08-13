@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>北阿爾卑斯大縱走 2026 · Cworld</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{
+  --bg:#F1EFE4;
+  --paper:#FAF8EE;
+  --ink:#333126;
+  --muted:#84816e;
+  --faint:#a5a28c;
+  --line:#d9d5bd;
+  --grid:#e6e3cd;
+  --water:#7fb5cc;
+  --waterlabel:#5d93ab;
+  --ref:#a3a08a;
+  --staybg:rgba(230,140,40,.20);
+  --stayborder:rgba(200,110,20,.45);
+  --stayicon:#d97316;
+  --hut:#fffdf5;
+  --warn:#b3261e;
+  --card:#f7f5e9;
+  --cardline:#e0dcc4;
+  --d1:#c93c3c; --d2:#db7a1c; --d3:#a08a10; --d4:#3f8f55; --d5:#17879c; --d6:#3e63c4; --d7:#8e4fbf;
+  --transport:#9a9784;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191a14; --paper:#20211a; --ink:#e8e5d5; --muted:#a09d88; --faint:#7a7764;
+    --line:#3a3b2e; --grid:#2b2c22; --water:#4b8299; --waterlabel:#6fa9c0; --ref:#6e6c59;
+    --staybg:rgba(240,150,50,.22); --stayborder:rgba(240,150,50,.5); --stayicon:#efa04e;
+    --hut:#2a2b21; --warn:#ff8a80; --card:#22231b; --cardline:#35362a;
+    --d1:#ef7272; --d2:#f0a052; --d3:#cdb33a; --d4:#6fc98c; --d5:#54bdd2; --d6:#89a2ee; --d7:#bd8ce6;
+    --transport:#6e6c5c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191a14; --paper:#20211a; --ink:#e8e5d5; --muted:#a09d88; --faint:#7a7764;
+  --line:#3a3b2e; --grid:#2b2c22; --water:#4b8299; --waterlabel:#6fa9c0; --ref:#6e6c59;
+  --staybg:rgba(240,150,50,.22); --stayborder:rgba(240,150,50,.5); --stayicon:#efa04e;
+  --hut:#2a2b21; --warn:#ff8a80; --card:#22231b; --cardline:#35362a;
+  --d1:#ef7272; --d2:#f0a052; --d3:#cdb33a; --d4:#6fc98c; --d5:#54bdd2; --d6:#89a2ee; --d7:#bd8ce6;
+  --transport:#6e6c5c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft JhengHei","Noto Sans TC","Yu Gothic","Hiragino Sans",sans-serif;
+  line-height:1.6;
+}
+.wrap{max-width:820px;margin:0 auto;padding:28px 16px 60px}
+header{margin-bottom:14px}
+.eyebrow{font-size:12px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+h1{
+  font-family:"Noto Serif TC","PMingLiU","Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:clamp(24px,5vw,34px); margin:6px 0 4px; letter-spacing:.04em; text-wrap:balance;
+}
+.subtitle{color:var(--muted);font-size:14px;margin:0}
+.daychips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 10px}
+.daychips span{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);
+  border:1px solid var(--cardline);border-radius:999px;padding:2px 10px;background:var(--card);
+}
+.daychips i{width:14px;height:4px;border-radius:2px;display:inline-block}
+.legend{
+  display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--muted);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 2px;margin-bottom:12px;
+}
+.legend em{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+.legend svg{flex:none}
+.mapwrap{
+  background:var(--paper); border:1px solid var(--line); border-radius:8px;
+  overflow-x:auto; box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+.mapwrap svg{display:block;min-width:720px;width:100%;height:auto}
+/* --- svg classes --- */
+text{font-family:"Microsoft JhengHei","Noto Sans TC","Yu Gothic","Hiragino Sans",sans-serif}
+.gridline{stroke:var(--grid);stroke-width:1}
+.gridlabel{fill:var(--faint);font-size:9px}
+.river{fill:none;stroke:var(--water);stroke-width:2.5;stroke-linecap:round;opacity:.75}
+.riverlabel{fill:var(--waterlabel);font-size:10.5px;font-style:italic}
+.route{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.spur{fill:none;stroke-width:2;stroke-dasharray:3 4;stroke-linecap:round}
+.r1{stroke:var(--d1)} .r2{stroke:var(--d2)} .r3{stroke:var(--d3)} .r4{stroke:var(--d4)}
+.r5{stroke:var(--d5)} .r6{stroke:var(--d6)} .r7{stroke:var(--d7)}
+.peak{fill:var(--ink)} .peak3k{fill:var(--ink)}
+.refpeak{fill:var(--ref)}
+.hutshape{fill:var(--hut);stroke:var(--ink);stroke-width:1.3}
+.stayshape{fill:var(--stayicon);stroke:var(--ink);stroke-width:1.2}
+.passshape{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+.placeshape{fill:var(--ink)}
+.lbl{fill:var(--ink);font-size:11.5px}
+.lbl.big{font-size:13px;font-weight:700}
+.lbl.small{font-size:10px;fill:var(--muted)}
+.lbl.ref{fill:var(--ref);font-size:10.5px}
+.lbl.place{font-weight:700}
+.elev{fill:var(--muted);font-size:9.5px}
+.staylbl{font-size:12px;font-weight:700;fill:var(--ink)}
+.staydate{font-size:9.5px;fill:var(--stayicon);font-weight:700}
+.staypill{fill:var(--staybg);stroke:var(--stayborder);stroke-width:1;rx:4}
+.leader{stroke:var(--faint);stroke-width:.8}
+.warnmark{fill:var(--warn);font-size:10px;font-weight:700}
+.chip{font-size:11px;font-weight:700;fill:#fff}
+.chipbg1{fill:var(--d1)} .chipbg2{fill:var(--d2)} .chipbg3{fill:var(--d3)} .chipbg4{fill:var(--d4)}
+.chipbg5{fill:var(--d5)} .chipbg6{fill:var(--d6)} .chipbg7{fill:var(--d7)}
+.deco{fill:var(--faint);font-size:10.5px;font-style:italic;letter-spacing:.12em}
+.scalebar{stroke:var(--ink);stroke-width:1.5}
+.scaletext{fill:var(--muted);font-size:9.5px}
+.north{fill:var(--ink)}
+.badge{font-size:9px;font-weight:800;letter-spacing:.14em;fill:var(--paper)}
+.badgebg{fill:var(--ink);rx:3}
+/* --- day cards --- */
+h2{
+  font-family:"Noto Serif TC","PMingLiU","Yu Mincho","Hiragino Mincho ProN",serif;
+  font-size:19px;margin:28px 0 10px;letter-spacing:.06em;
+}
+.days{display:flex;flex-direction:column;gap:8px}
+.day{
+  display:grid;grid-template-columns:64px 1fr;gap:4px 14px;align-items:start;
+  background:var(--card);border:1px solid var(--cardline);border-radius:8px;padding:10px 14px;
+}
+.day .tag{display:flex;flex-direction:column;gap:2px;padding-top:2px}
+.day .dnum{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
+.day .dnum i{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+.day .date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.day .routeline{font-size:13.5px}
+.day .routeline b{font-weight:700}
+.day .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.day .meta .stay{color:var(--stayicon);font-weight:700}
+.day .meta .warn{color:var(--warn);font-weight:700}
+.day.transport{opacity:.75}
+.day.transport .dnum i{background:var(--transport)}
+.paid{
+  display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:0 8px;
+  background:var(--staybg);border:1px solid var(--stayborder);color:var(--ink);
+}
+footer{margin-top:26px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+@media (prefers-reduced-motion:no-preference){ .route{transition:opacity .2s} }
+
+/* --- cworld nav --- */
+.cnav{background:#112840;padding:0 24px;display:flex;align-items:center;gap:8px;height:52px}
+.cnav a{color:rgba(255,255,255,.65);text-decoration:none;font-size:.85rem}
+.cnav a:hover{color:#fff}
+.cnav .sep{color:rgba(255,255,255,.3);font-size:.85rem}
+.cnav .current{color:#fff;font-weight:600;font-size:.85rem}
+/* --- interactive map --- */
+.mapbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 10px}
+.gpx{display:inline-flex;align-items:center;gap:6px;background:#2f9e44;color:#fff;border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.gpx:hover{background:#268a3a}
+.modetoggle{font-size:13px;color:var(--muted);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.mapnote{font-size:12px;color:var(--faint)}
+#lmap{height:72vh;min-height:430px;border:1px solid var(--line);border-radius:8px;background:#e8ede4;z-index:0}
+#lmap{font-family:inherit}
+.lmkwrap{background:none;border:none}
+.lmk{display:flex;align-items:center;gap:3px;white-space:nowrap}
+.lmk .lbl{font:600 11px/1.15 'Microsoft JhengHei','PingFang TC',sans-serif;color:#3b3b35;text-shadow:0 0 3px #fff,0 0 3px #fff,0 1px 2px #fff}
+.lmk .tri{color:#4a4238;font-size:12px;line-height:1;text-shadow:0 0 2px #fff}
+.lmk.major .lbl{font-size:12px;font-weight:800;color:#26261f}
+.lmk.ref .tri{color:#9a9a90}
+.lmk.ref .lbl{color:#8a8a80;font-weight:500}
+.lmk .dot{width:11px;height:11px;border-radius:3px;background:#fff;border:2px solid #4a4a44;box-shadow:0 0 3px rgba(0,0,0,.35);flex:none}
+.lmk.stay .dot{background:#e2801f;border-color:#fff;width:13px;height:13px}
+.lmk.stay .lbl{font-weight:800;color:#8a4a00;font-size:12px}
+.lmk.pass .dot{width:8px;height:8px;border-radius:50%;background:#5a5a52;border:2px solid #fff}
+.lz .minor{display:none}
+.lzm .mid{display:none}
+.leaflet-popup-content{font-family:'Microsoft JhengHei','PingFang TC',sans-serif;font-size:13px;line-height:1.6}
+@media (max-width:640px){ #lmap{height:60vh} }
+</style>
+</head>
+<body>
+
+<nav class="cnav">
+  <a href="../../index.html">Cworld</a>
+  <span class="sep">/</span>
+  <a href="../index.html">旅遊</a>
+  <span class="sep">/</span>
+  <span class="current">北阿爾卑斯大縱走</span>
+</nav>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Kita Alps Traverse · 2026</div>
+  <h1>北阿爾卑斯大縱走路線圖</h1>
+  <p class="subtitle">9/12–9/18（D1–D7）｜上高地 → 穗高 → 槍岳 → 雲之平 → 藥師岳 → 五色原 → 立山 → 室堂</p>
+</header>
+
+<div class="daychips" id="daychips"></div>
+
+<div class="legend">
+  <em><svg width="14" height="12"><path d="M7 1 L1 11 L13 11 Z" style="fill:var(--ink)"/></svg>山頭（▲＋標高）</em>
+  <em><svg width="14" height="12"><path d="M7 1 L1 11 L13 11 Z" style="fill:var(--ref)"/></svg>參考山頭（不經過）</em>
+  <em><svg width="16" height="13"><path d="M2 11 h12 v-6 l-6 -4 l-6 4 z" style="fill:var(--stayicon);stroke:var(--ink);stroke-width:1.2"/></svg>過夜山屋</em>
+  <em><svg width="16" height="13"><path d="M2 11 h12 v-6 l-6 -4 l-6 4 z" style="fill:var(--hut);stroke:var(--ink);stroke-width:1.2"/></svg>途經山屋</em>
+  <em><svg width="16" height="10"><path d="M2 2 Q8 10 14 2" style="fill:none;stroke:var(--ink);stroke-width:1.6"/></svg>峠／鞍部</em>
+  <em><svg width="12" height="12"><circle cx="6" cy="6" r="3.5" style="fill:var(--ink)"/></svg>地標</em>
+  <em><svg width="20" height="8"><path d="M1 4 h18" style="stroke:var(--ink);stroke-width:2;stroke-dasharray:3 4"/></svg>槍岳登頂往返</em>
+</div>
+
+
+<h2>互動地圖</h2>
+<div class="mapbar">
+  <button class="gpx" id="gpxbtn">⬇ 下載GPX</button>
+  <label class="modetoggle"><input type="checkbox" id="daymode"> 依日期分色</label>
+  <span class="mapnote">路線為手繪示意，下載的 GPX 請勿直接用於導航</span>
+</div>
+<div id="lmap"></div>
+
+<h2>手繪路線圖</h2>
+<div class="mapwrap"><svg id="map" viewBox="0 0 780 1490" role="img" aria-label="北阿爾卑斯縱走路線圖"></svg></div>
+
+<h2>每日行程</h2>
+<div class="days" id="days"></div>
+
+<footer>
+  座標為示意（依實際地理相對位置繪製，非正式登山地圖）。行前請以「山と高原地図」或 YAMAP／ヤマレコ 實際圖資確認路線與水源。
+</footer>
+</div>
+
+<script>
+(function(){
+const SVG='http://www.w3.org/2000/svg';
+const svg=document.getElementById('map');
+const ML=150, MT=60, KX=2682, KY=3330, LON0=137.485, LAT0=36.640;
+const X=lon=>ML+(lon-LON0)*KX;
+const Y=lat=>MT+(LAT0-lat)*KY;
+function el(name,attrs,parent){
+  const e=document.createElementNS(SVG,name);
+  for(const k in attrs) e.setAttribute(k,attrs[k]);
+  (parent||svg).appendChild(e); return e;
+}
+function txt(x,y,str,cls,anchor,parent){
+  const t=el('text',{x,y,'class':cls,'text-anchor':anchor||'start'},parent);
+  t.textContent=str; return t;
+}
+
+/* ---------- points ---------- */
+/* t: peak | peak3k | ref | hut | stay | pass | place | placebig
+   a: label anchor s(start)/m(middle)/e(end); lx,ly label offset; ldr: leader line */
+const P={
+ kamikochi:{n:'上高地',e:1505,lon:137.636,lat:36.249,t:'placebig',a:'s',lx:13,ly:5,badge:'START'},
+ nishihoSanso:{n:'西穗山莊',e:2367,lon:137.6205,lat:36.2705,t:'hut',a:'s',lx:12,ly:8,warn:1},
+ dokuhyo:{n:'西穗獨標',e:2701,lon:137.625,lat:36.2785,t:'peak',a:'e',lx:-10,ly:8},
+ nishiho:{n:'西穗高岳',e:2909,lon:137.6278,lat:36.2839,t:'peak',a:'e',lx:-9,ly:-10},
+ ainodake:{n:'間之岳',e:2907,lon:137.632,lat:36.2857,t:'peak',small:1,a:'e',lx:-6,ly:-27,ldr:1},
+ tengu:{n:'天狗之頭',e:2909,lon:137.636,lat:36.2867,t:'peak',small:1,a:'m',lx:24,ly:35,ldr:1},
+ jandarm:{n:'憲兵岩',e:3163,lon:137.6437,lat:36.2885,t:'peak',a:'e',lx:-16,ly:26,warn:1},
+ okuho:{n:'奧穗高岳',e:3190,lon:137.6479,lat:36.2894,t:'peak3k',a:'s',lx:13,ly:13},
+ hotakaSanso:{n:'穗高岳山莊',e:2996,lon:137.6478,lat:36.2926,t:'stay',date:'9/12',a:'s',lx:14,ly:-3},
+ karasawadake:{n:'涸澤岳',e:3110,lon:137.6478,lat:36.2946,t:'peak',a:'e',lx:-11,ly:-12},
+ kitaho:{n:'北穗高岳',e:3106,lon:137.6535,lat:36.301,t:'peak',a:'s',lx:12,ly:3},
+ daikiretto:{n:'大切戶',lon:137.6505,lat:36.309,t:'pass',a:'s',lx:12,ly:4,warn:1},
+ minamigoya:{n:'南岳小屋',lon:137.649,lat:36.3135,t:'hut',small:1,a:'e',lx:-10,ly:5},
+ minamidake:{n:'南岳',e:3033,lon:137.648,lat:36.3165,t:'peak',a:'s',lx:12,ly:3},
+ nakadake:{n:'中岳',e:3084,lon:137.6478,lat:36.325,t:'peak',a:'e',lx:-10,ly:3},
+ obami:{n:'大喰岳',e:3101,lon:137.647,lat:36.3315,t:'peak',a:'s',lx:12,ly:3},
+ yarisanso:{n:'槍岳山莊',e:3080,lon:137.6465,lat:36.3413,t:'stay',date:'9/13',a:'e',lx:-16,ly:9},
+ yari:{n:'槍岳',e:3180,lon:137.6476,lat:36.3419,t:'peak3k',a:'s',lx:13,ly:-4},
+ senjo:{n:'千丈乘越',lon:137.638,lat:36.3455,t:'pass',small:1,a:'e',lx:-12,ly:2},
+ momisawa:{n:'樅澤岳',e:2755,lon:137.613,lat:36.358,t:'peak',a:'m',lx:0,ly:-13},
+ sugorokuGoya:{n:'雙六小屋',lon:137.599,lat:36.362,t:'hut',a:'m',lx:6,ly:22},
+ sugorokudake:{n:'雙六岳',e:2860,lon:137.5942,lat:36.3653,t:'peak',a:'e',lx:-10,ly:2},
+ mitsumataRenge:{n:'三俁蓮華岳',e:2841,lon:137.5822,lat:36.3772,t:'peak',a:'e',lx:-10,ly:3},
+ mitsumata:{n:'三俁山莊',e:2550,lon:137.5865,lat:36.3822,t:'stay',date:'9/14',a:'s',lx:13,ly:6},
+ washiba:{n:'鷲羽岳',e:2924,lon:137.5944,lat:36.3906,t:'ref',a:'s',lx:10,ly:-5},
+ kurobeGenryu:{n:'黑部源流',lon:137.578,lat:36.388,t:'place',a:'e',lx:-9,ly:13},
+ sofudake:{n:'祖父岳',e:2825,lon:137.567,lat:36.393,t:'ref',a:'m',lx:0,ly:-13},
+ kumonodaira:{n:'雲之平山莊',e:2550,lon:137.556,lat:36.399,t:'hut',a:'e',lx:-11,ly:-2},
+ yakushisawa:{n:'藥師澤小屋',e:1912,lon:137.529,lat:36.42,t:'stay',date:'9/15',a:'m',lx:-4,ly:26},
+ taroudaira:{n:'太郎平小屋',e:2330,lon:137.503,lat:36.424,t:'hut',a:'m',lx:2,ly:22},
+ yakushitoge:{n:'藥師峠',lon:137.508,lat:36.431,t:'pass',small:1,a:'e',lx:-9,ly:1},
+ yakushiSanso:{n:'藥師岳山莊',lon:137.5395,lat:36.456,t:'hut',a:'s',lx:11,ly:9},
+ yakushi:{n:'藥師岳',e:2926,lon:137.5447,lat:36.4678,t:'peak',big:1,a:'s',lx:13,ly:1},
+ kitayakushi:{n:'北藥師岳',e:2900,lon:137.5395,lat:36.476,t:'peak',a:'e',lx:-10,ly:-3},
+ mayama:{n:'間山',e:2585,lon:137.543,lat:36.49,t:'peak',a:'e',lx:-10,ly:1},
+ sugo:{n:'スゴ乘越小屋',lon:137.548,lat:36.498,t:'hut',a:'s',lx:12,ly:5},
+ ecchuzawa:{n:'越中澤岳',e:2591,lon:137.55,lat:36.5165,t:'peak',a:'e',lx:-10,ly:-2},
+ tonbi:{n:'鳶山',e:2616,lon:137.552,lat:36.533,t:'peak',a:'e',lx:-10,ly:-2},
+ goshiki:{n:'五色原山莊',e:2500,lon:137.5575,lat:36.5405,t:'stay',date:'9/16',a:'e',lx:-13,ly:-4},
+ zaratoge:{n:'ザラ峠',lon:137.559,lat:36.548,t:'pass',a:'s',lx:11,ly:3},
+ shishidake:{n:'獅子岳',e:2714,lon:137.566,lat:36.555,t:'peak',a:'e',lx:-10,ly:-5},
+ onidake:{n:'鬼岳',e:2750,lon:137.578,lat:36.56,t:'peak',small:1,a:'m',lx:0,ly:18},
+ ryuo:{n:'龍王岳',e:2872,lon:137.604,lat:36.568,t:'peak',a:'m',lx:-16,ly:24},
+ ichinokoshi:{n:'一之越山莊',e:2700,lon:137.61,lat:36.572,t:'hut',a:'s',lx:10,ly:12},
+ oyama:{n:'雄山',e:3003,lon:137.6172,lat:36.5758,t:'peak3k',a:'s',lx:12,ly:4},
+ onanji:{n:'大汝山',e:3015,lon:137.618,lat:36.58,t:'peak3k',a:'s',lx:12,ly:3},
+ fujinooritate:{n:'富士之折立',e:2999,lon:137.617,lat:36.584,t:'peak',a:'s',lx:12,ly:2},
+ masago:{n:'真砂岳',e:2861,lon:137.618,lat:36.592,t:'peak',a:'s',lx:12,ly:3},
+ bessan:{n:'別山',e:2880,lon:137.614,lat:36.601,t:'peak',a:'e',lx:-10,ly:-2},
+ tsurugisawa:{n:'劍澤小屋',lon:137.6145,lat:36.6095,t:'hut',small:1,a:'s',lx:14,ly:9},
+ kenzansou:{n:'劍山莊',e:2475,lon:137.619,lat:36.614,t:'stay',date:'9/17',a:'s',lx:13,ly:0},
+ tsurugi:{n:'劍岳',e:2999,lon:137.617,lat:36.6233,t:'ref',a:'m',lx:0,ly:-12},
+ kenngozen:{n:'劍御前小舍',lon:137.606,lat:36.607,t:'hut',a:'e',lx:-11,ly:-3},
+ raichozawa:{n:'雷鳥澤',lon:137.594,lat:36.586,t:'place',a:'e',lx:-10,ly:1},
+ murodou:{n:'室堂',lon:137.5955,lat:36.577,t:'placebig',a:'e',lx:-13,ly:5,badge:'GOAL'},
+ suisho:{n:'水晶岳',e:2986,lon:137.5611,lat:36.4125,t:'ref',a:'s',lx:10,ly:1},
+ kurobegoro:{n:'黑部五郎岳',e:2840,lon:137.52,lat:36.3956,t:'ref',a:'e',lx:-9,ly:2},
+ kasa:{n:'笠岳',e:2898,lon:137.555,lat:36.323,t:'ref',a:'e',lx:-9,ly:2}
+};
+
+/* ---------- route segments (day → point ids / raw [lon,lat] bends) ---------- */
+const R=[
+ {d:1,pts:['kamikochi',[137.614,36.2555],[137.611,36.264],'nishihoSanso','dokuhyo','nishiho','ainodake','tengu','jandarm','okuho','hotakaSanso']},
+ {d:2,pts:['hotakaSanso','karasawadake','kitaho','daikiretto','minamigoya','minamidake','nakadake','obami','yarisanso']},
+ {d:3,pts:['yarisanso','senjo',[137.626,36.352],'momisawa','sugorokuGoya','sugorokudake','mitsumataRenge','mitsumata']},
+ {d:4,pts:['mitsumata','kurobeGenryu',[137.567,36.3925],[137.5595,36.3965],'kumonodaira',[137.545,36.406],'yakushisawa']},
+ {d:5,pts:['yakushisawa',[137.515,36.4215],'taroudaira','yakushitoge',[137.522,36.443],'yakushiSanso','yakushi','kitayakushi','mayama','sugo','ecchuzawa','tonbi','goshiki']},
+ {d:6,pts:['goshiki','zaratoge','shishidake','onidake','ryuo','ichinokoshi','oyama','onanji','fujinooritate','masago','bessan',[137.6155,36.6075],'kenzansou']},
+ {d:7,pts:['kenzansou','kenngozen',[137.5955,36.593],'raichozawa','murodou']}
+];
+
+/* day chip positions on map */
+const CHIP=[
+ {d:1,x:474,y:1326},{d:2,x:622,y:1122},{d:3,x:544,y:1012},{d:4,x:412,y:886},
+ {d:5,x:272,y:582},{d:6,x:428,y:288},{d:7,x:476,y:212}
+];
+
+/* ---------- grid ---------- */
+const gGrid=el('g',{});
+for(let lat=36.25;lat<=36.601;lat+=0.05){
+  const y=Y(lat);
+  el('line',{x1:40,y1:y,x2:740,y2:y,'class':'gridline'},gGrid);
+  txt(46,y+3,lat.toFixed(2)+'°N','gridlabel','end',gGrid);
+}
+for(let lon=137.5;lon<=137.651;lon+=0.05){
+  const x=X(lon);
+  el('line',{x1:x,y1:30,x2:x,y2:1440,'class':'gridline'},gGrid);
+  txt(x,24,lon.toFixed(2)+'°E','gridlabel','middle',gGrid);
+}
+
+/* ---------- river 黑部川 ---------- */
+const gW=el('g',{});
+const riverPts=[[399,899],[360,862],[312,822],[268,792],[298,747],[330,692],[356,632],[381,562],[410,492],[443,424],[470,392]];
+el('path',{d:'M'+riverPts.map(p=>p.join(' ')).join(' L '),'class':'river'},gW);
+txt(404,522,'黑部川','riverlabel','start',gW);
+
+/* ---------- routes ---------- */
+const gR=el('g',{});
+function coord(p){ return Array.isArray(p)?[X(p[0]),Y(p[1])]:[X(P[p].lon),Y(P[p].lat)]; }
+R.forEach(seg=>{
+  const d='M'+seg.pts.map(p=>coord(p).map(v=>v.toFixed(1)).join(' ')).join(' L ');
+  el('path',{d,'class':'route r'+seg.d},gR);
+});
+/* 槍岳 summit spur */
+el('path',{d:`M${X(P.yarisanso.lon)} ${Y(P.yarisanso.lat)} L ${X(P.yari.lon)} ${Y(P.yari.lat)}`,'class':'spur r2'},gR);
+
+/* ---------- day chips ---------- */
+const gC=el('g',{});
+CHIP.forEach(c=>{
+  el('circle',{cx:c.x,cy:c.y,r:10,'class':'chipbg'+c.d},gC);
+  txt(c.x,c.y+3.5,'D'+c.d,'chip','middle',gC);
+});
+
+/* ---------- deco area labels ---------- */
+const gD=el('g',{});
+txt(293,846,'雲之平','deco','end',gD);
+txt(428,1030,'西鎌尾根','deco','start',gD);
+
+/* ---------- points & labels ---------- */
+const gP=el('g',{});
+function peakPath(x,y,s){ return `M${x} ${y-s} L${x-s} ${y+s*0.72} L${x+s} ${y+s*0.72} Z`; }
+function housePath(x,y,s){ return `M${x-s} ${y+s*0.7} h${2*s} v-${s} l-${s} -${s*0.8} l-${s} ${s*0.8} z`; }
+
+Object.keys(P).forEach(id=>{
+  const p=P[id], x=X(p.lon), y=Y(p.lat);
+  const lx=x+(p.lx||0), ly=y+(p.ly||0);
+  const anchor=p.a==='m'?'middle':(p.a==='e'?'end':'start');
+
+  if(p.ldr) el('line',{x1:x,y1:y,x2:lx-(p.a==='e'?-2:p.a==='s'?2:0),y2:ly-4,'class':'leader'},gP);
+
+  if(p.t==='peak'||p.t==='peak3k'||p.t==='ref'){
+    const s=p.t==='peak3k'||p.big?7:(p.small?4.5:5.5);
+    el('path',{d:peakPath(x,y,s),'class':p.t==='ref'?'refpeak':'peak'},gP);
+    const cls=p.t==='ref'?'lbl ref':(p.t==='peak3k'||p.big?'lbl big':(p.small?'lbl small':'lbl'));
+    const t=txt(lx,ly,p.n+(p.e?' ':''),cls,anchor,gP);
+    if(p.e){ const ts=el('tspan',{'class':'elev'},t); ts.textContent=p.e; }
+    if(p.warn){ const w=el('tspan',{'class':'warnmark'},t); w.textContent=' ⚠'; }
+  }
+  else if(p.t==='hut'){
+    el('path',{d:housePath(x,y,p.small?4:5),'class':'hutshape'},gP);
+    const t=txt(lx,ly,p.n+(p.e?' ':''),p.small?'lbl small':'lbl',anchor,gP);
+    if(p.e){ const ts=el('tspan',{'class':'elev'},t); ts.textContent=p.e; }
+    if(p.warn){ const w=el('tspan',{'class':'warnmark'},t); w.textContent=' ⚠'; }
+  }
+  else if(p.t==='stay'){
+    el('path',{d:housePath(x,y,6),'class':'stayshape'},gP);
+    const t=txt(lx,ly,'','staylbl',anchor,gP);
+    const d1=el('tspan',{'class':'staydate'},t); d1.textContent=p.date+' ';
+    const nm=el('tspan',{},t); nm.textContent=p.n;
+    if(p.e){ const ts=el('tspan',{'class':'elev'},t); ts.textContent=' '+p.e; }
+    const bb=t.getBBox();
+    const r=el('rect',{x:bb.x-6,y:bb.y-3,width:bb.width+12,height:bb.height+6,rx:5,'class':'staypill'},gP);
+    gP.insertBefore(r,t);
+  }
+  else if(p.t==='pass'){
+    el('path',{d:`M${x-6} ${y-3} Q${x} ${y+5} ${x+6} ${y-3}`,'class':'passshape'},gP);
+    const t=txt(lx,ly,p.n,p.small?'lbl small':'lbl',anchor,gP);
+    if(p.warn){ const w=el('tspan',{'class':'warnmark'},t); w.textContent=' ⚠'; }
+  }
+  else if(p.t==='place'||p.t==='placebig'){
+    el('circle',{cx:x,cy:y,r:p.t==='placebig'?5:3.5,'class':'placeshape'},gP);
+    if(p.t==='placebig') el('circle',{cx:x,cy:y,r:8,fill:'none',stroke:'var(--ink)','stroke-width':1},gP);
+    const t=txt(lx,ly,p.n+(p.e?' ':''),p.t==='placebig'?'lbl big place':'lbl',anchor,gP);
+    if(p.e){ const ts=el('tspan',{'class':'elev'},t); ts.textContent=p.e; }
+    if(p.badge){
+      const bx=p.a==='e'?lx-64:lx, by=ly+8;
+      const bt=txt(p.a==='e'?lx-4:lx+2,by+11,p.badge,'badge',p.a==='e'?'end':'start',gP);
+      const bb=bt.getBBox();
+      const r=el('rect',{x:bb.x-5,y:bb.y-2.5,width:bb.width+10,height:bb.height+5,rx:3,'class':'badgebg'},gP);
+      gP.insertBefore(r,bt);
+    }
+  }
+});
+
+/* 室堂 → 富山市 exit note */
+txt(X(P.murodou.lon)-13,Y(P.murodou.lat)+38,'阿爾卑斯路線下山 → 富山市','lbl small','end',gP);
+
+/* ---------- north arrow & scale ---------- */
+const gN=el('g',{});
+el('path',{d:'M70 96 L64 118 L70 112 L76 118 Z','class':'north'},gN);
+txt(70,90,'N','lbl big','middle',gN);
+el('line',{x1:150,y1:1452,x2:300,y2:1452,'class':'scalebar'},gN);
+el('line',{x1:150,y1:1447,x2:150,y2:1457,'class':'scalebar'},gN);
+el('line',{x1:225,y1:1449,x2:225,y2:1455,'class':'scalebar'},gN);
+el('line',{x1:300,y1:1447,x2:300,y2:1457,'class':'scalebar'},gN);
+txt(150,1470,'0','scaletext','middle',gN);
+txt(225,1470,'2.5','scaletext','middle',gN);
+txt(300,1470,'5 km','scaletext','middle',gN);
+
+/* ---------- header day chips (HTML) ---------- */
+const chipbox=document.getElementById('daychips');
+const dayMeta=[
+ ['D1','9/12'],['D2','9/13'],['D3','9/14'],['D4','9/15'],['D5','9/16'],['D6','9/17'],['D7','9/18']
+];
+dayMeta.forEach((m,i)=>{
+  const s=document.createElement('span');
+  s.innerHTML=`<i style="background:var(--d${i+1})"></i>${m[0]} ${m[1]}`;
+  chipbox.appendChild(s);
+});
+
+/* ---------- day cards ---------- */
+const DAYS=[
+ {d:'D0',date:'9/11',transport:1,route:'交通日（移動・耍廢）',meta:''},
+ {d:'D1',date:'9/12',c:1,
+  route:'上高地登山口 <b>–3hr–</b> 西穗山莊 <b>–75m–</b> 西穗獨標 <b>–1hr–</b> 西穗高岳 <b>–5hr30–</b> 奧穗高岳（叉路往左）<b>–45min–</b> 穗高岳山莊',
+  meta:'<span class="stay">宿：穗高岳山莊</span>（一個月前預定）<br><span class="warn">⚠ 西穗山莊已訂</span>——確認能否推進到穗高岳營地，並記得問西穗山莊能不能取消'},
+ {d:'D2',date:'9/13',c:2,
+  route:'穗高岳山莊 <b>–6hr–</b> 槍岳山莊（涸澤岳・北穗高岳・大切戶・南岳・中岳・大喰岳）＋槍岳登頂往返',
+  meta:'<span class="stay">宿：槍岳山莊</span>（一個月前預定）'},
+ {d:'D3',date:'9/14',c:3,
+  route:'槍岳山莊 → 西鎌尾根（千丈乘越・樅澤岳）→ 雙六小屋 → 雙六岳 → 三俁蓮華岳 → 三俁山莊',
+  meta:'<span class="stay">宿：三俁山莊</span>｜預刷 1245 台幣・<span class="warn">不可退</span>，剩餘當日現金繳'},
+ {d:'D4',date:'9/15',c:4,
+  route:'三俁山莊 → 黑部源流 → 雲之平（雲之平山莊）→ 藥師澤小屋',
+  meta:'<span class="stay">宿：藥師澤小屋</span>'},
+ {d:'D5',date:'9/16',c:5,
+  route:'藥師澤小屋 → 太郎平小屋 → 藥師岳山莊 → 藥師岳 → 北藥師岳 → 間山 → スゴ乘越小屋 → 越中澤岳 → 鳶山 → 五色原山莊',
+  meta:'<span class="stay">宿：五色原山莊</span>｜長程日——中途唯一山屋為スゴ乘越小屋'},
+ {d:'D6',date:'9/17',c:6,
+  route:'五色原山莊 → ザラ峠 → 獅子岳 → 龍王岳 → 一之越 → 雄山 → 大汝山 → 富士之折立 → 真砂岳 → 別山 → 劍澤 → 劍山莊',
+  meta:'<span class="stay">宿：劍山莊</span>｜晚餐＋9/18 早餐便當 <span class="paid">已付</span>'},
+ {d:'D7',date:'9/18',c:7,
+  route:'劍山莊 → 劍御前小舍（別山乘越）→ 雷鳥澤 → 室堂 <b>下山～～～！！</b> → 富山市',
+  meta:'晚上住宿 inn（booking $1750）<span class="paid">已付</span>｜tinghike@gmail.com'},
+ {d:'D8',date:'9/19',transport:1,route:'富山 → 名古屋',meta:''},
+ {d:'D9',date:'9/20',transport:1,route:'名古屋 → 回台灣 ✈',meta:''}
+];
+const daysBox=document.getElementById('days');
+DAYS.forEach(v=>{
+  const div=document.createElement('div');
+  div.className='day'+(v.transport?' transport':'');
+  div.innerHTML=`
+   <div class="tag">
+     <span class="dnum"><i style="background:${v.c?`var(--d${v.c})`:'var(--transport)'}"></i>${v.d}</span>
+     <span class="date">${v.date}</span>
+   </div>
+   <div>
+     <div class="routeline">${v.route}</div>
+     ${v.meta?`<div class="meta">${v.meta}</div>`:''}
+   </div>`;
+  daysBox.appendChild(div);
+});
+})();
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+(function(){
+const HNBLUE='#2f6fdd';
+const DAYCOLORS=['#c93c3c','#db7a1c','#a08a10','#3f8f55','#17879c','#3e63c4','#8e4fbf'];
+
+const DAYROUTES=[
+ {d:1,date:'9/12',from:'上高地',to:'穗高岳山莊',pts:[[36.249,137.636],[36.2465,137.630],[36.252,137.621],[36.259,137.6165],[36.266,137.616],[36.2705,137.6205],[36.2745,137.6225],[36.2785,137.625],[36.281,137.6265],[36.2839,137.6278],[36.2857,137.632],[36.2867,137.636],[36.2875,137.640],[36.2885,137.6437],[36.2894,137.6479],[36.2926,137.6478]]},
+ {d:2,date:'9/13',from:'穗高岳山莊',to:'槍岳山莊',pts:[[36.2926,137.6478],[36.2946,137.6478],[36.297,137.650],[36.301,137.6535],[36.305,137.652],[36.309,137.6505],[36.3115,137.650],[36.3135,137.649],[36.3165,137.648],[36.325,137.6478],[36.3315,137.647],[36.3413,137.6465]]},
+ {d:3,date:'9/14',from:'槍岳山莊',to:'三俁山莊',pts:[[36.3413,137.6465],[36.3455,137.638],[36.3505,137.630],[36.3535,137.6215],[36.358,137.613],[36.360,137.606],[36.362,137.599],[36.3653,137.5942],[36.370,137.590],[36.3772,137.5822],[36.3822,137.5865]]},
+ {d:4,date:'9/15',from:'三俁山莊',to:'藥師澤小屋',pts:[[36.3822,137.5865],[36.388,137.578],[36.3925,137.567],[36.3965,137.5595],[36.399,137.556],[36.406,137.545],[36.412,137.5365],[36.42,137.529]]},
+ {d:5,date:'9/16',from:'藥師澤小屋',to:'五色原山莊',pts:[[36.42,137.529],[36.4185,137.522],[36.42,137.512],[36.4225,137.505],[36.424,137.503],[36.431,137.508],[36.443,137.522],[36.456,137.5395],[36.4678,137.5447],[36.476,137.5395],[36.49,137.543],[36.498,137.548],[36.504,137.552],[36.5165,137.55],[36.533,137.552],[36.5405,137.5575]]},
+ {d:6,date:'9/17',from:'五色原山莊',to:'劍山莊',pts:[[36.5405,137.5575],[36.548,137.559],[36.555,137.566],[36.56,137.578],[36.5645,137.59],[36.568,137.604],[36.572,137.61],[36.5758,137.6172],[36.58,137.618],[36.584,137.617],[36.592,137.618],[36.601,137.614],[36.6095,137.6145],[36.614,137.619]]},
+ {d:7,date:'9/18',from:'劍山莊',to:'室堂',pts:[[36.614,137.619],[36.611,137.611],[36.607,137.606],[36.598,137.599],[36.586,137.594],[36.58,137.594],[36.577,137.5955]]}
+];
+const SPUR=[[36.3413,137.6465],[36.3419,137.6476]];
+
+const STAYS=[
+ ['穗高岳山莊',36.2926,137.6478,'9/12',2996,'一個月前預定'],
+ ['槍岳山莊',36.3413,137.6465,'9/13',3080,'一個月前預定'],
+ ['三俁山莊',36.3822,137.5865,'9/14',2550,'預刷 1245 台幣・不可退，剩餘當日現金繳'],
+ ['藥師澤小屋',36.42,137.529,'9/15',1912,''],
+ ['五色原山莊',36.5405,137.5575,'9/16',2500,''],
+ ['劍山莊',36.614,137.619,'9/17',2475,'晚餐＋9/18 早餐便當 已付']
+];
+const HUTS=[
+ ['西穗山莊',36.2705,137.6205,2367],['南岳小屋',36.3135,137.649,3030],
+ ['雙六小屋',36.362,137.599,2550],['雲之平山莊',36.399,137.556,2550],
+ ['太郎平小屋',36.424,137.503,2330],['藥師岳山莊',36.456,137.5395,2701],
+ ['スゴ乘越小屋',36.498,137.548,2270],['一之越山莊',36.572,137.61,2700],
+ ['劍御前小舍',36.607,137.606,2750],['劍澤小屋',36.6095,137.6145,2520]
+];
+const PEAKS=[
+ ['西穗獨標',36.2785,137.625,2701,0],['西穗高岳',36.2839,137.6278,2909,1],
+ ['間之岳',36.2857,137.632,2907,0],['天狗之頭',36.2867,137.636,2909,0],
+ ['憲兵岩',36.2885,137.6437,3163,0],['奧穗高岳',36.2894,137.6479,3190,1],
+ ['涸澤岳',36.2946,137.6478,3110,0],['北穗高岳',36.301,137.6535,3106,1],
+ ['南岳',36.3165,137.648,3033,0],['中岳',36.325,137.6478,3084,0],
+ ['大喰岳',36.3315,137.647,3101,0],['槍岳',36.3419,137.6476,3180,1],
+ ['樅澤岳',36.358,137.613,2755,0],['雙六岳',36.3653,137.5942,2860,0],
+ ['三俁蓮華岳',36.3772,137.5822,2841,0],['藥師岳',36.4678,137.5447,2926,1],
+ ['北藥師岳',36.476,137.5395,2900,0],['間山',36.49,137.543,2585,0],
+ ['越中澤岳',36.5165,137.55,2591,0],['鳶山',36.533,137.552,2616,0],
+ ['獅子岳',36.555,137.566,2714,0],['鬼岳',36.56,137.578,2750,0],
+ ['龍王岳',36.568,137.604,2872,0],['雄山',36.5758,137.6172,3003,1],
+ ['大汝山',36.58,137.618,3015,0],['富士之折立',36.584,137.617,2999,0],
+ ['真砂岳',36.592,137.618,2861,0],['別山',36.601,137.614,2880,0]
+];
+const REFPEAKS=[
+ ['劍岳',36.6233,137.617,2999],['鷲羽岳',36.3906,137.5944,2924],
+ ['水晶岳',36.4125,137.5611,2986],['黑部五郎岳',36.3956,137.52,2840],['笠岳',36.323,137.555,2898]
+];
+const PASSES=[
+ ['大切戶',36.309,137.6505],['千丈乘越',36.3455,137.638],['藥師峠',36.431,137.508],
+ ['ザラ峠',36.548,137.559],['一之越',36.572,137.61],['黑部源流',36.388,137.578],
+ ['雲之平',36.402,137.551],['雷鳥澤',36.586,137.594]
+];
+
+const map=L.map('lmap',{zoomControl:false});
+L.control.zoom({position:'bottomright'}).addTo(map);
+L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
+
+const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+const gsi=L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
+  {maxZoom:18,attribution:'&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>'});
+const topo=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+  {maxZoom:17,attribution:'&copy; OpenStreetMap contributors, SRTM | 樣式 &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'});
+osm.addTo(map);
+
+const dayLines=DAYROUTES.map((r,i)=>
+  L.polyline(r.pts,{color:HNBLUE,weight:5,opacity:.9})
+   .bindPopup(`<b>D${r.d}</b>（${r.date}）<br>${r.from} → ${r.to}`)
+   .addTo(map));
+L.polyline(SPUR,{color:HNBLUE,weight:3,opacity:.9,dashArray:'4 6'}).addTo(map);
+
+document.getElementById('daymode').addEventListener('change',e=>{
+  dayLines.forEach((pl,i)=>pl.setStyle({color:e.target.checked?DAYCOLORS[i]:HNBLUE}));
+});
+
+function icon(html){return L.divIcon({html,className:'lmkwrap',iconSize:null,iconAnchor:[7,8]});}
+const gStay=L.layerGroup().addTo(map), gHut=L.layerGroup().addTo(map),
+      gPeak=L.layerGroup().addTo(map), gPass=L.layerGroup().addTo(map),
+      gRef=L.layerGroup().addTo(map);
+
+STAYS.forEach(s=>L.marker([s[1],s[2]],{icon:icon(
+  `<div class="lmk stay"><span class="dot"></span><span class="lbl mid">${s[3]} ${s[0]}</span></div>`),zIndexOffset:500})
+  .bindPopup(`<b>${s[0]}</b>（${s[4]} m）<br>${s[3]} 過夜${s[5]?'<br>📌 '+s[5]:''}`).addTo(gStay));
+
+HUTS.forEach(h=>L.marker([h[1],h[2]],{icon:icon(
+  `<div class="lmk minor"><span class="dot"></span><span class="lbl">${h[0]}</span></div>`)})
+  .bindPopup(`<b>${h[0]}</b>（${h[3]} m）<br>途經山屋`).addTo(gHut));
+
+PEAKS.forEach(p=>L.marker([p[1],p[2]],{icon:icon(
+  `<div class="lmk ${p[4]?'major':'minor'}"><span class="tri">▲</span><span class="lbl${p[4]?' mid':''}">${p[0]} ${p[3]}</span></div>`)})
+  .bindPopup(`<b>${p[0]}</b> ${p[3]} m`).addTo(gPeak));
+
+REFPEAKS.forEach(p=>L.marker([p[1],p[2]],{icon:icon(
+  `<div class="lmk minor ref"><span class="tri">▲</span><span class="lbl">${p[0]} ${p[2+1]}</span></div>`)})
+  .bindPopup(`<b>${p[0]}</b> ${p[3]} m（不經過，方位參考）`).addTo(gRef));
+
+PASSES.forEach(p=>L.marker([p[1],p[2]],{icon:icon(
+  `<div class="lmk minor pass"><span class="dot"></span><span class="lbl">${p[0]}</span></div>`)})
+  .addTo(gPass));
+
+const pin=c=>`<svg width="26" height="36" viewBox="0 0 26 36"><path d="M13 1C6.4 1 1 6.4 1 13c0 8.8 12 22 12 22s12-13.2 12-22C25 6.4 19.6 1 13 1z" fill="${c}" stroke="#fff" stroke-width="2"/><circle cx="13" cy="13" r="5" fill="#fff"/></svg>`;
+L.marker([36.249,137.636],{icon:L.divIcon({html:pin('#2f9e44'),className:'lmkwrap',iconSize:[26,36],iconAnchor:[13,35]}),zIndexOffset:1000})
+ .bindPopup('<b>上高地</b>（1505 m）<br>D1 起點').addTo(map);
+L.marker([36.577,137.5955],{icon:L.divIcon({html:pin('#d33030'),className:'lmkwrap',iconSize:[26,36],iconAnchor:[13,35]}),zIndexOffset:1000})
+ .bindPopup('<b>室堂</b>（2450 m）<br>D7 終點，阿爾卑斯路線下山 → 富山市').addTo(map);
+
+L.control.layers(
+  {'OpenStreetMap 街道圖':osm,'日本地理院地形圖':gsi,'OpenTopoMap 等高線圖':topo},
+  {'過夜山屋':gStay,'途經山屋':gHut,'山頭':gPeak,'地標':gPass,'參考山頭':gRef},
+  {position:'topleft'}).addTo(map);
+
+function syncZoom(){const el=map.getContainer(),z=map.getZoom();el.classList.toggle('lz',z<12);el.classList.toggle('lzm',z<11);}
+map.on('zoomend',syncZoom);
+
+map.fitBounds(L.latLngBounds(DAYROUTES.flatMap(r=>r.pts)),{padding:[30,30]});
+syncZoom();
+
+// GPX 下載（示意路線）
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+document.getElementById('gpxbtn').addEventListener('click',()=>{
+  const w=[];
+  const wpt=(la,lo,name,ele,sym)=>w.push(`<wpt lat="${la}" lon="${lo}">`+(ele?`<ele>${ele}</ele>`:'')+`<name>${esc(name)}</name>`+(sym?`<sym>${sym}</sym>`:'')+`</wpt>`);
+  wpt(36.249,137.636,'上高地（起點）',1505);
+  STAYS.forEach(s=>wpt(s[1],s[2],`${s[3]}宿 ${s[0]}`,s[4],'Lodge'));
+  HUTS.forEach(h=>wpt(h[1],h[2],h[0],h[3],'Lodge'));
+  PEAKS.forEach(p=>wpt(p[1],p[2],p[0],p[3],'Summit'));
+  wpt(36.577,137.5955,'室堂（終點）',2450);
+  const segs=DAYROUTES.map(r=>`<trkseg>`+r.pts.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"/>`).join('')+`</trkseg>`).join('');
+  const gpx=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Cworld travel" xmlns="http://www.topografix.com/GPX/1/1"><metadata><name>北阿爾卑斯大縱走 2026（示意）</name></metadata>${w.join('')}<trk><name>北阿爾卑斯大縱走 2026</name>${segs}</trk></gpx>`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([gpx],{type:'application/gpx+xml'}));
+  a.download='北阿爾卑斯大縱走2026_示意.gpx';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+})();
+</script>
+
+</body>
+</html>
