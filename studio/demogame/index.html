@@ -45,7 +45,7 @@
     }
     .sort-btn:hover { border-color: var(--accent-mid); color: var(--text); }
     .sort-btn.active { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; }
-    .sort-dir { min-width: 84px; }
+    .sort-dir { width: 38px; font-size: .9rem; line-height: 1; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
     .dot.loading { background: #f0a020; animation: pulse 1s infinite; }
     .dot.done { background: #3a8a50; }
@@ -184,9 +184,9 @@
     <span id="status-text">讀取遊戲清單中…</span>
     <div class="sort-bar" id="sort-bar" hidden>
       <span class="sort-label">排序</span>
-      <button class="sort-btn" type="button" data-key="date">數學更新時間</button>
-      <button class="sort-btn" type="button" data-key="parsheet">PARsheet ID</button>
-      <button class="sort-btn sort-dir" type="button" id="sort-dir">↓ 新→舊</button>
+      <button class="sort-btn" type="button" data-key="date">更新時間</button>
+      <button class="sort-btn" type="button" data-key="gameid">遊戲編號</button>
+      <button class="sort-btn sort-dir" type="button" id="sort-dir">↓</button>
     </div>
   </div>
   <div class="grid" id="game-grid">
@@ -356,13 +356,13 @@ let games = [];
 const sortState = (() => {
   try { return JSON.parse(localStorage.getItem('demogame-sort')) || {}; } catch { return {}; }
 })();
-let sortKey = sortState.key === 'parsheet' ? 'parsheet' : 'date';   // date | parsheet
+let sortKey = sortState.key === 'gameid' ? 'gameid' : 'date';       // date | gameid
 let sortDesc = sortState.desc !== false;                            // true = 新→舊 / 大→小
 
 function render() {
   const grid = document.getElementById('game-grid');
   const dir = sortDesc ? 1 : -1;
-  const val = g => sortKey === 'date' ? (g.mathDate || 0) : (g.parsheetId || '');
+  const val = g => sortKey === 'date' ? (g.mathDate || 0) : (g.id || '');
   const sorted = [...games].sort((a, b) => {
     const va = val(a), vb = val(b);
     // 查不到值的（沒有 Source / 沒寫 PARsheet ID）一律沉底，不隨正反序跑到最前面
@@ -409,9 +409,11 @@ function render() {
   document.querySelectorAll('#sort-bar [data-key]').forEach(b => {
     b.classList.toggle('active', b.dataset.key === sortKey);
   });
-  document.getElementById('sort-dir').textContent = sortDesc
-    ? (sortKey === 'date' ? '↓ 新→舊' : '↓ 大→小')
-    : (sortKey === 'date' ? '↑ 舊→新' : '↑ 小→大');
+  const dirBtn = document.getElementById('sort-dir');
+  dirBtn.textContent = sortDesc ? '↓' : '↑';
+  dirBtn.title = sortDesc
+    ? (sortKey === 'date' ? '新 → 舊' : '大 → 小')
+    : (sortKey === 'date' ? '舊 → 新' : '小 → 大');
 }
 
 function setSort(key, desc) {
