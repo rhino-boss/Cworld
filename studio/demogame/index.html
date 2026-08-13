@@ -11,11 +11,17 @@
     :root {
       --bg: #f7f7f5; --surface: #fff; --border: #e8e8e4;
       --text: #1a1a1a; --muted: #6b6b6b;
-      --accent-dark: #4a3828; --accent-mid: #7a5c3a;
+      --accent-dark: #2a3d5c; --accent-mid: #3e6394;
       --card-edge: #e6e6e2;
       --radius: 14px;
     }
     body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    nav { background: #2a3d5c; padding: 0 32px; display: flex; align-items: center; gap: 8px; height: 52px; }
+    nav a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
+    nav a:hover { color: #fff; }
+    nav .sep { color: rgba(255,255,255,.3); font-size: .85rem; }
+    nav .current { color: #fff; font-weight: 600; font-size: .85rem; }
 
     .hero { background: linear-gradient(135deg, var(--accent-dark), var(--accent-mid)); padding: 40px 48px 36px; color: #fff; }
     /* 左上返回：走瀏覽器歷史，不暴露站內其他網址 */
@@ -170,7 +176,13 @@
 </head>
 <body>
 
-<!-- 這頁會分享給外部，不放任何回到 Cworld 其他頁面的連結 -->
+<nav>
+  <a href="../../index.html">Cworld</a>
+  <span class="sep">/</span>
+  <a href="../../index.html">工作室</a>
+  <span class="sep">/</span>
+  <span class="current">Demogame</span>
+</nav>
 
 <div class="hero">
   <button class="hero-back" id="hero-back" type="button" hidden>← 返回上一頁</button>
