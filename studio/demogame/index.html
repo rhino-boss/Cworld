@@ -32,7 +32,20 @@
     /* 1360px 上限 ≈ 最多 3 欄，視窗變窄自動降成 2 欄 / 1 欄，卡片寬度維持 ~400px */
     .container { max-width: 1360px; margin: 0 auto; padding: 36px 48px 80px; }
 
-    .status-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: .82rem; color: var(--muted); }
+    .status-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: .82rem; color: var(--muted); flex-wrap: wrap; }
+
+    /* 排序控制列 */
+    .sort-bar { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+    .sort-label { margin-right: 2px; }
+    .sort-btn {
+      font-family: inherit; font-size: .78rem; font-weight: 600; cursor: pointer;
+      padding: 6px 12px; border-radius: 8px;
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .sort-btn:hover { border-color: var(--accent-mid); color: var(--text); }
+    .sort-btn.active { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; }
+    .sort-dir { min-width: 84px; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
     .dot.loading { background: #f0a020; animation: pulse 1s infinite; }
     .dot.done { background: #3a8a50; }
@@ -169,6 +182,12 @@
   <div class="status-bar">
     <div class="dot loading" id="status-dot"></div>
     <span id="status-text">讀取遊戲清單中…</span>
+    <div class="sort-bar" id="sort-bar" hidden>
+      <span class="sort-label">排序</span>
+      <button class="sort-btn" type="button" data-key="date">數學更新時間</button>
+      <button class="sort-btn" type="button" data-key="parsheet">PARsheet ID</button>
+      <button class="sort-btn sort-dir" type="button" id="sort-dir">↓ 新→舊</button>
+    </div>
   </div>
   <div class="grid" id="game-grid">
     <!-- 骨架屏 -->
@@ -208,17 +227,21 @@ async function fetchJson(url) {
   return res.json();
 }
 
-// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」欄位
-// 對應表格列：| 遊戲類型 | Video Slot - Ways / Cascade |
-async function fetchGameType(gameBase) {
+// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」與「PARsheet ID」
+// 對應表格列：| 遊戲類型 | Video Slot - Ways / Cascade | 、| PARsheet ID | H0131 |
+async function fetchRuleInfo(gameBase) {
+  const empty = { gameType: '', parsheetId: '' };
   try {
     const res = await fetch(`${gameBase}/game_rule.md`);
-    if (!res.ok) return '';
+    if (!res.ok) return empty;
     const text = await res.text();
-    const m = text.match(/\|\s*遊戲類型\s*\|([^|\n]*)\|/);
-    const v = m ? m[1].trim() : '';
-    return (!v || v === '-') ? '' : v;
-  } catch { return ''; }
+    const cell = label => {
+      const m = text.match(new RegExp(`\\|\\s*${label}\\s*\\|([^|\\n]*)\\|`));
+      const v = m ? m[1].trim().replace(/^`|`$/g, '') : '';
+      return (!v || v === '-') ? '' : v;
+    };
+    return { gameType: cell('遊戲類型'), parsheetId: cell('PARsheet ID') };
+  } catch { return empty; }
 }
 
 // 「數學最後更新時間」＝該遊戲 Source/ 資料夾的最後一筆 commit 時間
@@ -300,32 +323,60 @@ async function init() {
       hasRule: hasFile(folder, 'game_rule.md'),
     }));
 
-    // 讀各遊戲的 game_rule.md 取遊戲類型（與本頁同網域，無 CORS 問題）
+    // 讀各遊戲的 game_rule.md 取遊戲類型 / PARsheet ID（與本頁同網域，無 CORS 問題）
     // 同時查各遊戲 Source/ 的最後 commit 時間，當作「數學最後更新時間」
     await Promise.all(results.map(async g => {
-      const [type, mathDate] = await Promise.all([
+      const [rule, mathDate] = await Promise.all([
         g.hasRule
-          ? fetchGameType(`${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`)
-          : Promise.resolve(''),
+          ? fetchRuleInfo(`${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`)
+          : Promise.resolve({ gameType: '', parsheetId: '' }),
         fetchMathDate(g.folderName),
       ]);
-      g.gameType = type;
+      g.gameType = rule.gameType;
+      g.parsheetId = rule.parsheetId;
       g.mathDate = mathDate;
     }));
-
-    // 數學越新的排越前面；查不到時間的沉底，最後才看有沒有 demo
-    results.sort((a, b) => (b.mathDate - a.mathDate) || (b.hasDemo - a.hasDemo));
 
     const demoCount = results.filter(r => r.hasDemo).length;
     dot.className = 'dot done';
     statusText.textContent = `共 ${results.length} 款遊戲，${demoCount} 款可遊玩`;
 
-    // 依 id 由大到小取最新的 3 款，掛上 NEW 緞帶
-    const newIds = new Set(
-      [...results].map(r => r.id).filter(Boolean).sort().reverse().slice(0, 3)
-    );
+    games = results;
+    document.getElementById('sort-bar').hidden = false;
+    render();
+  } catch (e) {
+    dot.className = 'dot error';
+    statusText.textContent = '讀取失敗';
+    grid.innerHTML = `<div class="error-msg"><div class="icon">⚠️</div><p>無法讀取遊戲清單<br><small>${e.message}</small></p></div>`;
+  }
+}
 
-    grid.innerHTML = results.map(g => {
+// ── 排序 ──
+let games = [];
+const sortState = (() => {
+  try { return JSON.parse(localStorage.getItem('demogame-sort')) || {}; } catch { return {}; }
+})();
+let sortKey = sortState.key === 'parsheet' ? 'parsheet' : 'date';   // date | parsheet
+let sortDesc = sortState.desc !== false;                            // true = 新→舊 / 大→小
+
+function render() {
+  const grid = document.getElementById('game-grid');
+  const dir = sortDesc ? 1 : -1;
+  const val = g => sortKey === 'date' ? (g.mathDate || 0) : (g.parsheetId || '');
+  const sorted = [...games].sort((a, b) => {
+    const va = val(a), vb = val(b);
+    // 查不到值的（沒有 Source / 沒寫 PARsheet ID）一律沉底，不隨正反序跑到最前面
+    if (!va !== !vb) return va ? -1 : 1;
+    const cmp = sortKey === 'date' ? (vb - va) : String(vb).localeCompare(String(va));
+    return (cmp * dir) || (b.hasDemo - a.hasDemo);
+  });
+
+  // 依 id 由大到小取最新的 3 款，掛上 NEW 緞帶
+  const newIds = new Set(
+    [...games].map(r => r.id).filter(Boolean).sort().reverse().slice(0, 3)
+  );
+
+  grid.innerHTML = sorted.map(g => {
       const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
       const playUrl  = `${gameBase}/`;
       // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
@@ -353,14 +404,26 @@ async function init() {
             }
           </div>
         </div>`;
-    }).join('');
+  }).join('');
 
-  } catch (e) {
-    dot.className = 'dot error';
-    statusText.textContent = '讀取失敗';
-    grid.innerHTML = `<div class="error-msg"><div class="icon">⚠️</div><p>無法讀取遊戲清單<br><small>${e.message}</small></p></div>`;
-  }
+  document.querySelectorAll('#sort-bar [data-key]').forEach(b => {
+    b.classList.toggle('active', b.dataset.key === sortKey);
+  });
+  document.getElementById('sort-dir').textContent = sortDesc
+    ? (sortKey === 'date' ? '↓ 新→舊' : '↓ 大→小')
+    : (sortKey === 'date' ? '↑ 舊→新' : '↑ 小→大');
 }
+
+function setSort(key, desc) {
+  sortKey = key; sortDesc = desc;
+  try { localStorage.setItem('demogame-sort', JSON.stringify({ key, desc })); } catch {}
+  render();
+}
+
+document.querySelectorAll('#sort-bar [data-key]').forEach(btn => {
+  btn.addEventListener('click', () => setSort(btn.dataset.key, sortDesc));
+});
+document.getElementById('sort-dir').addEventListener('click', () => setSort(sortKey, !sortDesc));
 
 init();
 
