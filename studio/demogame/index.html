@@ -24,14 +24,6 @@
     nav .current { color: #fff; font-weight: 600; font-size: .85rem; }
 
     .hero { background: linear-gradient(135deg, var(--accent-dark), var(--accent-mid)); padding: 40px 48px 36px; color: #fff; }
-    /* 左上返回：走瀏覽器歷史，不暴露站內其他網址 */
-    .hero-back {
-      display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px;
-      background: rgba(255,255,255,.14); color: #fff; border: 0;
-      padding: 7px 14px; border-radius: 8px; font-size: .82rem; font-weight: 700;
-      cursor: pointer; font-family: inherit;
-    }
-    .hero-back:hover { background: rgba(255,255,255,.28); }
     .hero h1 { font-size: 1.75rem; font-weight: 700; }
     .hero p { margin-top: 6px; font-size: .9rem; opacity: .7; }
 
@@ -185,7 +177,6 @@
 </nav>
 
 <div class="hero">
-  <button class="hero-back" id="hero-back" type="button" hidden>← 返回上一頁</button>
   <h1>🎰 Demogame</h1>
   <p>自製的 Slot 遊戲，點進去直接玩</p>
 </div>
@@ -440,13 +431,6 @@ document.querySelectorAll('#sort-bar [data-key]').forEach(btn => {
 document.getElementById('sort-dir').addEventListener('click', () => setSort(sortKey, !sortDesc));
 
 init();
-
-// 有上一頁可回時才顯示返回鈕（直接開這個網址的人不會看到）
-const heroBack = document.getElementById('hero-back');
-if (history.length > 1) {
-  heroBack.hidden = false;
-  heroBack.addEventListener('click', () => history.back());
-}
 
 // ── 遊戲以 iframe 在同一頁開啟，並支援上一頁 / Esc 返回列表 ──
 const player      = document.getElementById('player');
