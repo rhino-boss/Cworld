@@ -253,8 +253,6 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="dayswrap">
 <div class="days" id="days"></div>
 </div>
-</details>
-
 </div>
 </details>
 
@@ -413,6 +411,8 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="secbody">
 <div class="subbody">
 <div id="packlist"></div>
+<p class="hint">可勾選；點文字可直接編輯、✕ 刪除、下方輸入框＋新增。內容存在這台裝置的瀏覽器。</p>
+</div>
 </div>
 </details>
 
@@ -1078,18 +1078,19 @@ for(let e=1500;e<=3250;e+=250){
 el2('path',{d:'M'+PROF.map(p=>`${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(' L ')+` L ${X(kmMax)} ${pB} L ${L} ${pB} Z`,fill:'url(#ukg)'});
 el2('path',{d:'M'+PROF.map(p=>`${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(' L '),fill:'none',stroke:'#41708f','stroke-width':3,'stroke-linejoin':'round'});
 /* waypoint verticals + vertical name labels with stagger */
-const tiers=[-1e9,-1e9,-1e9];
+let lastLx=-1e9,lastRow=0;
 BWP.forEach(w=>{
   const[nm,km,ev]=w,x=X(km),y=Y(ev);
-  let ti=0;
-  while(ti<2&&x-tiers[ti]<27)ti++;
-  tiers[ti]=x;
-  const top=26+ti*46;
-  el2('line',{x1:x,y1:top,x2:x,y2:b2B,stroke:'#d9d9d3','stroke-width':.8});
+  const labx=Math.max(x,lastLx+16);
+  const nrow=(labx-lastLx<32)?1-lastRow:0;
+  lastLx=labx;lastRow=nrow;
+  el2('line',{x1:x,y1:pT,x2:x,y2:b2B,stroke:'#d9d9d3','stroke-width':.8});
   el2('circle',{cx:x,cy:y,r:3,fill:'#33586f'});
-  const num=el2('text',{x:x,y:top-6,'font-size':11,fill:'#777','text-anchor':'middle'});num.textContent=ev;
-  const t=el2('text',{x:x,y:top+8,'font-size':13,'font-weight':'700',fill:'#222','text-anchor':'middle'});
-  nm.split('').forEach((ch,i)=>{const ts=document.createElementNS(NS,'tspan');ts.setAttribute('x',x);ts.setAttribute('dy',i?'1em':'0');ts.textContent=ch;t.appendChild(ts);});
+  const nameTop=88,bot=nameTop+nm.length*13;
+  el2('line',{x1:labx,y1:bot+4,x2:x,y2:pT,stroke:'#c9c9c2','stroke-width':.7});
+  const num=el2('text',{x:labx,y:nrow?66:78,'font-size':10,fill:'#8a8a84','text-anchor':'middle'});num.textContent=ev;
+  const t=el2('text',{x:labx,y:nameTop+10,'font-size':12,'font-weight':'700',fill:'#222','text-anchor':'middle'});
+  nm.split('').forEach((ch,i)=>{const ts=document.createElementNS(NS,'tspan');ts.setAttribute('x',labx);ts.setAttribute('dy',i?'1em':'0');ts.textContent=ch;t.appendChild(ts);});
 });
 /* bands */
 function band(list,y1,y2,color){
