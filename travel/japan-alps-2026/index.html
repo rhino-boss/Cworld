@@ -151,6 +151,7 @@ details.sec{border:1px solid var(--line);border-radius:16px;margin:16px 0;backgr
   position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07)}
 details.sec::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,#d4cba8)}
 #sec-days{--accent:#d4cba8}
+#sec-flight{--accent:#a8c4d8}
 #sec-hike{--accent:#a8d4b8}
 #sec-travel{--accent:#a8b8d4}
 #sec-pack{--accent:#d4a8a8}
@@ -225,6 +226,20 @@ details[open]>summary::before{transform:rotate(90deg)}
 .flightbox{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:10px 14px;margin:0 0 14px}
 .fb-head{font-weight:700;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .fb-meta{font-weight:400;font-size:12.5px;color:var(--muted)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.fcard{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:12px 14px}
+.fhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
+.fhead span{font-size:11px;color:var(--muted);text-align:right}
+.ftime{font-size:17px;font-weight:800;margin:4px 0;font-variant-numeric:tabular-nums}
+.froute{font-size:12.5px}
+.fmeta{font-size:12px;color:var(--muted);margin-top:4px}
+.fnote{font-size:12px;color:var(--muted);margin-top:12px}
+.mflight{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:12px 14px;font-size:13px;margin-top:8px}
+.mflight .mf-no{font-weight:800;font-size:15px;margin-bottom:6px}
+.mflight .mf-no span{font-weight:400;font-size:12px;color:var(--muted)}
+.mflight .mf-leg{margin:2px 0}
+.mflight ul{margin:8px 0 0 16px;padding:0;color:var(--muted)}
+.mflight li{margin:2px 0}
 </style>
 </head>
 <body>
@@ -254,8 +269,6 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="secbody">
 
 <p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日詳細資料（分段時間、距離、爬升）。</p>
-<div class="flightbox">
-  <div class="fb-head">✈️ 航班資訊 <span class="fb-meta">樂桃航空 Peach｜訂單編號 <b>JQ5EHX</b>｜TWD 30,320 <span class="paid">已付</span>（2026/07/03 刷卡）</span></div>
   <ul class="ck" id="flightlist"></ul>
   <p class="hint">收據 PDF 只有付款資訊，沒有航班號與時間——點文字直接編輯補上，或把航班明細給我來填。</p>
 </div>
@@ -263,6 +276,27 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="dayswrap">
 <div class="days" id="days"></div>
 </div>
+</div>
+</details>
+
+<details class="sec" id="sec-flight" open>
+<summary>航班資訊</summary>
+<div class="secbody">
+<div class="fgrid">
+  <div class="fcard">
+    <div class="fhead"><b>去程 MM722</b><span>樂桃航空・Standard Plus</span></div>
+    <div class="ftime">9/11（五）02:10 → 06:05</div>
+    <div class="froute">台北（桃園）第1航廈 → 名古屋（中部）第1航廈</div>
+    <div class="fmeta">座位 7F・7E｜託運行李各 1 件</div>
+  </div>
+  <div class="fcard">
+    <div class="fhead"><b>回程 MM723</b><span>樂桃航空・Standard Plus</span></div>
+    <div class="ftime">9/20（日）22:50 → 9/21（一）00:55</div>
+    <div class="froute">名古屋（中部）第1航廈 → 台北（桃園）第1航廈</div>
+    <div class="fmeta">座位 2F・2E｜託運行李各 1 件｜隔日凌晨抵達</div>
+  </div>
+</div>
+<p class="fnote">訂單編號 <b>JQ5EHX</b>｜TWD 30,320 <span class="paid">已付</span>（2026/07/03）｜手提行李每人 2 件・合計 ≤ 7kg｜國際線報到：起飛前 120～50 分鐘</p>
 </div>
 </details>
 
@@ -713,6 +747,14 @@ mbg.addEventListener('click',e=>{if(e.target===mbg)closeM();});
 mbg.querySelector('.x').addEventListener('click',closeM);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
 const DETAIL={
+ 0:{html:`<div class="mflight"><div class="mf-no">✈️ MM722 <span>樂桃航空・Standard Plus</span></div>
+   <div class="mf-leg">9/11（五）<b>02:10</b> 台北（桃園）第1航廈 出發</div>
+   <div class="mf-leg">9/11（五）<b>06:05</b> 名古屋（中部）第1航廈 抵達</div>
+   <ul><li>座位 7F・7E｜託運行李各 1 件</li><li>手提每人 2 件・合計 ≤ 7kg</li><li>國際線報到：起飛前 120～50 分鐘</li><li>訂單編號 JQ5EHX｜TWD 30,320 已付</li><li>清晨抵達名古屋後移動至松本／上高地方向</li></ul></div>`},
+ 9:{html:`<div class="mflight"><div class="mf-no">✈️ MM723 <span>樂桃航空・Standard Plus</span></div>
+   <div class="mf-leg">9/20（日）<b>22:50</b> 名古屋（中部）第1航廈 出發</div>
+   <div class="mf-leg">9/21（一）<b>00:55</b> 台北（桃園）第1航廈 抵達（隔日凌晨）</div>
+   <ul><li>座位 2F・2E｜託運行李各 1 件</li><li>國際線報到：起飛前 120～50 分鐘｜22:50 起飛 → 最晚 22:00 前完成報到</li><li>訂單編號 JQ5EHX</li></ul></div>`},
  1:{time:'約 11:30',dist:'9.3 km',up:'2100 m',down:'610 m',legs:['上高地 – 西穗山莊 3:00（途中「宝水」水場）','西穗山莊 – 西穗獨標 1:15','西穗獨標 – 西穗高岳 1:00','西穗高岳 – 奧穗高岳 5:30（憲兵岩・叉路往左）','奧穗高岳 – 穗高岳山莊 0:45']},
  2:{time:'約 8:30＋槍岳往返 1:00',dist:'6.5 km',up:'900 m',down:'820 m',legs:['穗高岳山莊 – 涸澤岳 0:20','涸澤岳 – 北穗高岳 2:40','北穗高岳 – 南岳小屋 3:00（大切戶）','南岳小屋 – 槍岳山莊 2:30（中岳・大喰岳）','槍岳登頂往返 1:00']},
  3:{time:'約 7:00',dist:'11.1 km',up:'700 m',down:'1230 m',legs:['槍岳山莊 – 千丈乘越 0:45','千丈乘越 – 樅澤岳 2:20（西鎌尾根）','樅澤岳 – 雙六小屋 0:45','雙六小屋 – 雙六岳 1:00','雙六岳 – 三俁蓮華岳 1:20','三俁蓮華岳 – 三俁山莊 0:45']},
@@ -727,16 +769,17 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
   div.classList.add('clickable');
   div.addEventListener('click',()=>{
     mbg.querySelector('#mbody').innerHTML=`
-      <div class="mhead"><i style="background:var(--d${v.c})"></i><b>${v.d}</b><span>${v.date}</span></div>
+      <div class="mhead"><i style="background:${v.c?`var(--d${v.c})`:'var(--transport)'}"></i><b>${v.d}</b><span>${v.date}</span></div>
       <div class="mroute">${v.route}</div>
       ${v.meta?`<div class="mmeta">${v.meta}</div>`:''}
+      ${dx.html?dx.html:`
       <div class="mstats">
         <div><b>${dx.time}</b><span>總時長</span></div>
         <div><b>${dx.dist}</b><span>距離</span></div>
         <div><b>↑ ${dx.up}</b><span>爬升</span></div>
         <div><b>↓ ${dx.down}</b><span>下降</span></div>
       </div>
-      <div class="mlegs"><b>分段時間（標準CT）</b><ul>${dx.legs.map(l=>`<li>${l}</li>`).join('')}</ul></div>`;
+      <div class="mlegs"><b>分段時間（標準CT）</b><ul>${dx.legs.map(l=>`<li>${l}</li>`).join('')}</ul></div>`}`;
     mbg.style.display='flex';
   });
 });
@@ -1064,10 +1107,6 @@ editList(document.getElementById('playlist'), 'play', [
  {t:'富山：富山城址公園'},
  {t:'名古屋：名古屋城・榮商圈・大須商店街'},
  {t:'上高地：河童橋・大正池（D1 出發前）'}
-]);
-editList(document.getElementById('flightlist'), 'flight', [
- {t:'9/11 去程：台灣 → 日本｜航班號・起降時間待填', n:'MM___'},
- {t:'9/20 回程：名古屋 → 台灣｜航班號・起降時間待填', n:'MM___'}
 ]);
 editList(document.getElementById('eatlist'), 'eat', [
  {t:'富山：白えび（白蝦）天丼・刺身'},
