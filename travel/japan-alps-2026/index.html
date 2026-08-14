@@ -147,16 +147,6 @@ footer a{color:#2e6ea6}
 @media (max-width:640px){ #lmap{height:60vh} }
 
 /* --- toc & sections --- */
-.toc{border:1px solid var(--line);background:var(--paper);border-radius:16px;padding:16px 20px;font-size:13.5px;margin:16px 0;box-shadow:0 2px 12px rgba(0,0,0,.07)}
-.toc b{font-size:14px}
-.toc ul{margin:4px 0 0 18px;padding:0}
-.toc>ul{margin-left:2px;list-style:none}
-.toc>ul>li{margin:3px 0}
-.toc>ul ul{list-style:none;margin-left:16px}
-.toc>ul ul li{margin:2px 0}
-.toc a{color:#2e6ea6;text-decoration:none}
-.toc a:hover{text-decoration:underline}
-.toc>ul>li>a{font-weight:700}
 details.sec{border:1px solid var(--line);border-radius:16px;margin:16px 0;background:var(--paper);
   position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07)}
 details.sec::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,#d4cba8)}
@@ -199,6 +189,38 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ex-lbl.stay{fill:#b35c00;font-weight:800;font-size:11px}
 .ex-lbl.big{font-weight:800;font-size:11px}
 .ex-day{font-size:11px;font-weight:800;fill:#fff}
+
+.day.clickable{cursor:pointer;transition:box-shadow .15s}
+.day.clickable:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:2000;align-items:center;justify-content:center;padding:18px}
+.modal{background:#fff;border-radius:16px;max-width:600px;width:100%;max-height:84vh;overflow:auto;padding:22px 24px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.modal .x{position:absolute;top:10px;right:12px;border:none;background:none;font-size:18px;cursor:pointer;color:#999}
+.mhead{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin-bottom:10px}
+.mhead i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.mhead span{color:var(--muted);font-size:.9rem}
+.mroute{font-size:14px;line-height:1.7;margin-bottom:8px}
+.mmeta{font-size:13px;color:var(--muted);margin-bottom:12px}
+.mmeta .stay{color:var(--stayicon);font-weight:700}
+.mmeta .warn{color:var(--warn);font-weight:700}
+.mstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.mstats div{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:8px 6px;text-align:center}
+.mstats b{display:block;font-size:14px}
+.mstats span{font-size:11px;color:var(--muted)}
+.mlegs{font-size:13px}
+.mlegs ul{margin:6px 0 0 18px;padding:0}
+.mlegs li{margin:3px 0}
+.ck li{display:flex;gap:8px;align-items:flex-start}
+.ck .txt{flex:1;cursor:text;border-radius:4px;padding:0 2px}
+.ck .txt.done{color:var(--muted);text-decoration:line-through}
+.ck .txt[contenteditable="true"]{outline:2px solid #a8d4b8;background:#fff}
+.ck .del{border:none;background:none;color:#c9c9c2;cursor:pointer;font-size:12px;padding:2px 4px;flex:none}
+.ck .del:hover{color:#c0392b}
+.ck .addrow{margin-top:8px}
+.ck .addin{flex:1;border:1px dashed var(--cardline);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;background:var(--paper)}
+.ck .addbtn{border:none;background:#2f9e44;color:#fff;border-radius:8px;padding:2px 12px;font-size:15px;cursor:pointer;flex:none}
+.ichart{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden}
+.ichart svg{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
+.hiker{font-size:24px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
 </style>
 </head>
 <body>
@@ -223,64 +245,12 @@ details[open]>summary::before{transform:rotate(90deg)}
 
 
 
-<div class="toc">
-  <b>目錄</b>
-  <ul>
-    <li><a href="#sec-days">行程</a>
-      <ul>
-        <li><a href="#sec-days-brief">簡易版</a></li>
-        <li><a href="#sec-days-detail">詳細版</a></li>
-      </ul>
-    </li>
-    <li><a href="#sec-hike">爬山篇</a>
-      <ul>
-        <li><a href="#sec-route">路線地圖</a></li>
-        <li><a href="#sec-sketch">手繪版地圖</a></li>
-        <li><a href="#sec-elev">高度圖</a></li>
-        <li><a href="#sec-daystats">簡易彙整</a></li>
-        <li><a href="#sec-notes">注意事項</a></li>
-        <li><a href="#sec-hike-links">參考連結</a></li>
-      </ul>
-    </li>
-    <li><a href="#sec-travel">旅行篇</a>
-      <ul>
-        <li><a href="#sec-souvenir">必買伴手禮</a></li>
-        <li><a href="#sec-play">玩什麼</a></li>
-        <li><a href="#sec-eat">吃什麼</a></li>
-        <li><a href="#sec-travel-links">參考連結</a></li>
-      </ul>
-    </li>
-    <li><a href="#sec-pack">攜帶物品</a></li>
-    <li><a href="#sec-todo">待確認項目</a></li>
-  </ul>
-</div>
-
 <details class="sec" id="sec-days" open>
 <summary>行程</summary>
 <div class="secbody">
 
-<details class="sub" id="sec-days-brief" open>
-<summary>簡易版</summary>
-<div class="subbody">
-<table class="itin">
-<tr><th>日期</th><th>行程</th><th>宿</th></tr>
-<tr class="tp"><td>9/11</td><td>台灣－日本（交通日）</td><td>—</td></tr>
-<tr><td>9/12</td><td>上高地－西穗山莊－西穗獨標－西穗高岳－奧穗高岳－穗高岳山莊</td><td>穗高岳山莊</td></tr>
-<tr><td>9/13</td><td>穗高岳山莊－涸澤岳－北穗高岳－大切戶－南岳小屋－中岳－大喰岳－槍岳山莊－槍岳（往返）</td><td>槍岳山莊</td></tr>
-<tr><td>9/14</td><td>槍岳山莊－千丈乘越－樅澤岳－雙六小屋－雙六岳－三俁蓮華岳－三俁山莊</td><td>三俁山莊</td></tr>
-<tr><td>9/15</td><td>三俁山莊－黑部源流－雲之平山莊－藥師澤小屋</td><td>藥師澤小屋</td></tr>
-<tr><td>9/16</td><td>藥師澤小屋－太郎平小屋－藥師岳山莊－藥師岳－北藥師岳－間山－スゴ乘越小屋－越中澤岳－鳶山－五色原山莊</td><td>五色原山莊</td></tr>
-<tr><td>9/17</td><td>五色原山莊－ザラ峠－獅子岳－鬼岳－龍王岳－一之越－雄山－大汝山－富士之折立－真砂岳－別山－劍山莊</td><td>劍山莊</td></tr>
-<tr><td>9/18</td><td>劍山莊－劍御前小舍－雷鳥澤－室堂－富山市</td><td>富山 inn</td></tr>
-<tr class="tp"><td>9/19</td><td>富山－名古屋</td><td>名古屋</td></tr>
-<tr class="tp"><td>9/20</td><td>名古屋－台灣 ✈</td><td>—</td></tr>
-</table>
-</div>
-</details>
-
-<details class="sub" id="sec-days-detail">
-<summary>詳細版（點開看每日細節）</summary>
-<div class="subbody">
+<p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日詳細資料（分段時間、距離、爬升）。</p>
+<div class="dayswrap">
 <div class="days" id="days"></div>
 </div>
 </details>
@@ -295,12 +265,13 @@ details[open]>summary::before{transform:rotate(90deg)}
 <details class="sub" id="sec-route" open>
 <summary>路線地圖</summary>
 <div class="subbody">
+<div id="lmap"></div>
+<div class="ichart"><svg id="ichart" viewBox="0 0 960 190"></svg></div>
 <div class="mapbar">
   <button class="gpx" id="gpxbtn">⬇ 下載GPX</button>
   <label class="modetoggle"><input type="checkbox" id="daymode"> 依日期分色</label>
   <span class="mapnote">軌跡取自 OpenStreetMap 步道資料，行前請再與官方圖資核對</span>
 </div>
-<div id="lmap"></div>
 
 </div>
 </details>
@@ -308,11 +279,6 @@ details[open]>summary::before{transform:rotate(90deg)}
 <details class="sub" id="sec-sketch" open>
 <summary>手繪版地圖</summary>
 <div class="subbody">
-<div class="mapbar">
-  <button class="gpx" id="copysketch">📋 複製圖片</button>
-  <button class="gpx" id="dlsketch" style="background:#5a7d9a">⬇ 下載 PNG</button>
-  <span class="mapnote" id="copymsg"></span>
-</div>
 <div class="legend">
   <em><svg width="14" height="12"><path d="M7 1 L1 11 L13 11 Z" style="fill:var(--ink)"/></svg>山頭（▲＋標高）</em>
   <em><svg width="14" height="12"><path d="M7 1 L1 11 L13 11 Z" style="fill:var(--ref)"/></svg>參考山頭（不經過）</em>
@@ -323,6 +289,11 @@ details[open]>summary::before{transform:rotate(90deg)}
   <em><svg width="20" height="8"><path d="M1 4 h18" style="stroke:var(--ink);stroke-width:2;stroke-dasharray:3 4"/></svg>槍岳登頂往返</em>
 </div>
 <div class="mapwrap"><svg id="map" viewBox="0 0 780 1490" role="img" aria-label="北阿爾卑斯縱走路線圖"></svg></div>
+<div class="mapbar">
+  <button class="gpx" id="copysketch">📋 複製圖片</button>
+  <button class="gpx" id="dlsketch" style="background:#5a7d9a">⬇ 下載 PNG</button>
+  <span class="mapnote" id="copymsg"></span>
+</div>
 </div>
 </details>
 
@@ -330,6 +301,11 @@ details[open]>summary::before{transform:rotate(90deg)}
 <summary>高度圖</summary>
 <div class="subbody">
 <div class="elevwrap"><svg id="elev" viewBox="0 0 960 400" role="img" aria-label="高度剖面圖"></svg></div>
+<div class="mapbar">
+  <button class="gpx" id="copyelev">📋 複製圖片</button>
+  <button class="gpx" id="dlelev" style="background:#5a7d9a">⬇ 下載 PNG</button>
+  <span class="mapnote" id="copymsg2"></span>
+</div>
 </div>
 </details>
 
@@ -338,14 +314,14 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="subbody">
 <table class="itin">
 <tr><th></th><th>日期</th><th>總時長</th><th>距離</th><th>爬升</th><th>下降</th></tr>
-<tr><td>D1</td><td>9/12</td><td>約 11:30</td><td>15.0 km</td><td>↑ 2100 m</td><td>↓ 610 m</td></tr>
+<tr><td>D1</td><td>9/12</td><td>約 11:30</td><td>9.3 km</td><td>↑ 2100 m</td><td>↓ 610 m</td></tr>
 <tr><td>D2</td><td>9/13</td><td>約 8:30（＋槍岳往返 1:00）</td><td>6.5 km</td><td>↑ 900 m</td><td>↓ 820 m</td></tr>
 <tr><td>D3</td><td>9/14</td><td>約 7:00</td><td>11.1 km</td><td>↑ 700 m</td><td>↓ 1230 m</td></tr>
 <tr><td>D4</td><td>9/15</td><td>約 5:20</td><td>8.7 km</td><td>↑ 350 m</td><td>↓ 990 m</td></tr>
 <tr><td>D5</td><td>9/16</td><td>約 12:50</td><td>19.2 km</td><td>↑ 1750 m</td><td>↓ 1160 m</td></tr>
 <tr><td>D6</td><td>9/17</td><td>約 8:15</td><td>11.9 km</td><td>↑ 1100 m</td><td>↓ 1120 m</td></tr>
 <tr><td>D7</td><td>9/18</td><td>約 2:45</td><td>5.7 km</td><td>↑ 450 m</td><td>↓ 480 m</td></tr>
-<tr><td><b>合計</b></td><td>7 天</td><td>約 56 hr</td><td>78.1 km</td><td>↑ 約 7350 m</td><td>↓ 約 6410 m</td></tr>
+<tr><td><b>合計</b></td><td>7 天</td><td>約 56 hr</td><td>72.4 km</td><td>↑ 約 7350 m</td><td>↓ 約 6410 m</td></tr>
 </table>
 <p class="hint">時間為標準コースタイム（未含休息），距離由 OSM 軌跡計算，爬升／下降為概估。</p>
 </div>
@@ -375,7 +351,9 @@ details[open]>summary::before{transform:rotate(90deg)}
     <li>日本官方地形圖：<a href="https://maps.gsi.go.jp/" target="_blank" rel="noopener">国土地理院 地理院地図</a></li>
     <li>等高線底圖：<a href="https://opentopomap.org/" target="_blank" rel="noopener">OpenTopoMap</a>（CC-BY-SA）</li>
     <li>裏銀座路線參考：<a href="https://hiking.biji.co/index.php?q=trail&amp;act=gpx_detail&amp;id=45961" target="_blank" rel="noopener">健行筆記 GPX #45961</a></li>
-    <li>行程時間與山屋資訊：<a href="https://sp.mapple.co.jp/yamachizu/" target="_blank" rel="noopener">山と高原地図（昭文社）</a>、<a href="https://yamap.com/" target="_blank" rel="noopener">YAMAP</a>、<a href="https://www.yamareco.com/" target="_blank" rel="noopener">ヤマレコ</a></li>
+    <li>上高地→西穗山莊 段實走紀錄：<a href="https://www.yamareco.com/modules/yamareco/detail-5712576.html" target="_blank" rel="noopener">ヤマレコ 2023/07（4.6km・爬升956m）</a>、<a href="https://www.yamareco.com/modules/yamareco/detail-5775770.html" target="_blank" rel="noopener">ヤマレコ 2023/07 ②</a>、<a href="https://yamap.com/activities/7673788" target="_blank" rel="noopener">YAMAP：不搭纜車的上高地路線</a></li>
+  <li>西穗山莊官方登山案內（含上高地路線）：<a href="http://www.nishiho.com/tozan.htm" target="_blank" rel="noopener">nishiho.com</a></li>
+  <li>行程時間與山屋資訊：<a href="https://sp.mapple.co.jp/yamachizu/" target="_blank" rel="noopener">山と高原地図（昭文社）</a>、<a href="https://yamap.com/" target="_blank" rel="noopener">YAMAP</a>、<a href="https://www.yamareco.com/" target="_blank" rel="noopener">ヤマレコ</a></li>
   </ul>
 </div>
 </details>
@@ -392,7 +370,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="subbody">
 
 <ul class="ck" id="souvenirlist"></ul>
-<p class="hint">之後想到再補，勾選狀態會自動記住。</p>
+<p class="hint">點文字可編輯、✕ 刪除、＋ 新增；內容會自動記住。</p>
 
 </div>
 </details>
@@ -401,7 +379,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <summary>玩什麼</summary>
 <div class="subbody">
 <ul class="ck" id="playlist"></ul>
-<p class="hint">之後想到再補。</p>
+<p class="hint">點文字可編輯、✕ 刪除、＋ 新增；內容會自動記住。</p>
 </div>
 </details>
 
@@ -409,7 +387,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <summary>吃什麼</summary>
 <div class="subbody">
 <ul class="ck" id="eatlist"></ul>
-<p class="hint">之後想到再補。</p>
+<p class="hint">點文字可編輯、✕ 刪除、＋ 新增；內容會自動記住。</p>
 </div>
 </details>
 
@@ -705,6 +683,44 @@ DAYS.forEach(v=>{
    </div>`;
   daysBox.appendChild(div);
 });
+
+/* --- day detail modal --- */
+const mbg=document.createElement('div');
+mbg.className='modal-bg';
+mbg.innerHTML='<div class="modal"><button class="x">✕</button><div id="mbody"></div></div>';
+document.body.appendChild(mbg);
+const closeM=()=>mbg.style.display='none';
+mbg.addEventListener('click',e=>{if(e.target===mbg)closeM();});
+mbg.querySelector('.x').addEventListener('click',closeM);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
+const DETAIL={
+ 1:{time:'約 11:30',dist:'9.3 km',up:'2100 m',down:'610 m',legs:['上高地 – 西穗山莊 3:00（途中「宝水」水場）','西穗山莊 – 西穗獨標 1:15','西穗獨標 – 西穗高岳 1:00','西穗高岳 – 奧穗高岳 5:30（憲兵岩・叉路往左）','奧穗高岳 – 穗高岳山莊 0:45']},
+ 2:{time:'約 8:30＋槍岳往返 1:00',dist:'6.5 km',up:'900 m',down:'820 m',legs:['穗高岳山莊 – 涸澤岳 0:20','涸澤岳 – 北穗高岳 2:40','北穗高岳 – 南岳小屋 3:00（大切戶）','南岳小屋 – 槍岳山莊 2:30（中岳・大喰岳）','槍岳登頂往返 1:00']},
+ 3:{time:'約 7:00',dist:'11.1 km',up:'700 m',down:'1230 m',legs:['槍岳山莊 – 千丈乘越 0:45','千丈乘越 – 樅澤岳 2:20（西鎌尾根）','樅澤岳 – 雙六小屋 0:45','雙六小屋 – 雙六岳 1:00','雙六岳 – 三俁蓮華岳 1:20','三俁蓮華岳 – 三俁山莊 0:45']},
+ 4:{time:'約 5:20',dist:'8.7 km',up:'350 m',down:'990 m',legs:['三俁山莊 – 黑部源流 0:30','黑部源流 – 雲之平山莊 2:40','雲之平山莊 – 藥師澤小屋 2:10（急下降）']},
+ 5:{time:'約 12:50',dist:'19.2 km',up:'1750 m',down:'1160 m',legs:['藥師澤小屋 – 太郎平小屋 2:50','太郎平小屋 – 藥師岳山莊 1:50（藥師峠）','藥師岳山莊 – 藥師岳 0:40','藥師岳 – 間山 2:10（北藥師岳）','間山 – スゴ乘越小屋 1:00','スゴ乘越小屋 – 越中澤岳 2:00','越中澤岳 – 鳶山 1:40','鳶山 – 五色原山莊 0:40']},
+ 6:{time:'約 8:15',dist:'11.9 km',up:'1100 m',down:'1120 m',legs:['五色原山莊 – ザラ峠 0:30','ザラ峠 – 獅子岳 1:30','獅子岳 – 龍王岳 1:40（鬼岳）','龍王岳 – 一之越 0:30','一之越 – 雄山 1:00','雄山 – 真砂岳 1:05（大汝山・富士之折立）','真砂岳 – 別山 0:40','別山 – 劍山莊 1:20（劍澤）']},
+ 7:{time:'約 2:45',dist:'5.7 km',up:'450 m',down:'480 m',legs:['劍山莊 – 劍御前小舍 0:50（別山乘越）','劍御前小舍 – 雷鳥澤 1:10（雷鳥坂）','雷鳥澤 – 室堂 0:45']}
+};
+document.querySelectorAll('#days .day').forEach((div,i)=>{
+  const v=DAYS[i], dx=DETAIL[i];
+  if(!dx) return;
+  div.classList.add('clickable');
+  div.addEventListener('click',()=>{
+    mbg.querySelector('#mbody').innerHTML=`
+      <div class="mhead"><i style="background:var(--d${v.c})"></i><b>${v.d}</b><span>${v.date}</span></div>
+      <div class="mroute">${v.route}</div>
+      ${v.meta?`<div class="mmeta">${v.meta}</div>`:''}
+      <div class="mstats">
+        <div><b>${dx.time}</b><span>總時長</span></div>
+        <div><b>${dx.dist}</b><span>距離</span></div>
+        <div><b>↑ ${dx.up}</b><span>爬升</span></div>
+        <div><b>↓ ${dx.down}</b><span>下降</span></div>
+      </div>
+      <div class="mlegs"><b>分段時間（標準CT）</b><ul>${dx.legs.map(l=>`<li>${l}</li>`).join('')}</ul></div>`;
+    mbg.style.display='flex';
+  });
+});
 })();
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -715,7 +731,7 @@ const HNBLUE='#2f6fdd';
 const DAYCOLORS=['#c93c3c','#db7a1c','#a08a10','#3f8f55','#17879c','#3e63c4','#8e4fbf'];
 
 const DAYROUTES=[
- {d:1,date:'9/12',from:'上高地',to:'穗高岳山莊',pts:[[36.24960,137.63538],[36.24964,137.63612],[36.25022,137.63656],[36.24945,137.63768],[36.24912,137.63776],[36.24868,137.63717],[36.24818,137.63601],[36.24799,137.63420],[36.24684,137.63218],[36.24587,137.63009],[36.24587,137.62984],[36.24587,137.63009],[36.24684,137.63218],[36.24799,137.63420],[36.24818,137.63601],[36.24868,137.63717],[36.24912,137.63776],[36.24945,137.63768],[36.24976,137.63711],[36.25054,137.63650],[36.25126,137.63673],[36.25270,137.63669],[36.25429,137.63701],[36.25541,137.63824],[36.25552,137.63877],[36.25587,137.63913],[36.25706,137.63938],[36.25774,137.64022],[36.25894,137.64078],[36.26001,137.64233],[36.26081,137.64259],[36.26127,137.64246],[36.26128,137.64317],[36.26242,137.64360],[36.26269,137.64331],[36.26308,137.64381],[36.26416,137.64360],[36.26458,137.64327],[36.26464,137.64304],[36.26495,137.64295],[36.26536,137.64330],[36.26616,137.64357],[36.26669,137.64414],[36.26789,137.64404],[36.26839,137.64426],[36.26931,137.64428],[36.27026,137.64477],[36.27086,137.64451],[36.27194,137.64455],[36.27257,137.64484],[36.27308,137.64576],[36.27316,137.64623],[36.27374,137.64652],[36.27438,137.64748],[36.27512,137.64764],[36.27551,137.64748],[36.27568,137.64710],[36.27628,137.64727],[36.27784,137.64448],[36.27862,137.64328],[36.27957,137.64227],[36.28089,137.63986],[36.28244,137.63838],[36.28312,137.63797],[36.28450,137.63766],[36.28417,137.63743],[36.28363,137.63746],[36.28325,137.63616],[36.28293,137.63595],[36.28274,137.63552],[36.28206,137.63502],[36.28034,137.63192],[36.27946,137.63099],[36.27911,137.62964],[36.27854,137.62876],[36.27667,137.62802],[36.27651,137.62791],[36.27637,137.62733],[36.27579,137.62692],[36.27507,137.62694],[36.27435,137.62650],[36.27398,137.62654],[36.27369,137.62635],[36.27315,137.62647],[36.27253,137.62636],[36.27243,137.62614],[36.27188,137.62595],[36.27164,137.62546],[36.27123,137.62532],[36.27077,137.62449],[36.27068,137.62364],[36.27052,137.62342],[36.26955,137.62292],[36.26934,137.62259],[36.26905,137.62247],[36.26861,137.62179],[36.26797,137.62132],[36.26777,137.62091],[36.26688,137.62082],[36.26667,137.62062],[36.26638,137.61919],[36.26609,137.61886],[36.26591,137.61813],[36.26564,137.61791],[36.26537,137.61784],[36.26591,137.61813],[36.26609,137.61886],[36.26645,137.61937],[36.26667,137.62062],[36.26688,137.62082],[36.26777,137.62091],[36.26797,137.62132],[36.26861,137.62179],[36.26905,137.62247],[36.26934,137.62259],[36.26955,137.62292],[36.27052,137.62342],[36.27068,137.62364],[36.27077,137.62449],[36.27123,137.62532],[36.27164,137.62546],[36.27188,137.62595],[36.27243,137.62614],[36.27253,137.62636],[36.27315,137.62647],[36.27369,137.62635],[36.27398,137.62654],[36.27435,137.62650],[36.27507,137.62694],[36.27579,137.62692],[36.27637,137.62733],[36.27651,137.62791],[36.27709,137.62824],[36.27791,137.62841],[36.27871,137.62896],[36.27911,137.62964],[36.27946,137.63099],[36.28034,137.63192],[36.28206,137.63502],[36.28274,137.63552],[36.28293,137.63595],[36.28325,137.63616],[36.28363,137.63746],[36.28430,137.63751],[36.28490,137.63822],[36.28518,137.63881],[36.28545,137.64042],[36.28577,137.64112],[36.28660,137.64213],[36.28716,137.64314],[36.28773,137.64368],[36.28785,137.64475],[36.28865,137.64685],[36.28918,137.64764],[36.28920,137.64813],[36.28918,137.64764],[36.28999,137.64736],[36.29027,137.64777],[36.29060,137.64790],[36.29140,137.64779],[36.29203,137.64799],[36.29292,137.64769],[36.29361,137.64778]]},
+ {d:1,date:'9/12',from:'上高地',to:'穗高岳山莊',pts:[[36.24970,137.63530],[36.24800,137.63496],[36.24799,137.63420],[36.24720,137.63288],[36.24683,137.63190],[36.24645,137.63000],[36.24648,137.62898],[36.24701,137.62775],[36.24710,137.62706],[36.24569,137.62520],[36.24511,137.62470],[36.24449,137.62449],[36.24495,137.62139],[36.24569,137.62024],[36.24619,137.61982],[36.24647,137.61923],[36.24855,137.61849],[36.24941,137.61903],[36.24971,137.61903],[36.24987,137.61936],[36.25029,137.61920],[36.25077,137.61943],[36.25104,137.61919],[36.25159,137.61928],[36.25174,137.61936],[36.25161,137.61971],[36.25206,137.62013],[36.25314,137.62029],[36.25390,137.61981],[36.25521,137.61943],[36.25616,137.61857],[36.25650,137.61853],[36.25661,137.61826],[36.25740,137.61809],[36.25743,137.61776],[36.25754,137.61796],[36.25888,137.61809],[36.25983,137.61755],[36.26019,137.61760],[36.26049,137.61699],[36.26141,137.61691],[36.26294,137.61747],[36.26325,137.61742],[36.26350,137.61686],[36.26371,137.61684],[36.26396,137.61722],[36.26448,137.61718],[36.26485,137.61767],[36.26585,137.61806],[36.26609,137.61886],[36.26645,137.61937],[36.26667,137.62062],[36.26688,137.62082],[36.26777,137.62091],[36.26797,137.62132],[36.26861,137.62179],[36.26905,137.62247],[36.26934,137.62259],[36.26955,137.62292],[36.27052,137.62342],[36.27068,137.62364],[36.27077,137.62449],[36.27123,137.62532],[36.27164,137.62546],[36.27188,137.62595],[36.27243,137.62614],[36.27253,137.62636],[36.27315,137.62647],[36.27369,137.62635],[36.27398,137.62654],[36.27435,137.62650],[36.27507,137.62694],[36.27579,137.62692],[36.27637,137.62733],[36.27651,137.62791],[36.27709,137.62824],[36.27791,137.62841],[36.27871,137.62896],[36.27911,137.62964],[36.27946,137.63099],[36.28034,137.63192],[36.28206,137.63502],[36.28274,137.63552],[36.28293,137.63595],[36.28325,137.63616],[36.28363,137.63746],[36.28430,137.63751],[36.28490,137.63822],[36.28518,137.63881],[36.28545,137.64042],[36.28577,137.64112],[36.28660,137.64213],[36.28716,137.64314],[36.28773,137.64368],[36.28785,137.64475],[36.28865,137.64685],[36.28918,137.64764],[36.28920,137.64813],[36.28918,137.64764],[36.28999,137.64736],[36.29027,137.64777],[36.29060,137.64790],[36.29140,137.64779],[36.29203,137.64799],[36.29292,137.64769],[36.29361,137.64778]]},
  {d:2,date:'9/13',from:'穗高岳山莊',to:'槍岳山莊',pts:[[36.29361,137.64778],[36.29395,137.64764],[36.29416,137.64777],[36.29442,137.64754],[36.29461,137.64775],[36.29637,137.64669],[36.29743,137.64747],[36.29794,137.64752],[36.29835,137.64801],[36.29913,137.64806],[36.29951,137.64854],[36.30011,137.64853],[36.30181,137.65087],[36.30216,137.65161],[36.30223,137.65221],[36.30293,137.65228],[36.30339,137.65268],[36.30362,137.65266],[36.30373,137.65290],[36.30396,137.65280],[36.30466,137.65329],[36.30503,137.65261],[36.30572,137.65204],[36.30618,137.65085],[36.30696,137.65042],[36.30804,137.64917],[36.30834,137.64917],[36.30892,137.64872],[36.30923,137.64869],[36.31021,137.64922],[36.31121,137.64947],[36.31251,137.64906],[36.31464,137.64968],[36.31567,137.64961],[36.31597,137.64979],[36.31602,137.65006],[36.31656,137.65065],[36.31684,137.65078],[36.31683,137.65063],[36.31684,137.65078],[36.31728,137.65095],[36.31976,137.65077],[36.32078,137.65048],[36.32117,137.65072],[36.32175,137.65213],[36.32228,137.65224],[36.32340,137.65148],[36.32668,137.65063],[36.32768,137.64996],[36.32859,137.64875],[36.32827,137.64804],[36.32825,137.64748],[36.32901,137.64683],[36.32988,137.64665],[36.33007,137.64625],[36.33111,137.64611],[36.33213,137.64634],[36.33343,137.64625],[36.33489,137.64567],[36.33553,137.64588],[36.33623,137.64563],[36.33692,137.64589],[36.33773,137.64568],[36.33874,137.64579],[36.33974,137.64531],[36.33975,137.64564],[36.34097,137.64585]]},
  {d:3,date:'9/14',from:'槍岳山莊',to:'三俁山莊',pts:[[36.34097,137.64585],[36.34143,137.64613],[36.34166,137.64548],[36.34137,137.64494],[36.34178,137.64456],[36.34136,137.64444],[36.34136,137.64381],[36.34118,137.64352],[36.34182,137.64147],[36.34207,137.63926],[36.34212,137.63699],[36.34245,137.63591],[36.34305,137.63537],[36.34410,137.63497],[36.34453,137.63461],[36.34518,137.63378],[36.34537,137.63323],[36.34630,137.63233],[36.34679,137.63158],[36.34704,137.63156],[36.34744,137.63119],[36.34781,137.63119],[36.34804,137.63076],[36.34862,137.63049],[36.34985,137.62852],[36.35106,137.62832],[36.35174,137.62797],[36.35270,137.62663],[36.35285,137.62568],[36.35318,137.62511],[36.35392,137.62511],[36.35467,137.62428],[36.35616,137.62356],[36.35631,137.62372],[36.35649,137.62365],[36.35662,137.62334],[36.35755,137.62314],[36.35778,137.62276],[36.35813,137.62258],[36.35909,137.62246],[36.36058,137.62188],[36.36154,137.62081],[36.36274,137.61991],[36.36387,137.61962],[36.36440,137.61928],[36.36475,137.61872],[36.36521,137.61839],[36.36557,137.61772],[36.36596,137.61742],[36.36620,137.61426],[36.36585,137.61357],[36.36625,137.61286],[36.36654,137.61161],[36.36642,137.60908],[36.36650,137.60839],[36.36671,137.60754],[36.36696,137.60756],[36.36728,137.60726],[36.36729,137.60703],[36.36761,137.60663],[36.36811,137.60422],[36.36853,137.60367],[36.36878,137.60377],[36.36888,137.60364],[36.36911,137.60294],[36.36933,137.60273],[36.36959,137.60176],[36.36976,137.60161],[36.37011,137.59859],[36.37027,137.59830],[36.37020,137.59727],[36.37041,137.59671],[36.36895,137.59452],[36.36920,137.59271],[36.36990,137.59124],[36.37033,137.58961],[36.37163,137.58763],[36.37206,137.58734],[36.37269,137.58767],[36.37316,137.58768],[36.37612,137.58647],[36.37741,137.58708],[36.37794,137.58661],[36.37846,137.58657],[36.38127,137.58730],[36.38196,137.58772],[36.38263,137.58696],[36.38353,137.58678],[36.38628,137.58701],[36.38667,137.58682],[36.38769,137.58686],[36.38886,137.58719],[36.38941,137.58710],[36.38986,137.58765],[36.38973,137.58771],[36.38955,137.58866],[36.38888,137.58927],[36.38960,137.59016],[36.39014,137.59035],[36.39036,137.59065],[36.39078,137.59139],[36.39104,137.59271],[36.39243,137.59321],[36.39322,137.59412],[36.39422,137.59452],[36.39484,137.59550],[36.39496,137.59678],[36.39511,137.59693]]},
  {d:4,date:'9/15',from:'三俁山莊',to:'藥師澤小屋',pts:[[36.39511,137.59693],[36.39496,137.59678],[36.39494,137.59584],[36.39611,137.59605],[36.39687,137.59642],[36.39759,137.59632],[36.39971,137.59504],[36.40145,137.59429],[36.40179,137.59396],[36.40216,137.59405],[36.40231,137.59357],[36.40282,137.59361],[36.40273,137.59260],[36.40304,137.59224],[36.40324,137.59166],[36.40339,137.59161],[36.40339,137.59124],[36.40384,137.59099],[36.40380,137.59075],[36.40414,137.59007],[36.40415,137.58934],[36.40439,137.58881],[36.40475,137.58845],[36.40585,137.58815],[36.40601,137.58784],[36.40651,137.58776],[36.40716,137.58682],[36.40783,137.58651],[36.40832,137.58607],[36.40930,137.58637],[36.41012,137.58590],[36.41126,137.58590],[36.41213,137.58612],[36.41355,137.58728],[36.41457,137.58927],[36.41527,137.58969],[36.41714,137.58996],[36.41766,137.59028],[36.41809,137.59016],[36.41784,137.58937],[36.41794,137.58910],[36.41829,137.58885],[36.41865,137.58884],[36.41882,137.58856],[36.41918,137.58852],[36.41917,137.58737],[36.41904,137.58700],[36.41953,137.58674],[36.41961,137.58570],[36.41929,137.58432],[36.41904,137.58387],[36.41976,137.58230],[36.42003,137.58045],[36.42062,137.57884],[36.42062,137.57678],[36.42069,137.57816],[36.42098,137.57781],[36.42107,137.57740],[36.42123,137.57522],[36.42096,137.57237],[36.42131,137.57204],[36.42164,137.57208],[36.42202,137.57172],[36.42267,137.56988],[36.42233,137.56870],[36.42252,137.56809],[36.42243,137.56787],[36.42217,137.56796],[36.42191,137.56777],[36.42167,137.56727],[36.42175,137.56575],[36.42156,137.56555],[36.42149,137.56511],[36.42117,137.56492],[36.42110,137.56442],[36.42127,137.56395],[36.42097,137.56373],[36.42081,137.56310],[36.42066,137.56296],[36.42068,137.56229],[36.42120,137.56129],[36.42059,137.56008],[36.42052,137.55958],[36.42071,137.55884],[36.42110,137.55836],[36.42174,137.55827],[36.42224,137.55765],[36.42245,137.55692],[36.42282,137.55656],[36.42275,137.55562],[36.42380,137.55484],[36.42469,137.55351],[36.42458,137.55295],[36.42466,137.55231],[36.42497,137.55186],[36.42500,137.55095],[36.42531,137.55032],[36.42609,137.54936],[36.42702,137.54860],[36.42749,137.54791],[36.42848,137.54712],[36.42834,137.54670],[36.42850,137.54634]]},
@@ -849,6 +865,69 @@ function syncZoom(){const el=map.getContainer(),z=map.getZoom();el.classList.tog
 map.on('zoomend',syncZoom);
 
 map.fitBounds(L.latLngBounds(DAYROUTES.flatMap(r=>r.pts)),{padding:[30,30]});
+
+/* --- interactive elevation chart with hiker --- */
+const EPROF=[[0,1505],[1.6,1500],[4.6,2367],[5.8,2701],[6.7,2909],[8.1,3163],[8.9,3190],[9.5,2996],[9.9,3110],[10.8,3106],[11.8,2748],[12.9,3033],[14.0,3084],[15.2,3101],[16.1,3080],[19.4,2755],[22.3,2550],[23.8,2860],[25.9,2841],[27.2,2550],[29.2,2450],[32.0,2550],[35.8,1912],[40.4,2330],[41.5,2294],[42.8,2701],[44.3,2926],[45.5,2900],[47.5,2585],[48.9,2270],[51.4,2591],[53.8,2616],[55.0,2500],[55.8,2348],[57.1,2714],[58.1,2750],[59.4,2820],[60.1,2700],[60.8,3003],[61.3,3015],[61.8,2999],[62.8,2861],[64.1,2880],[66.7,2475],[68.4,2750],[70.4,2277],[72.4,2450]];
+const ALL=[]; let icum=0;
+DAYROUTES.forEach((r,di)=>{r.pts.forEach(p=>{
+  if(ALL.length) icum+=map.distance(ALL[ALL.length-1].p,p)/1000;
+  ALL.push({p,km:icum,d:di});
+});});
+const ITOT=icum;
+function elevAt(km){
+  const k=km/ITOT*72.4;
+  for(let i=1;i<EPROF.length;i++){
+    if(EPROF[i][0]>=k){
+      const a=EPROF[i-1],b=EPROF[i],f=(k-a[0])/((b[0]-a[0])||1);
+      return a[1]+f*(b[1]-a[1]);
+    }
+  }
+  return EPROF[EPROF.length-1][1];
+}
+const ic=document.getElementById('ichart');
+const ICW=960,ICH=190,IL=44,IR=10,IT=30,IB=22;
+const IX=km=>IL+km/ITOT*(ICW-IL-IR), IY=e=>IT+(3300-e)/(3300-1400)*(ICH-IT-IB);
+function iel(n,a){const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);ic.appendChild(e);return e;}
+iel('rect',{x:0,y:0,width:ICW,height:ICH,fill:'#ffffff'});
+for(let e=1500;e<=3000;e+=500){
+  iel('line',{x1:IL,y1:IY(e),x2:ICW-IR,y2:IY(e),stroke:'#ececea','stroke-width':1});
+  const t=iel('text',{x:IL-5,y:IY(e)+4,'font-size':10,fill:'#9a9a94','text-anchor':'end'});t.textContent=e+'m';
+}
+let idp='M'+IX(0)+' '+IY(elevAt(0));
+for(let i=1;i<ALL.length;i++) idp+=' L'+IX(ALL[i].km).toFixed(1)+' '+IY(elevAt(ALL[i].km)).toFixed(1);
+iel('path',{d:idp+` L${IX(ITOT)} ${ICH-IB} L${IL} ${ICH-IB} Z`,fill:'#cfe3d6'});
+iel('path',{d:idp,fill:'none',stroke:'#2e8b57','stroke-width':2});
+for(let k=10;k<ITOT;k+=10){
+  const t=iel('text',{x:IX(k),y:ICH-8,'font-size':10,fill:'#9a9a94','text-anchor':'middle'});t.textContent=k+'km';
+}
+const guide=iel('line',{x1:-9,y1:IT,x2:-9,y2:ICH-IB,stroke:'#888','stroke-width':1,'stroke-dasharray':'3 3'});
+const gdot=iel('circle',{cx:-9,cy:-9,r:4,fill:'#d33030',stroke:'#fff','stroke-width':1.5});
+const gtxt=iel('text',{x:ICW/2,y:18,'font-size':12,'font-weight':'700',fill:'#333','text-anchor':'middle'});
+gtxt.textContent='在高度圖上滑動／拖曳，小人會沿路線移動';
+let hiker=null;
+function moveTo(km){
+  km=Math.max(0,Math.min(ITOT,km));
+  let lo=0,hi=ALL.length-1;
+  while(lo<hi){const mid=(lo+hi)>>1; if(ALL[mid].km<km)lo=mid+1; else hi=mid;}
+  const pt=ALL[lo].p, ev=elevAt(km);
+  if(!hiker){
+    hiker=L.marker(pt,{icon:L.divIcon({html:'<div class="hiker">🚶</div>',className:'lmkwrap',iconSize:null,iconAnchor:[12,22]}),zIndexOffset:2000}).addTo(map);
+  }
+  hiker.setLatLng(pt);
+  const x=IX(km);
+  guide.setAttribute('x1',x);guide.setAttribute('x2',x);
+  gdot.setAttribute('cx',x);gdot.setAttribute('cy',IY(ev));
+  gtxt.textContent=`里程 ${km.toFixed(1)} km 處，海拔約 ${Math.round(ev)} m（D${ALL[lo].d+1}）`;
+  if(!map.getBounds().contains(pt)) map.panTo(pt);
+}
+function evKm(e){
+  const r=ic.getBoundingClientRect();
+  const x=(e.clientX-r.left)/r.width*ICW;
+  return (x-IL)/(ICW-IL-IR)*ITOT;
+}
+ic.addEventListener('pointermove',e=>{ if(e.pressure>0||e.pointerType==='mouse') moveTo(evKm(e)); });
+ic.addEventListener('pointerdown',e=>{ ic.setPointerCapture(e.pointerId); moveTo(evKm(e)); });
+
 syncZoom();
 
 // GPX 下載（示意路線）
@@ -876,20 +955,44 @@ document.getElementById('gpxbtn').addEventListener('click',()=>{
 <script>
 (function(){
 /* --- collapsible helpers --- */
-document.querySelectorAll('.toc a').forEach(a=>a.addEventListener('click',()=>{
-  const el=document.querySelector(a.getAttribute('href'));
-  let p=el; while(p){ if(p.tagName==='DETAILS') p.open=true; p=p.parentElement; }
-}));
 document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{
   if(d.open && d.querySelector('#lmap') && window._tripMap)
     setTimeout(()=>window._tripMap.invalidateSize(),60);
 }));
 
-/* --- checklists (localStorage) --- */
-function renderCk(el, items, keyPrefix){
-  el.innerHTML = items.map((it,i)=>`
-    <li><label><input type="checkbox" data-k="${keyPrefix}${i}" ${it.done?'checked':''}>
-    <span>${it.t}${it.n?` <em class="note">${it.n}</em>`:''}</span></label></li>`).join('');
+/* --- editable checklists (localStorage) --- */
+const esc2=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function editList(el, key, seed){
+  const K='alps26.items.'+key;
+  let items;
+  const raw=localStorage.getItem(K);
+  if(raw){ try{items=JSON.parse(raw);}catch(e){items=null;} }
+  if(!items){
+    items=seed.map((it,i)=>{
+      const old=localStorage.getItem('alps26.'+key+'-'+i);
+      return {t:it.t, n:it.n||'', done: old!==null ? old==='1' : !!it.done};
+    });
+  }
+  function render(){
+    localStorage.setItem(K, JSON.stringify(items));
+    el.innerHTML = items.map((it,i)=>`
+      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
+      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span>
+      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
+      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
+    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
+    el.querySelectorAll('.txt').forEach(sp=>{
+      sp.addEventListener('click',()=>{ if(sp.isContentEditable) return; sp.textContent=items[+sp.dataset.i].t; sp.contentEditable='true'; sp.focus(); });
+      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
+      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
+    });
+    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
+    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,n:'',done:false}); render(); };
+    ab.addEventListener('click',add);
+    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
+  }
+  render();
 }
 const PACK = [
  ['證件與錢', [
@@ -909,9 +1012,8 @@ const PACK = [
 ];
 const packBox=document.getElementById('packlist');
 packBox.innerHTML = PACK.map((g,gi)=>`<div class="ckcat">${g[0]}</div><ul class="ck" data-g="${gi}"></ul>`).join('');
-packBox.querySelectorAll('ul.ck').forEach((ul,gi)=>renderCk(ul, PACK[gi][1], 'pack'+gi+'-'));
-
-const TODO = [
+packBox.querySelectorAll('ul.ck').forEach((ul,gi)=>editList(ul, 'pack'+gi, PACK[gi][1]));
+editList(document.getElementById('todolist'), 'todo', [
  {t:'西穗山莊已訂——確認能否推進到穗高岳，並問西穗山莊能不能取消', n:'⚠ 行程關鍵'},
  {t:'穗高岳山莊 訂房（一個月前預定：約 8/12 開放）'},
  {t:'槍岳山莊 訂房（一個月前預定：約 8/13 開放）'},
@@ -923,42 +1025,29 @@ const TODO = [
  {t:'頭盔：自帶或現場租借'},
  {t:'劍山莊 晚餐＋9/18 早餐便當', n:'已付 ✓', done:true},
  {t:'富山市 inn（booking $1750）', n:'已付 ✓', done:true}
-];
-renderCk(document.getElementById('todolist'), TODO, 'todo-');
-
-const SOUV = [
+]);
+editList(document.getElementById('souvenirlist'), 'souv', [
  {t:'富山：ますのすし（鱒壽司）'},
  {t:'富山：白えび煎餅（白蝦仙貝）'},
  {t:'信州：雷鳥の里'},
  {t:'名古屋：坂角総本舖 ゆかり蝦餅'},
  {t:'名古屋：ういろう（外郎糕）'}
-];
-renderCk(document.getElementById('souvenirlist'), SOUV, 'souv-');
-
-const PLAY=[
+]);
+editList(document.getElementById('playlist'), 'play', [
  {t:'富山：富岩運河環水公園（世界最美星巴克）'},
  {t:'富山：市電路面電車・富山市玻璃美術館'},
  {t:'富山：富山城址公園'},
  {t:'名古屋：名古屋城・榮商圈・大須商店街'},
  {t:'上高地：河童橋・大正池（D1 出發前）'}
-];
-renderCk(document.getElementById('playlist'), PLAY, 'play-');
-const EAT=[
+]);
+editList(document.getElementById('eatlist'), 'eat', [
  {t:'富山：白えび（白蝦）天丼・刺身'},
  {t:'富山：富山ブラック黑拉麵'},
  {t:'富山：ますのすし 鱒壽司'},
  {t:'名古屋：ひつまぶし 鰻魚飯三吃'},
  {t:'名古屋：味噌豬排（矢場とん）'},
  {t:'名古屋：手羽先（世界の山ちゃん／風来坊）'}
-];
-renderCk(document.getElementById('eatlist'), EAT, 'eat-');
-
-document.querySelectorAll('.ck input').forEach(cb=>{
-  const k='alps26.'+cb.dataset.k;
-  const saved=localStorage.getItem(k);
-  if(saved!==null) cb.checked = saved==='1';
-  cb.addEventListener('change',()=>localStorage.setItem(k, cb.checked?'1':'0'));
-});
+]);
 
 /* --- elevation profile (上河文化風格) --- */
 const svg=document.getElementById('elev');
@@ -966,28 +1055,28 @@ svg.setAttribute('viewBox','0 0 980 560');
 const NS='http://www.w3.org/2000/svg';
 const W=980,H=560,L=14,R=54;
 const pT=214,pB=430,b1T=442,b1B=468,b2T=474,b2B=500;
-const kmMax=77.9,eMin=1400,eMax=3300;
+const kmMax=72.4,eMin=1400,eMax=3300;
 const X=k=>L+k/kmMax*(W-L-R), Y=e=>pT+(eMax-e)/(eMax-eMin)*(pB-pT);
 function el2(n,a,parent){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(parent||svg).appendChild(e);return e;}
-const PROF=[[0,1505],[1.1,1500],[10.1,2367],[11.3,2701],[12.2,2909],[13.6,3163],[14.4,3190],[15.0,2996],[15.4,3110],[16.3,3106],[17.3,2748],[18.4,3033],[19.5,3084],[20.7,3101],[21.6,3080],[24.9,2755],[27.8,2550],[29.3,2860],[31.4,2841],[32.7,2550],[34.7,2450],[37.5,2550],[41.3,1912],[45.9,2330],[47.0,2294],[48.3,2701],[49.8,2926],[51.0,2900],[53.0,2585],[54.4,2270],[56.9,2591],[59.3,2616],[60.5,2500],[61.3,2348],[62.6,2714],[63.6,2750],[64.9,2820],[65.6,2700],[66.3,3003],[66.8,3015],[67.3,2999],[68.3,2861],[69.6,2880],[72.2,2475],[73.9,2750],[75.9,2277],[77.9,2450]];
-const BWP=[['上高地',0,1505],['西穗山莊',10.1,2367],['西穗獨標',11.3,2701],['西穗高岳',12.2,2909],['奧穗高岳',14.4,3190],['穗高岳山莊',15.0,2996],['北穗高岳',16.3,3106],['南岳小屋',18.3,3030],['槍岳山莊',21.6,3080],['雙六小屋',27.8,2550],['三俁山莊',32.7,2550],['雲之平山莊',37.5,2550],['藥師澤小屋',41.3,1912],['太郎平小屋',45.9,2330],['藥師岳',49.8,2926],['スゴ乘越小屋',54.4,2270],['五色原山莊',60.5,2500],['一之越',65.6,2700],['雄山',66.3,3003],['別山',69.6,2880],['劍山莊',72.2,2475],['劍御前小舍',73.9,2750],['雷鳥澤',75.9,2277],['室堂',77.9,2450]];
-const SEGT=[[0,10.1,'3:00'],[10.1,12.2,'2:15'],[12.2,15.0,'6:15'],[15.0,18.3,'6:00'],[18.3,21.6,'2:30'],[21.6,27.8,'3:50'],[27.8,32.7,'3:05'],[32.7,37.5,'2:30'],[37.5,41.3,'2:10'],[41.3,45.9,'2:50'],[45.9,49.8,'2:30'],[49.8,54.4,'3:10'],[54.4,60.5,'4:20'],[60.5,65.6,'4:10'],[65.6,69.6,'2:45'],[69.6,72.2,'1:10'],[72.2,73.9,'0:50'],[73.9,77.9,'1:55']];
-const DAYT=[[0,15.0,'D1 11:30'],[15.0,21.6,'D2 8:30'],[21.6,32.7,'D3 7:00'],[32.7,41.3,'D4 5:20'],[41.3,60.5,'D5 12:50'],[60.5,72.2,'D6 8:15'],[72.2,77.9,'D7 2:45']];
+const PROF=[[0,1505],[1.6,1500],[4.6,2367],[5.8,2701],[6.7,2909],[8.1,3163],[8.9,3190],[9.5,2996],[9.9,3110],[10.8,3106],[11.8,2748],[12.9,3033],[14.0,3084],[15.2,3101],[16.1,3080],[19.4,2755],[22.3,2550],[23.8,2860],[25.9,2841],[27.2,2550],[29.2,2450],[32.0,2550],[35.8,1912],[40.4,2330],[41.5,2294],[42.8,2701],[44.3,2926],[45.5,2900],[47.5,2585],[48.9,2270],[51.4,2591],[53.8,2616],[55.0,2500],[55.8,2348],[57.1,2714],[58.1,2750],[59.4,2820],[60.1,2700],[60.8,3003],[61.3,3015],[61.8,2999],[62.8,2861],[64.1,2880],[66.7,2475],[68.4,2750],[70.4,2277],[72.4,2450]];
+const BWP=[['上高地',0,1505],['西穗山莊',4.6,2367],['西穗獨標',5.8,2701],['西穗高岳',6.7,2909],['奧穗高岳',8.9,3190],['穗高岳山莊',9.5,2996],['北穗高岳',10.8,3106],['南岳小屋',12.8,3030],['槍岳山莊',16.1,3080],['雙六小屋',22.3,2550],['三俁山莊',27.2,2550],['雲之平山莊',32.0,2550],['藥師澤小屋',35.8,1912],['太郎平小屋',40.4,2330],['藥師岳',44.3,2926],['スゴ乘越小屋',48.9,2270],['五色原山莊',55.0,2500],['一之越',60.1,2700],['雄山',60.8,3003],['別山',64.1,2880],['劍山莊',66.7,2475],['劍御前小舍',68.4,2750],['雷鳥澤',70.4,2277],['室堂',72.4,2450]];
+const SEGT=[[0,4.6,'3:00'],[4.6,6.7,'2:15'],[6.7,9.5,'6:15'],[9.5,12.8,'6:00'],[12.8,16.1,'2:30'],[16.1,22.3,'3:50'],[22.3,27.2,'3:05'],[27.2,32.0,'2:30'],[32.0,35.8,'2:10'],[35.8,40.4,'2:50'],[40.4,44.3,'2:30'],[44.3,48.9,'3:10'],[48.9,55.0,'4:20'],[55.0,60.1,'4:10'],[60.1,64.1,'2:45'],[64.1,66.7,'1:10'],[66.7,68.4,'0:50'],[68.4,72.4,'1:55']];
+const DAYT=[[0,9.5,'D1 11:30'],[9.5,16.1,'D2 8:30'],[16.1,27.2,'D3 7:00'],[27.2,35.8,'D4 5:20'],[35.8,55.0,'D5 12:50'],[55.0,66.7,'D6 8:15'],[66.7,72.4,'D7 2:45']];
 /* background */
-el2('rect',{x:0,y:0,width:W,height:H,fill:'#fffbe6'});
+el2('rect',{x:0,y:0,width:W,height:H,fill:'#ffffff'});
 const defs=el2('defs',{});
 const g=el2('linearGradient',{id:'ukg',x1:0,y1:0,x2:0,y2:1},defs);
-el2('stop',{offset:'0%','stop-color':'#79b6d6','stop-opacity':.95},g);
-el2('stop',{offset:'55%','stop-color':'#a9d3c4','stop-opacity':.9},g);
-el2('stop',{offset:'100%','stop-color':'#e3f2d9','stop-opacity':.9},g);
+el2('stop',{offset:'0%','stop-color':'#8fc1b0','stop-opacity':.95},g);
+el2('stop',{offset:'55%','stop-color':'#c6e2d0','stop-opacity':.9},g);
+el2('stop',{offset:'100%','stop-color':'#eef5f0','stop-opacity':.9},g);
 /* gridlines + right elevation labels */
 for(let e=1500;e<=3250;e+=250){
-  el2('line',{x1:L,y1:Y(e),x2:W-R+16,y2:Y(e),stroke:'#8fd0e8','stroke-width':1});
-  if(e%500===0||e===3250||e===2750){const t=el2('text',{x:W-R+20,y:Y(e)+4,'font-size':12,fill:'#557'});t.textContent=e+'m';}
+  el2('line',{x1:L,y1:Y(e),x2:W-R+16,y2:Y(e),stroke:'#dfe6ea','stroke-width':1});
+  if(e%500===0||e===3250||e===2750){const t=el2('text',{x:W-R+20,y:Y(e)+4,'font-size':12,fill:'#667'});t.textContent=e+'m';}
 }
 /* profile */
 el2('path',{d:'M'+PROF.map(p=>`${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(' L ')+` L ${X(kmMax)} ${pB} L ${L} ${pB} Z`,fill:'url(#ukg)'});
-el2('path',{d:'M'+PROF.map(p=>`${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(' L '),fill:'none',stroke:'#1d5f8a','stroke-width':3,'stroke-linejoin':'round'});
+el2('path',{d:'M'+PROF.map(p=>`${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(' L '),fill:'none',stroke:'#41708f','stroke-width':3,'stroke-linejoin':'round'});
 /* waypoint verticals + vertical name labels with stagger */
 const tiers=[-1e9,-1e9,-1e9];
 BWP.forEach(w=>{
@@ -996,8 +1085,8 @@ BWP.forEach(w=>{
   while(ti<2&&x-tiers[ti]<27)ti++;
   tiers[ti]=x;
   const top=26+ti*46;
-  el2('line',{x1:x,y1:top,x2:x,y2:b2B,stroke:'#c9c4a8','stroke-width':.8});
-  el2('circle',{cx:x,cy:y,r:3,fill:'#134a6e'});
+  el2('line',{x1:x,y1:top,x2:x,y2:b2B,stroke:'#d9d9d3','stroke-width':.8});
+  el2('circle',{cx:x,cy:y,r:3,fill:'#33586f'});
   const num=el2('text',{x:x,y:top-6,'font-size':11,fill:'#777','text-anchor':'middle'});num.textContent=ev;
   const t=el2('text',{x:x,y:top+8,'font-size':13,'font-weight':'700',fill:'#222','text-anchor':'middle'});
   nm.split('').forEach((ch,i)=>{const ts=document.createElementNS(NS,'tspan');ts.setAttribute('x',x);ts.setAttribute('dy',i?'1em':'0');ts.textContent=ch;t.appendChild(ts);});
@@ -1016,14 +1105,14 @@ function band(list,y1,y2,color){
     t.textContent=sg[2];
   });
 }
-band(SEGT,b1T,b1B,'#b9db8d');
+band(SEGT,b1T,b1B,'#c5dfa2');
 band(DAYT,b2T,b2B,'#f6cf9f');
 const bl1=el2('text',{x:L,y:b1B-8,'font-size':11,'font-weight':'700',fill:'#3d6b1f'});
 const bl2=el2('text',{x:L,y:b2B-8,'font-size':11,'font-weight':'700',fill:'#9a5a1a'});
 /* footnote */
-const fn=el2('text',{x:L,y:530,'font-size':11,fill:'#887'});
+const fn=el2('text',{x:L,y:530,'font-size':11,fill:'#8a8a82'});
 fn.textContent='上帶＝點到點步程時間、下帶＝單日總時長（標準コースタイム，未含休息）；高差比率因步程長短僅供參考。';
-const fn2=el2('text',{x:L,y:548,'font-size':11,fill:'#887'});
+const fn2=el2('text',{x:L,y:548,'font-size':11,fill:'#8a8a82'});
 fn2.textContent='每段詳細升降請以地形圖實際落差為準。';
 })();
 </script>
@@ -1031,11 +1120,10 @@ fn2.textContent='每段詳細升降請以地形圖實際落差為準。';
 
 <script>
 (function(){
-function sketchCanvas(cb){
-  const src=document.getElementById('map');
-  const vb=src.getAttribute('viewBox').split(' ').map(Number);
-  const clone=src.cloneNode(true);
-  const se=src.querySelectorAll('*'), ce=clone.querySelectorAll('*');
+function svgCanvas(svgEl, cb){
+  const vb=svgEl.getAttribute('viewBox').split(' ').map(Number);
+  const clone=svgEl.cloneNode(true);
+  const se=svgEl.querySelectorAll('*'), ce=clone.querySelectorAll('*');
   const props=['fill','stroke','stroke-width','stroke-dasharray','stroke-linecap','stroke-linejoin','font-size','font-family','font-weight','font-style','opacity','text-anchor','letter-spacing'];
   for(let i=0;i<se.length;i++){
     const cs=getComputedStyle(se[i]);
@@ -1049,40 +1137,44 @@ function sketchCanvas(cb){
   const url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}));
   const img=new Image();
   img.onload=()=>{
-    const sc=2, c=document.createElement('canvas');
-    c.width=vb[2]*sc; c.height=vb[3]*sc;
+    const sc=2,c=document.createElement('canvas');
+    c.width=vb[2]*sc;c.height=vb[3]*sc;
     const ctx=c.getContext('2d');
-    ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
     ctx.drawImage(img,0,0,c.width,c.height);
     URL.revokeObjectURL(url);
     cb(c);
   };
   img.src=url;
 }
-const msg=document.getElementById('copymsg');
-document.getElementById('copysketch').addEventListener('click',()=>{
-  msg.textContent='處理中…';
-  sketchCanvas(c=>c.toBlob(async blob=>{
-    try{
-      await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-      msg.textContent='已複製到剪貼簿 ✓';
-    }catch(e){
-      msg.textContent='此瀏覽器不支援複製圖片，請改用「下載 PNG」';
-    }
-    setTimeout(()=>msg.textContent='',4000);
-  },'image/png'));
-});
-document.getElementById('dlsketch').addEventListener('click',()=>{
-  msg.textContent='處理中…';
-  sketchCanvas(c=>c.toBlob(blob=>{
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='北阿爾卑斯大縱走_手繪路線圖.png';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    msg.textContent='';
-  },'image/png'));
-});
+function bindExport(svgId,copyId,dlId,msgId,fname){
+  const msg=document.getElementById(msgId);
+  document.getElementById(copyId).addEventListener('click',()=>{
+    msg.textContent='處理中…';
+    svgCanvas(document.getElementById(svgId),c=>c.toBlob(async blob=>{
+      try{
+        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+        msg.textContent='已複製到剪貼簿 ✓';
+      }catch(e){
+        msg.textContent='此瀏覽器不支援複製圖片，請改用「下載 PNG」';
+      }
+      setTimeout(()=>msg.textContent='',4000);
+    },'image/png'));
+  });
+  document.getElementById(dlId).addEventListener('click',()=>{
+    msg.textContent='處理中…';
+    svgCanvas(document.getElementById(svgId),c=>c.toBlob(blob=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=fname;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      msg.textContent='';
+    },'image/png'));
+  });
+}
+bindExport('map','copysketch','dlsketch','copymsg','北阿爾卑斯大縱走_手繪路線圖.png');
+bindExport('elev','copyelev','dlelev','copymsg2','北阿爾卑斯大縱走_高度圖.png');
 })();
 </script>
 </body>
