@@ -278,7 +278,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 
 
 
-<details class="sec" id="sec-days" open>
+<details class="sec" id="sec-days">
 <summary>行程</summary>
 <div class="secbody">
 
@@ -290,7 +290,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sec" id="sec-flight" open>
+<details class="sec" id="sec-flight">
 <summary>航班資訊</summary>
 <div class="secbody">
 <div class="gflights">
@@ -327,11 +327,11 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sec" id="sec-hike" open>
+<details class="sec" id="sec-hike">
 <summary>爬山篇</summary>
 <div class="secbody">
 
-<details class="sub" id="sec-route" open>
+<details class="sub" id="sec-route">
 <summary>路線地圖</summary>
 <div class="subbody">
 <div id="lmap"></div>
@@ -345,7 +345,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-sketch" open>
+<details class="sub" id="sec-sketch">
 <summary>手繪版地圖</summary>
 <div class="subbody">
 <div class="legend">
@@ -366,7 +366,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-elev" open>
+<details class="sub" id="sec-elev">
 <summary>高度圖</summary>
 <div class="subbody">
 <div class="elevwrap"><svg id="elev" viewBox="0 0 960 400" role="img" aria-label="高度剖面圖"></svg></div>
@@ -378,7 +378,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-daystats" open>
+<details class="sub" id="sec-daystats">
 <summary>簡易彙整</summary>
 <div class="subbody">
 <div class="tblwrap">
@@ -398,7 +398,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-notes" open>
+<details class="sub" id="sec-notes">
 <summary>注意事項</summary>
 <div class="subbody">
 
@@ -436,7 +436,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <summary>旅行篇</summary>
 <div class="secbody">
 
-<details class="sub" id="sec-souvenir" open>
+<details class="sub" id="sec-souvenir">
 <summary>必買伴手禮</summary>
 <div class="subbody">
 
@@ -446,7 +446,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-play" open>
+<details class="sub" id="sec-play">
 <summary>玩什麼</summary>
 <div class="subbody">
 <ul class="ck" id="playlist"></ul>
@@ -454,7 +454,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-eat" open>
+<details class="sub" id="sec-eat">
 <summary>吃什麼</summary>
 <div class="subbody">
 <ul class="ck" id="eatlist"></ul>
@@ -462,7 +462,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 </div>
 </details>
 
-<details class="sub" id="sec-travel-links" open>
+<details class="sub" id="sec-travel-links">
 <summary>參考連結</summary>
 <div class="subbody">
 
@@ -953,7 +953,8 @@ L.control.layers(
 function syncZoom(){const el=map.getContainer(),z=map.getZoom();el.classList.toggle('lz',z<12);el.classList.toggle('lzm',z<11);}
 map.on('zoomend',syncZoom);
 
-map.fitBounds(L.latLngBounds(DAYROUTES.flatMap(r=>r.pts)),{padding:[30,30]});
+window._tripBounds=L.latLngBounds(DAYROUTES.flatMap(r=>r.pts));
+map.fitBounds(window._tripBounds,{padding:[30,30]});
 
 /* --- interactive elevation chart with hiker --- */
 const EPROF=[[0,1505],[1.6,1500],[4.6,2367],[5.8,2701],[6.7,2909],[8.1,3163],[8.9,3190],[9.5,2996],[9.9,3110],[10.8,3106],[11.8,2748],[12.9,3033],[14.0,3084],[15.2,3101],[16.1,3080],[19.4,2755],[22.3,2550],[23.8,2860],[25.9,2841],[27.2,2550],[29.2,2450],[32.0,2550],[35.8,1912],[40.4,2330],[41.5,2294],[42.8,2701],[44.3,2926],[45.5,2900],[47.5,2585],[48.9,2270],[51.4,2591],[53.8,2616],[55.0,2500],[55.8,2348],[57.1,2714],[58.1,2750],[59.4,2820],[60.1,2700],[60.8,3003],[61.3,3015],[61.8,2999],[62.8,2861],[64.1,2880],[66.7,2475],[68.4,2750],[70.4,2277],[72.4,2450]];
@@ -1052,8 +1053,28 @@ document.getElementById('gpxbtn').addEventListener('click',()=>{
 /* --- collapsible helpers --- */
 document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{
   if(d.open && d.querySelector('#lmap') && window._tripMap)
-    setTimeout(()=>window._tripMap.invalidateSize(),60);
+    setTimeout(()=>{
+      const el=document.getElementById('lmap');
+      if(!el || el.clientHeight===0 || el.clientWidth===0) return;
+      window._tripMap.invalidateSize();
+      if(window._tripBounds && !window._tripFit){
+        window._tripMap.fitBounds(window._tripBounds,{padding:[30,30]});
+        window._tripFit=true;
+      }
+    },80);
+  if(d.open && d.querySelector('#map')) setTimeout(fixPills,30);
 }));
+function fixPills(){
+  document.querySelectorAll('#map rect.staypill, #map rect.badgebg').forEach(r=>{
+    const t=r.nextElementSibling;
+    if(!t || !t.getBBox) return;
+    const bb=t.getBBox();
+    if(!bb.width) return;
+    const px=r.classList.contains('staypill')?6:5, py=r.classList.contains('staypill')?3:2.5;
+    r.setAttribute('x',bb.x-px); r.setAttribute('y',bb.y-py);
+    r.setAttribute('width',bb.width+2*px); r.setAttribute('height',bb.height+2*py);
+  });
+}
 
 /* --- editable checklists (localStorage) --- */
 const esc2=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
