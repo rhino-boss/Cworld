@@ -166,7 +166,7 @@ summary::before{content:'▸';display:inline-block;margin-right:8px;color:var(--
 details[open]>summary::before{transform:rotate(90deg)}
 .itin{width:100%;border-collapse:collapse;font-size:13.5px}
 .itin th{font-size:12px;color:var(--muted);font-weight:700}
-.itin td,.itin th{border-bottom:1px solid var(--cardline);padding:6px 8px;text-align:left}
+.itin td,.itin th{border-bottom:1px solid var(--cardline);padding:6px 8px;text-align:left;white-space:nowrap}
 .itin td:first-child{white-space:nowrap;font-weight:800}
 .itin tr.tp{opacity:.65}
 .notes{margin:6px 0 4px 18px;padding:0;font-size:13.5px}
@@ -221,6 +221,10 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ichart{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden}
 .ichart svg{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
 .hiker{font-size:24px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.tblwrap{overflow-x:auto}
+.flightbox{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:10px 14px;margin:0 0 14px}
+.fb-head{font-weight:700;font-size:14px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.fb-meta{font-weight:400;font-size:12.5px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -250,6 +254,12 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="secbody">
 
 <p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日詳細資料（分段時間、距離、爬升）。</p>
+<div class="flightbox">
+  <div class="fb-head">✈️ 航班資訊 <span class="fb-meta">樂桃航空 Peach｜訂單編號 <b>JQ5EHX</b>｜TWD 30,320 <span class="paid">已付</span>（2026/07/03 刷卡）</span></div>
+  <ul class="ck" id="flightlist"></ul>
+  <p class="hint">收據 PDF 只有付款資訊，沒有航班號與時間——點文字直接編輯補上，或把航班明細給我來填。</p>
+</div>
+
 <div class="dayswrap">
 <div class="days" id="days"></div>
 </div>
@@ -310,6 +320,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <details class="sub" id="sec-daystats" open>
 <summary>簡易彙整</summary>
 <div class="subbody">
+<div class="tblwrap">
 <table class="itin">
 <tr><th></th><th>日期</th><th>總時長</th><th>距離</th><th>爬升</th><th>下降</th></tr>
 <tr><td>D1</td><td>9/12</td><td>約 11:30</td><td>9.3 km</td><td>↑ 2100 m</td><td>↓ 610 m</td></tr>
@@ -321,6 +332,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <tr><td>D7</td><td>9/18</td><td>約 2:45</td><td>5.5 km</td><td>↑ 450 m</td><td>↓ 480 m</td></tr>
 <tr><td><b>合計</b></td><td>7 天</td><td>約 56 hr</td><td>72.2 km</td><td>↑ 約 7350 m</td><td>↓ 約 6410 m</td></tr>
 </table>
+</div>
 <p class="hint">時間為標準コースタイム（未含休息），距離由 OSM 軌跡計算，爬升／下降為概估。</p>
 </div>
 </details>
@@ -1052,6 +1064,10 @@ editList(document.getElementById('playlist'), 'play', [
  {t:'富山：富山城址公園'},
  {t:'名古屋：名古屋城・榮商圈・大須商店街'},
  {t:'上高地：河童橋・大正池（D1 出發前）'}
+]);
+editList(document.getElementById('flightlist'), 'flight', [
+ {t:'9/11 去程：台灣 → 日本｜航班號・起降時間待填', n:'MM___'},
+ {t:'9/20 回程：名古屋 → 台灣｜航班號・起降時間待填', n:'MM___'}
 ]);
 editList(document.getElementById('eatlist'), 'eat', [
  {t:'富山：白えび（白蝦）天丼・刺身'},
