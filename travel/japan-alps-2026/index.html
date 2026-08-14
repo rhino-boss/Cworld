@@ -240,6 +240,20 @@ details[open]>summary::before{transform:rotate(90deg)}
 .mflight .mf-leg{margin:2px 0}
 .mflight ul{margin:8px 0 0 16px;padding:0;color:var(--muted)}
 .mflight li{margin:2px 0}
+.gflights{display:flex;flex-direction:column;gap:12px}
+.gfcard{background:#f1f4f8;border-radius:12px;padding:14px 18px}
+.gf-title{font-weight:700;font-size:13.5px}
+.gf-sub{font-size:12px;color:var(--muted);margin:2px 0 10px}
+.gf-row{display:flex;align-items:center;gap:14px 26px;flex-wrap:wrap}
+.gf-air{display:flex;align-items:center;gap:18px;flex:none}
+.gf-ap b{display:block;font-size:26px;letter-spacing:.5px;line-height:1.1}
+.gf-ap span{font-size:12px;color:var(--muted)}
+.gf-arc{display:flex;flex-direction:column;align-items:center;min-width:110px}
+.gf-arc svg{width:120px;height:28px;display:block}
+.gf-arc span{font-size:11px;color:var(--muted);margin-top:2px}
+.gf-conf span{display:block;font-size:11px;color:var(--muted)}
+.gf-conf b{font-size:14px;font-weight:700}
+.gf-meta{font-size:12px;color:var(--muted);margin-top:10px;border-top:1px solid #e2e7ee;padding-top:8px}
 </style>
 </head>
 <body>
@@ -279,21 +293,37 @@ details[open]>summary::before{transform:rotate(90deg)}
 <details class="sec" id="sec-flight" open>
 <summary>航班資訊</summary>
 <div class="secbody">
-<div class="fgrid">
-  <div class="fcard">
-    <div class="fhead"><b>去程 MM722</b><span>樂桃航空・Standard Plus</span></div>
-    <div class="ftime">9/11（五）02:10 → 06:05</div>
-    <div class="froute">台北（桃園）第1航廈 → 名古屋（中部）第1航廈</div>
-    <div class="fmeta">座位 7F・7E｜託運行李各 1 件</div>
+<div class="gflights">
+  <div class="gfcard">
+    <div class="gf-title">從臺北市前往名古屋市</div>
+    <div class="gf-sub">9月11日週五・上午2:10 – 上午6:05</div>
+    <div class="gf-row">
+      <div class="gf-air">
+      <div class="gf-ap"><b>TPE</b><span>上午2:10</span></div>
+      <div class="gf-arc"><svg viewBox="0 0 130 30" aria-hidden="true"><path d="M6 26 Q65 -8 124 26" stroke="#2e7d32" fill="none" stroke-width="2.5" stroke-linecap="round"></path><text x="18" y="15" font-size="13">✈️</text></svg><span>2 小時 55 分鐘</span></div>
+      <div class="gf-ap"><b>NGO</b><span>上午6:05</span></div>
+      </div>
+      <div class="gf-conf"><span>確認</span><b>JQ5EHX</b></div>
+      <div class="gf-conf"><span>Peach Aviation</span><b>MM722</b></div>
+    </div>
+    <div class="gf-meta">第1航廈 → 第1航廈｜座位 7F・7E｜託運行李各 1 件</div>
   </div>
-  <div class="fcard">
-    <div class="fhead"><b>回程 MM723</b><span>樂桃航空・Standard Plus</span></div>
-    <div class="ftime">9/20（日）22:50 → 9/21（一）00:55</div>
-    <div class="froute">名古屋（中部）第1航廈 → 台北（桃園）第1航廈</div>
-    <div class="fmeta">座位 2F・2E｜託運行李各 1 件｜隔日凌晨抵達</div>
+  <div class="gfcard">
+    <div class="gf-title">從名古屋市前往臺北市</div>
+    <div class="gf-sub">9月20日週日 下午10:50 – 9月21日週一 上午12:55</div>
+    <div class="gf-row">
+      <div class="gf-air">
+      <div class="gf-ap"><b>NGO</b><span>下午10:50</span></div>
+      <div class="gf-arc"><svg viewBox="0 0 130 30" aria-hidden="true"><path d="M6 26 Q65 -8 124 26" stroke="#2e7d32" fill="none" stroke-width="2.5" stroke-linecap="round"></path><text x="18" y="15" font-size="13">✈️</text></svg><span>3 小時 5 分鐘</span></div>
+      <div class="gf-ap"><b>TPE</b><span>上午12:55</span></div>
+      </div>
+      <div class="gf-conf"><span>確認</span><b>JQ5EHX</b></div>
+      <div class="gf-conf"><span>Peach Aviation</span><b>MM723</b></div>
+    </div>
+    <div class="gf-meta">第1航廈 → 第1航廈｜座位 2F・2E｜託運行李各 1 件｜9/21 凌晨抵達</div>
   </div>
 </div>
-<p class="fnote">訂單編號 <b>JQ5EHX</b>｜TWD 30,320 <span class="paid">已付</span>（2026/07/03）｜手提行李每人 2 件・合計 ≤ 7kg｜國際線報到：起飛前 120～50 分鐘</p>
+<p class="fnote">Standard Plus｜TWD 30,320 <span class="paid">已付</span>（2026/07/03）｜手提行李每人 2 件・合計 ≤ 7kg｜國際線報到：起飛前 120～50 分鐘</p>
 </div>
 </details>
 
