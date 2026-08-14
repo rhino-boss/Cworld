@@ -645,24 +645,31 @@ txt(300,1470,'5 km','scaletext','middle',gN);
 const DAYS=[
  {d:'D0',date:'9/11',transport:1,route:'交通日（移動・耍廢）',meta:''},
  {d:'D1',date:'9/12',c:1,
+  card:'上高地 → 西穗山莊 → 西穗獨標 → 西穗高岳 → 奧穗高岳 → 穗高岳山莊',stay:'穗高岳山莊',
   route:'上高地登山口 <b>–3hr–</b> 西穗山莊 <b>–75m–</b> 西穗獨標 <b>–1hr–</b> 西穗高岳 <b>–5hr30–</b> 奧穗高岳（叉路往左）<b>–45min–</b> 穗高岳山莊',
   meta:'<span class="stay">宿：穗高岳山莊</span>（一個月前預定）<br><span class="warn">⚠ 西穗山莊已訂</span>——確認能否推進到穗高岳營地，並記得問西穗山莊能不能取消'},
  {d:'D2',date:'9/13',c:2,
+  card:'穗高岳山莊 → 涸澤岳 → 北穗高岳 → 大切戶 → 南岳 → 中岳 → 大喰岳 → 槍岳山莊 → 槍岳往返',stay:'槍岳山莊',
   route:'穗高岳山莊 <b>–6hr–</b> 槍岳山莊（涸澤岳・北穗高岳・大切戶・南岳・中岳・大喰岳）＋槍岳登頂往返',
   meta:'<span class="stay">宿：槍岳山莊</span>（一個月前預定）'},
  {d:'D3',date:'9/14',c:3,
+  card:'槍岳山莊 → 千丈乘越 → 樅澤岳 → 雙六小屋 → 雙六岳 → 三俁蓮華岳 → 三俁山莊',stay:'三俁山莊',
   route:'槍岳山莊 → 西鎌尾根（千丈乘越・樅澤岳）→ 雙六小屋 → 雙六岳 → 三俁蓮華岳 → 三俁山莊',
   meta:'<span class="stay">宿：三俁山莊</span>｜預刷 1245 台幣・<span class="warn">不可退</span>，剩餘當日現金繳'},
  {d:'D4',date:'9/15',c:4,
+  card:'三俁山莊 → 黑部源流 → 雲之平山莊 → 藥師澤小屋',stay:'藥師澤小屋',
   route:'三俁山莊 → 黑部源流 → 雲之平（雲之平山莊）→ 藥師澤小屋',
   meta:'<span class="stay">宿：藥師澤小屋</span>'},
  {d:'D5',date:'9/16',c:5,
+  card:'藥師澤小屋 → 太郎平小屋 → 藥師岳山莊 → 藥師岳 → 北藥師岳 → 間山 → スゴ乘越小屋 → 越中澤岳 → 鳶山 → 五色原山莊',stay:'五色原山莊',
   route:'藥師澤小屋 → 太郎平小屋 → 藥師岳山莊 → 藥師岳 → 北藥師岳 → 間山 → スゴ乘越小屋 → 越中澤岳 → 鳶山 → 五色原山莊',
   meta:'<span class="stay">宿：五色原山莊</span>｜長程日——中途唯一山屋為スゴ乘越小屋'},
  {d:'D6',date:'9/17',c:6,
+  card:'五色原山莊 → ザラ峠 → 獅子岳 → 龍王岳 → 一之越 → 雄山 → 大汝山 → 富士之折立 → 真砂岳 → 別山 → 劍澤 → 劍山莊',stay:'劍山莊',
   route:'五色原山莊 → ザラ峠 → 獅子岳 → 龍王岳 → 一之越 → 雄山 → 大汝山 → 富士之折立 → 真砂岳 → 別山 → 劍澤 → 劍山莊',
   meta:'<span class="stay">宿：劍山莊</span>｜晚餐＋9/18 早餐便當 <span class="paid">已付</span>'},
  {d:'D7',date:'9/18',c:7,
+  card:'劍山莊 → 劍御前小舍 → 雷鳥澤 → 室堂 → 富山市',stay:'富山 inn',
   route:'劍山莊 → 劍御前小舍（別山乘越）→ 雷鳥澤 → 室堂 <b>下山～～～！！</b> → 富山市',
   meta:'晚上住宿 inn（booking $1750）<span class="paid">已付</span>｜tinghike@gmail.com'},
  {d:'D8',date:'9/19',transport:1,route:'富山 → 名古屋',meta:''},
@@ -678,8 +685,8 @@ DAYS.forEach(v=>{
      <span class="date">${v.date}</span>
    </div>
    <div>
-     <div class="routeline">${v.route}</div>
-     ${v.meta?`<div class="meta">${v.meta}</div>`:''}
+     <div class="routeline">${v.card||v.route}</div>
+     ${v.stay?`<div class="meta"><span class="stay">宿：${v.stay}</span></div>`:(v.meta?`<div class="meta">${v.meta}</div>`:'')}
    </div>`;
   daysBox.appendChild(div);
 });
