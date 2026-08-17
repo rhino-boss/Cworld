@@ -9,50 +9,29 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #f2f4f0; --surface: #fff; --border: #dde2d8;
-      --green-dark: #2d4a2d; --green-mid: #4a7c59; --green-light: #7fb08a;
-      --text: #1a1a1a; --muted: #5a6b5a;
+      --bg: #f7f7f5; --surface: #fff; --border: #e8e8e4;
+      --green-dark: #1a4731; --green-mid: #2d6a4f; --green-light: #7fb08a;
+      --text: #1a1a1a; --muted: #6b6b6b;
       --visited-color: #e85d2f; --unvisited-color: #9ab5a0;
       --nav-height: 52px;
     }
     body { background: var(--bg); font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; color: var(--text); min-height: 100vh; }
 
-    /* ── My Nav ── */
+    /* ── 麵包屑導覽（同 Cworld 其他頁） ── */
     .site-nav {
-      background: var(--green-dark); padding: 0 24px;
-      display: flex; align-items: center; height: var(--nav-height);
+      background: var(--green-dark); padding: 0 32px;
+      display: flex; align-items: center; gap: 8px; height: var(--nav-height);
       position: sticky; top: 0; z-index: 1000;
     }
-    .site-nav .logo {
-      display: flex; align-items: center; gap: 8px;
-      color: #fff; font-weight: 700; font-size: .95rem;
-      text-decoration: none; flex-shrink: 0;
-    }
-    .site-nav ul { display: flex; gap: 2px; list-style: none; margin-left: auto; align-items: center; }
-    .site-nav ul > li { position: relative; }
-    .site-nav ul a {
-      display: block; padding: 6px 12px; border-radius: 6px;
-      color: rgba(255,255,255,.72); text-decoration: none; font-size: .85rem;
-      transition: background .15s, color .15s; white-space: nowrap;
-    }
-    .site-nav ul a:hover,
-    .site-nav ul a.active { background: rgba(255,255,255,.15); color: #fff; font-weight: 600; }
-    .dropdown-menu {
-      display: none; position: absolute; top: calc(100% + 6px); left: 0;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.15); min-width: 180px; padding: 6px 0;
-      list-style: none; z-index: 2000;
-    }
-    .has-dropdown:hover .dropdown-menu { display: block; }
-    .dropdown-menu li a {
-      color: var(--text); border-radius: 0; padding: 10px 16px; font-size: .85rem;
-    }
-    .dropdown-menu li a:hover { background: #f0f8f3; color: var(--green-dark); font-weight: 600; }
+    .site-nav a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
+    .site-nav a:hover { color: #fff; }
+    .site-nav .sep { color: rgba(255,255,255,.3); font-size: .85rem; }
+    .site-nav .current { color: #fff; font-weight: 600; font-size: .85rem; }
 
     /* ── Hero ── */
-    .hero { background: linear-gradient(135deg, var(--green-dark), #3a6b4a); padding: 28px 48px 24px; color: #fff; }
-    .hero h1 { font-size: 1.6rem; font-weight: 700; }
-    .hero p { margin-top: 5px; font-size: .88rem; opacity: .72; }
+    .hero { background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); padding: 40px 48px 36px; color: #fff; }
+    .hero h1 { font-size: 1.75rem; font-weight: 700; }
+    .hero p { margin-top: 6px; font-size: .9rem; opacity: .7; }
 
     /* ── Stats bar ── */
     .stats { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 48px; display: flex; gap: 32px; align-items: center; }
@@ -174,28 +153,19 @@
       .hero { padding: 20px 24px; }
       .stats { padding: 10px 20px; gap: 16px; }
       .sidebar { height: 280px; border-left: none; border-top: 1px solid var(--border); }
-      .site-nav ul { display: none; }
+      .site-nav { padding: 0 20px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── My Nav ── -->
+<!-- ── 麵包屑（與 Cworld 其他頁一致，點「爬山」即回上一層） ── -->
 <nav class="site-nav">
-  <a href="index.html" class="logo">⛰️ 我的登山紀錄</a>
-  <ul>
-    <li><a href="index.html">首頁</a></li>
-    <li><a href="records.html">紀錄列表</a></li>
-    <li class="has-dropdown">
-      <a href="#" class="active">制霸地圖 ▾</a>
-      <ul class="dropdown-menu">
-        <li><a href="peaks.html" style="font-weight:700;color:var(--green-dark);">百岳制霸地圖</a></li>
-        <li><a href="peaks-small.html">小百岳制霸地圖</a></li>
-        <li><a href="peaks-285.html">285峰制霸地圖</a></li>
-      </ul>
-    </li>
-    <li><a href="gear.html">裝備清單</a></li>
-  </ul>
+  <a href="../index.html">Cworld</a>
+  <span class="sep">/</span>
+  <a href="index.html">爬山</a>
+  <span class="sep">/</span>
+  <span class="current">百岳足跡</span>
 </nav>
 
 <!-- ── Hero ── -->
