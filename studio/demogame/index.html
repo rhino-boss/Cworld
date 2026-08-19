@@ -257,6 +257,29 @@ async function fetchRuleInfo(gameBase) {
   } catch { return empty; }
 }
 
+// 遊戲版本＝demo 版本下拉選單目前的版號，來源是 Versions/version_manifest.js 的 current
+// 沒有 current 時退而取 versions[] 裡數字最大的版本；抓不到就不顯示
+function cmpVersion(a, b) {
+  const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const d = (pa[i] || 0) - (pb[i] || 0);
+    if (d) return d;
+  }
+  return 0;
+}
+
+async function fetchDemoVersion(gameBase) {
+  try {
+    const res = await fetch(`${gameBase}/Versions/version_manifest.js`);
+    if (!res.ok) return '';
+    const text = await res.text();
+    const cur = text.match(/["']?current["']?\s*:\s*["']([\d.]+)["']/);
+    if (cur) return cur[1];
+    const all = [...text.matchAll(/["']?version["']?\s*:\s*["']([\d.]+)["']/g)].map(m => m[1]);
+    return all.length ? all.sort(cmpVersion).pop() : '';
+  } catch { return ''; }
+}
+
 // 「數學最後更新時間」＝該遊戲 Source/ 資料夾的最後一筆 commit 時間
 // 查不到（沒有 Source、或 API 額度用完）回 0，排序時會沉到最後
 // 結果快取 6 小時，避免每次進頁面都吃掉 GitHub API 額度（未登入每小時 60 次）
@@ -329,43 +352,27 @@ async function init() {
     const hasFile = (folder, file) =>
       nodes.some(n => n.type === 'blob' && n.path.toLowerCase() === `${folder}/${file}`.toLowerCase());
 
-    // 數學版本：看 Source/ 底下的模型 xlsx，取變體字母最大的那一版
-    // 例：H026192A / H026192B / H026194B → H026194B（B 版、RTP 94）
-    const latestMath = folder => {
-      const files = nodes
-        .filter(n => n.type === 'blob' && n.path.startsWith(`${folder}/Source/`))
-        .map(n => n.path.slice(`${folder}/Source/`.length))
-        .filter(f => /\.xlsx$/i.test(f) && !f.startsWith('~$') && !/_/.test(f));
-      let best = null;
-      for (const f of files) {
-        const m = f.match(/^([A-Za-z0-9]+?)(\d{3})?([A-Z])?\.xlsx$/);
-        if (!m) continue;
-        const cand = { name: f.replace(/\.xlsx$/i, ''), rtp: Number(m[2] || 0), variant: m[3] || '' };
-        if (!best || cand.variant > best.variant || (cand.variant === best.variant && cand.rtp > best.rtp)) best = cand;
-      }
-      return best ? best.name : '';
-    };
-
     const results = folders.map(folder => ({
       ...parseFolderName(folder),
       folderName: folder,
       hasDemo: hasFile(folder, 'index.html'),
       hasRule: hasFile(folder, 'game_rule.md'),
-      mathVer: latestMath(folder),
     }));
 
     // 讀各遊戲的 game_rule.md 取遊戲類型 / PARsheet ID（與本頁同網域，無 CORS 問題）
     // 同時查各遊戲 Source/ 的最後 commit 時間，當作「數學最後更新時間」
     await Promise.all(results.map(async g => {
-      const [rule, mathDate] = await Promise.all([
+      const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
+      const [rule, mathDate, version] = await Promise.all([
         g.hasRule
-          ? fetchRuleInfo(`${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`)
-          : Promise.resolve({ gameType: '', parsheetId: '', version: '' }),
+          ? fetchRuleInfo(gameBase)
+          : Promise.resolve({ gameType: '', parsheetId: '' }),
         fetchMathDate(g.folderName),
+        fetchDemoVersion(gameBase),
       ]);
       g.gameType = rule.gameType;
       g.parsheetId = rule.parsheetId;
-      g.version = rule.version;
+      g.version = version;
       g.mathDate = mathDate;
     }));
 
@@ -413,7 +420,9 @@ function render() {
       const playUrl  = `${gameBase}/`;
       // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
       const coverUrl = `${ASSETS_BASE}/${encodeURIComponent(g.id)}.png`;
-      const desc = g.gameType || (g.hasDemo ? 'Video Slot' : 'Demo 製作中，敬請期待。 🚧');
+      // 遊戲類型只留「Video Slot」後面的玩法，例：Video Slot - Ways / Cascade → Ways / Cascade
+      const type = (g.gameType || '').replace(/^\s*video\s*slot\s*[-–—/]\s*/i, '').trim();
+      const desc = type || (g.hasDemo ? '' : 'Demo 製作中，敬請期待。 🚧');
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
@@ -425,7 +434,7 @@ function render() {
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
-            <div class="card-title">${g.title}${g.mathVer ? `<span class="ver" title="最新數學模型檔">${g.mathVer}</span>` : ''}</div>
+            <div class="card-title">${g.title}${g.version ? `<span class="ver" title="demo 目前版本">${g.version}</span>` : ''}</div>
             <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
