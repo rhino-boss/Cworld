@@ -44,6 +44,36 @@
     .sort-btn:hover { border-color: var(--accent-mid); color: var(--text); }
     .sort-btn.active { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; }
     .sort-dir { width: 38px; font-size: .9rem; line-height: 1; }
+    .sort-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+    /* ── 清單模式 ── */
+    .grid.as-list { display: flex; flex-direction: column; gap: 10px; }
+    .as-list .row {
+      display: flex; align-items: center; gap: 14px; position: relative;
+      background: var(--surface); border: 1px solid var(--card-edge);
+      border-radius: 12px; padding: 10px 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .as-list .row.has-demo:hover { border-color: var(--accent-mid); box-shadow: 0 6px 18px rgba(0,0,0,.10); }
+    .as-list .row-cover {
+      width: 92px; flex-shrink: 0; aspect-ratio: 330/250; border-radius: 8px; overflow: hidden;
+      background: linear-gradient(135deg, #3a2c1a, #6b4e2a);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .as-list .row-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .as-list .row-main { flex: 1; min-width: 0; text-align: left; }
+    .as-list .row-title { font-size: .95rem; font-weight: 800; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .as-list .row-desc { margin-top: 4px; font-size: .8rem; color: var(--muted); }
+    .as-list .new-tag {
+      background: #d32020; color: #fff; font-size: .62rem; font-weight: 800;
+      letter-spacing: .5px; padding: 2px 8px; border-radius: 99px;
+    }
+    .as-list .btn { flex: 0 0 auto; }
+    @media (max-width: 720px) {
+      .as-list .row-cover { width: 64px; }
+      .as-list .btn { padding: 10px 12px; }
+    }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
     .dot.loading { background: #f0a020; animation: pulse 1s infinite; }
     .dot.done { background: #3a8a50; }
@@ -197,6 +227,9 @@
       <button class="sort-btn" type="button" data-key="date">更新時間</button>
       <button class="sort-btn" type="button" data-key="gameid">遊戲編號</button>
       <button class="sort-btn sort-dir" type="button" id="sort-dir">↓</button>
+      <span class="sort-sep"></span>
+      <button class="sort-btn" type="button" data-view="list">☰ 清單</button>
+      <button class="sort-btn" type="button" data-view="card">▦ 卡片</button>
     </div>
   </div>
   <div class="grid" id="game-grid">
@@ -439,6 +472,7 @@ const sortState = (() => {
 })();
 let sortKey = sortState.key === 'gameid' ? 'gameid' : 'date';       // date | gameid
 let sortDesc = sortState.desc !== false;                            // true = 新→舊 / 大→小
+let viewMode = localStorage.getItem('demogame-view') === 'list' ? 'list' : 'card';   // card 為預設
 
 function render() {
   const grid = document.getElementById('game-grid');
@@ -457,13 +491,32 @@ function render() {
     [...games].map(r => r.id).filter(Boolean).sort().reverse().slice(0, 3)
   );
 
+  grid.classList.toggle('as-list', viewMode === 'list');
+
   grid.innerHTML = sorted.map(g => {
       const gameBase = `${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`;
       const playUrl  = `${gameBase}/`;
       // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
       const coverUrl = `${ASSETS_BASE}/${encodeURIComponent(g.id)}.png`;
-      // 玩法統一寫法（Cluster Pay / Pay Anywhere / Way Games - N Ways / Line Games - N Lines）
+      // 玩法統一寫法（Cluster Pay / Pay Anywhere / N Ways / N Lines）
       const desc = g.play || (g.hasDemo ? '' : 'Demo 製作中，敬請期待。 🚧');
+      const ver = g.version ? `<span class="ver" title="demo 目前版本">${g.version}</span>` : '';
+
+      if (viewMode === 'list') return `
+        <div class="row ${g.hasDemo ? 'has-demo' : ''}">
+          <div class="row-cover">
+            <img src="${coverUrl}" alt="${g.title}" loading="lazy" onerror="this.parentNode.textContent='🎰'">
+          </div>
+          <div class="row-main">
+            <div class="row-title">${g.title}${ver}${newIds.has(g.id) ? '<span class="new-tag">NEW</span>' : ''}</div>
+            <div class="row-desc">${g.id}${desc ? ` · ${desc}` : ''}</div>
+          </div>
+          ${g.hasDemo
+            ? `<button class="btn btn-play" type="button" data-play="${playUrl}" data-title="${g.title}">開始遊玩 <span class="ico">🎮</span></button>`
+            : `<div class="btn disabled">製作中</div>`
+          }
+        </div>`;
+
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
@@ -475,7 +528,7 @@ function render() {
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
-            <div class="card-title">${g.title}${g.version ? `<span class="ver" title="demo 目前版本">${g.version}</span>` : ''}</div>
+            <div class="card-title">${g.title}${ver}</div>
             <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
@@ -490,6 +543,9 @@ function render() {
 
   document.querySelectorAll('#sort-bar [data-key]').forEach(b => {
     b.classList.toggle('active', b.dataset.key === sortKey);
+  });
+  document.querySelectorAll('#sort-bar [data-view]').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === viewMode);
   });
   const dirBtn = document.getElementById('sort-dir');
   dirBtn.textContent = sortDesc ? '↓' : '↑';
@@ -508,6 +564,14 @@ document.querySelectorAll('#sort-bar [data-key]').forEach(btn => {
   btn.addEventListener('click', () => setSort(btn.dataset.key, sortDesc));
 });
 document.getElementById('sort-dir').addEventListener('click', () => setSort(sortKey, !sortDesc));
+
+document.querySelectorAll('#sort-bar [data-view]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    viewMode = btn.dataset.view;
+    try { localStorage.setItem('demogame-view', viewMode); } catch {}
+    render();
+  });
+});
 
 init();
 
