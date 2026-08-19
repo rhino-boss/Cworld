@@ -238,7 +238,7 @@ async function fetchJson(url) {
 }
 
 // 玩法統一成四種寫法：
-//   Cluster Pay / Pay Anywhere / Way Games - N Ways / Line Games - N Lines
+//   Cluster Pay / Pay Anywhere / N Ways / N Lines
 // 判定依序看 game_rule.md 的「遊戲類型」「中獎方式」，Ways / Lines 的數字取自
 // 「最小 / 最大 Ways」或中獎方式裡的線數；額外特色（Cascade 等）接在後面
 function normalizePlay(type, winWay, waysCell) {
@@ -253,12 +253,12 @@ function normalizePlay(type, winWay, waysCell) {
     mech = 'Pay Anywhere';
   } else if (/megaways|ways|way\s*game/i.test(all)) {
     const nums = (waysCell.match(/[\d,]{3,}/g) || []).map(num).map(Number).filter(Boolean);
-    if (nums.length >= 2) mech = `Way Games - ${fmt(Math.min(...nums))}–${fmt(Math.max(...nums))} Ways`;
-    else if (nums.length === 1) mech = `Way Games - ${fmt(nums[0])} Ways`;
-    else mech = 'Way Games';
+    if (nums.length >= 2) mech = `${fmt(Math.min(...nums))}–${fmt(Math.max(...nums))} Ways`;
+    else if (nums.length === 1) mech = `${fmt(nums[0])} Ways`;
+    else mech = 'Ways';
   } else {
     const ln = all.match(/(\d+)\s*(?:line|lines|線|條線)/i);
-    if (ln) mech = `Line Games - ${ln[1]} Lines`;
+    if (ln) mech = `${ln[1]} Lines`;
   }
   if (!mech) return type;   // 認不出來就照原文顯示
 
