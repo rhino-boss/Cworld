@@ -144,6 +144,42 @@
     .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
     .hint { font-size: .78rem; color: var(--gray-500); margin-top: 6px; }
 
+    /* ── 清單 / 卡片切換 ── */
+    .result-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .result-row .result-count { margin-bottom: 0; }
+    .view-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
+    .view-toggle button {
+      font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer;
+      padding: 6px 14px; border-radius: 99px;
+      border: 1px solid var(--gray-300); background: var(--white); color: var(--gray-500);
+      transition: all var(--transition);
+    }
+    .view-toggle button:hover { border-color: var(--green-main); color: var(--gray-900); }
+    .view-toggle button.active { background: #1a4731; border-color: #1a4731; color: #fff; }
+
+    /* 清單模式：一列一筆 */
+    .cards-grid.as-list { display: flex; flex-direction: column; gap: 10px; }
+    .as-list .rec-row {
+      display: flex; align-items: center; gap: 14px; position: relative;
+      background: var(--white); border: 1px solid var(--gray-300);
+      border-radius: var(--radius-sm); padding: 10px 14px; cursor: pointer;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .as-list .rec-row:hover { border-color: var(--green-main); box-shadow: var(--shadow-sm); }
+    .as-list .rec-thumb {
+      width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden;
+      background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .as-list .rec-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .as-list .rec-main { flex: 1; min-width: 0; }
+    .as-list .rec-name { font-size: .95rem; font-weight: 700; }
+    .as-list .rec-sub { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; font-size: .76rem; color: var(--gray-500); }
+    .as-list .rec-acts { display: flex; gap: 6px; flex-shrink: 0; }
+    @media (max-width: 640px) {
+      .as-list .rec-sub { font-size: .72rem; }
+      .as-list .rec-thumb { width: 46px; height: 46px; }
+    }
+
     /* ── 與 Cworld 其他頁一致的外殼（麵包屑 + hero + 米白底） ── */
     body { background: #f7f7f5; }
     .site-nav {
@@ -202,7 +238,13 @@
 
   <div class="filter-row" id="yearFilter"></div>
 
-  <p class="result-count" id="resultCount"></p>
+  <div class="result-row">
+    <p class="result-count" id="resultCount"></p>
+    <div class="view-toggle">
+      <button type="button" id="view-list" onclick="setView('list')">☰ 清單</button>
+      <button type="button" id="view-card" onclick="setView('card')">▦ 卡片</button>
+    </div>
+  </div>
   <div class="cards-grid" id="cardGrid"></div>
 </main>
 
@@ -889,6 +931,41 @@ function renderYearFilter() {
     years.map(y => `<button class="filter-pill" onclick="setYear(this,'${y}')">${y}</button>`).join('');
 }
 
+// 顯示模式：清單（預設）／卡片，記在瀏覽器裡
+let currentView = localStorage.getItem('hikeView') === 'card' ? 'card' : 'list';
+function setView(v) {
+  currentView = v;
+  localStorage.setItem('hikeView', v);
+  renderCards();
+}
+
+// 清單模式：一列一筆，資訊濃縮成一行 chips
+function renderList(filtered, grid) {
+  grid.innerHTML = filtered.map(r => `
+    <div class="rec-row" onclick="openDetail(${r.id})" title="點開看完整資訊">
+      <div class="rec-thumb">${
+        r.photos && r.photos.length ? `<img src="${r.photos[0]}" alt="${r.name}" />` : (r.emoji || '🏔')
+      }</div>
+      <div class="rec-main">
+        <div class="rec-name">${r.name}</div>
+        <div class="rec-sub">
+          <span>📅 ${r.date}</span>
+          ${r.days ? `<span>⏱ ${r.days}</span>` : ''}
+          ${r.distance ? `<span>📏 ${Number(r.distance).toFixed(1)} km</span>` : ''}
+          ${r.gain ? `<span>⬆️ ${Number(r.gain).toLocaleString()} m</span>` : ''}
+          ${r.maxAlt ? `<span>🗻 ${Number(r.maxAlt).toLocaleString()} m</span>` : ''}
+          ${r.category ? `<span>${r.category}</span>` : ''}
+          ${r.peaks && r.peaks.length ? `<span>🏔 ${r.peaks.join('・')}</span>` : ''}
+        </div>
+      </div>
+      <div class="rec-acts">
+        <button class="card-act-btn" onclick="openEditModal(${r.id}, event)" title="編輯">✏️</button>
+        <button class="card-act-btn danger" onclick="deleteRecord(${r.id}, event)" title="刪除">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
 let currentYear = 'all';
 function setYear(btn, y) {
   document.querySelectorAll('#yearFilter .filter-pill').forEach(b => b.classList.remove('active'));
@@ -911,10 +988,16 @@ function renderCards() {
   const grid = document.getElementById('cardGrid');
   document.getElementById('resultCount').textContent = `顯示 ${filtered.length} 筆`;
 
+  grid.classList.toggle('as-list', currentView === 'list');
+  document.getElementById('view-list').classList.toggle('active', currentView === 'list');
+  document.getElementById('view-card').classList.toggle('active', currentView === 'card');
+
   if (!filtered.length) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="icon">🔍</div><p>${records.length ? '沒有符合條件的紀錄' : '還沒有紀錄，點右上角「新增紀錄」開始吧！'}</p></div>`;
     return;
   }
+
+  if (currentView === 'list') { renderList(filtered, grid); return; }
 
   grid.innerHTML = filtered.map(r => `
     <div class="record-card" onclick="openDetail(${r.id})" title="點開看完整資訊">

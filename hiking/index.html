@@ -47,6 +47,16 @@
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
 
+    /* 最近紀錄：最多 5 筆，放不下就左右滑動 */
+    .recent-row {
+      display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x proximity;
+      padding: 4px 4px 12px; margin: -4px -4px 0;
+    }
+    .recent-row > .card { flex: 0 0 300px; scroll-snap-align: start; }
+    .recent-row::-webkit-scrollbar { height: 8px; }
+    .recent-row::-webkit-scrollbar-thumb { background: #d8d8d2; border-radius: 99px; }
+    .recent-row::-webkit-scrollbar-track { background: transparent; }
+
     .card {
       position: relative; display: block; overflow: hidden;
       background: var(--surface); border: 1px solid var(--border);
@@ -163,10 +173,10 @@ function renderHome() {
     ? `共 ${records.length} 筆紀錄，累計爬升 ${totalGain.toLocaleString()} 公尺`
     : '還沒有紀錄';
 
-  const recent = [...records].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+  const recent = [...records].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
   if (recent.length) {
     document.getElementById('recentCards').innerHTML = `
-      <div class="grid">
+      <div class="recent-row">
         ${recent.map(r => `
           <a class="card" href="records.html">
             <div class="card-cover">${
