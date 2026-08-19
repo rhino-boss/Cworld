@@ -329,11 +329,29 @@ async function init() {
     const hasFile = (folder, file) =>
       nodes.some(n => n.type === 'blob' && n.path.toLowerCase() === `${folder}/${file}`.toLowerCase());
 
+    // 數學版本：看 Source/ 底下的模型 xlsx，取變體字母最大的那一版
+    // 例：H026192A / H026192B / H026194B → H026194B（B 版、RTP 94）
+    const latestMath = folder => {
+      const files = nodes
+        .filter(n => n.type === 'blob' && n.path.startsWith(`${folder}/Source/`))
+        .map(n => n.path.slice(`${folder}/Source/`.length))
+        .filter(f => /\.xlsx$/i.test(f) && !f.startsWith('~$') && !/_/.test(f));
+      let best = null;
+      for (const f of files) {
+        const m = f.match(/^([A-Za-z0-9]+?)(\d{3})?([A-Z])?\.xlsx$/);
+        if (!m) continue;
+        const cand = { name: f.replace(/\.xlsx$/i, ''), rtp: Number(m[2] || 0), variant: m[3] || '' };
+        if (!best || cand.variant > best.variant || (cand.variant === best.variant && cand.rtp > best.rtp)) best = cand;
+      }
+      return best ? best.name : '';
+    };
+
     const results = folders.map(folder => ({
       ...parseFolderName(folder),
       folderName: folder,
       hasDemo: hasFile(folder, 'index.html'),
       hasRule: hasFile(folder, 'game_rule.md'),
+      mathVer: latestMath(folder),
     }));
 
     // 讀各遊戲的 game_rule.md 取遊戲類型 / PARsheet ID（與本頁同網域，無 CORS 問題）
@@ -407,7 +425,7 @@ function render() {
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
-            <div class="card-title">${g.title}${g.version ? `<span class="ver">${g.version}</span>` : ''}</div>
+            <div class="card-title">${g.title}${g.mathVer ? `<span class="ver" title="最新數學模型檔">${g.mathVer}</span>` : ''}</div>
             <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
