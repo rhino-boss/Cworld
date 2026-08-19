@@ -106,6 +106,13 @@
       font-size: 1rem; font-weight: 800; letter-spacing: .5px;
       padding-bottom: 12px; border-bottom: 1px solid var(--border);
     }
+    /* 版本號（取自 game_rule.md 的「文件版本」） */
+    .card-title .ver {
+      display: inline-block; vertical-align: middle; margin-left: 8px;
+      font-size: .68rem; font-weight: 700; letter-spacing: 0;
+      color: var(--muted); background: var(--bg);
+      border: 1px solid var(--border); border-radius: 99px; padding: 2px 8px;
+    }
     .card-desc {
       padding: 12px 4px 14px; font-size: .8rem; color: var(--muted);
       line-height: 1.5; min-height: 62px;
@@ -230,10 +237,11 @@ async function fetchJson(url) {
   return res.json();
 }
 
-// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」與「PARsheet ID」
-// 對應表格列：| 遊戲類型 | Video Slot - Ways / Cascade | 、| PARsheet ID | H0131 |
+// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」「PARsheet ID」「文件版本」
+// 表格列：| 遊戲類型 | Video Slot - Ways / Cascade | 、| PARsheet ID | H0131 |
+// 版本列：> 文件版本：v1.1（可能後面接「（草稿）」等註記，只取版號）
 async function fetchRuleInfo(gameBase) {
-  const empty = { gameType: '', parsheetId: '' };
+  const empty = { gameType: '', parsheetId: '', version: '' };
   try {
     const res = await fetch(`${gameBase}/game_rule.md`);
     if (!res.ok) return empty;
@@ -243,7 +251,9 @@ async function fetchRuleInfo(gameBase) {
       const v = m ? m[1].trim().replace(/^`|`$/g, '') : '';
       return (!v || v === '-') ? '' : v;
     };
-    return { gameType: cell('遊戲類型'), parsheetId: cell('PARsheet ID') };
+    const vm = text.match(/文件版本\s*[：:]\s*([vV]?[\d.]+)/);
+    const version = vm ? (vm[1].startsWith('v') || vm[1].startsWith('V') ? vm[1] : 'v' + vm[1]) : '';
+    return { gameType: cell('遊戲類型'), parsheetId: cell('PARsheet ID'), version };
   } catch { return empty; }
 }
 
@@ -332,11 +342,12 @@ async function init() {
       const [rule, mathDate] = await Promise.all([
         g.hasRule
           ? fetchRuleInfo(`${PAGES_BASE}/${SLOTS_PATH}/${encodeURIComponent(g.folderName)}`)
-          : Promise.resolve({ gameType: '', parsheetId: '' }),
+          : Promise.resolve({ gameType: '', parsheetId: '', version: '' }),
         fetchMathDate(g.folderName),
       ]);
       g.gameType = rule.gameType;
       g.parsheetId = rule.parsheetId;
+      g.version = rule.version;
       g.mathDate = mathDate;
     }));
 
@@ -396,7 +407,7 @@ function render() {
             ${!g.hasDemo ? '<div class="no-demo-overlay">尚無 Demo</div>' : ''}
           </div>
           <div class="card-body">
-            <div class="card-title">${g.title}</div>
+            <div class="card-title">${g.title}${g.version ? `<span class="ver">${g.version}</span>` : ''}</div>
             <div class="card-desc">${desc}</div>
           </div>
           <div class="card-footer">
