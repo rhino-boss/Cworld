@@ -237,7 +237,46 @@ async function fetchJson(url) {
   return res.json();
 }
 
-// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」「PARsheet ID」「文件版本」
+// 玩法統一成四種寫法：
+//   Cluster Pay / Pay Anywhere / Way Games - N Ways / Line Games - N Lines
+// 判定依序看 game_rule.md 的「遊戲類型」「中獎方式」，Ways / Lines 的數字取自
+// 「最小 / 最大 Ways」或中獎方式裡的線數；額外特色（Cascade 等）接在後面
+function normalizePlay(type, winWay, waysCell) {
+  const all = `${type} ${winWay} ${waysCell}`;
+  const num = s => s.replace(/,/g, '');
+  const fmt = n => Number(n).toLocaleString('en-US');
+
+  let mech = '';
+  if (/cluster/i.test(all)) {
+    mech = 'Cluster Pay';
+  } else if (/count\s*anywhere|pay\s*anywhere|全盤面|整個盤面/i.test(all)) {
+    mech = 'Pay Anywhere';
+  } else if (/megaways|ways|way\s*game/i.test(all)) {
+    const nums = (waysCell.match(/[\d,]{3,}/g) || []).map(num).map(Number).filter(Boolean);
+    if (nums.length >= 2) mech = `Way Games - ${fmt(Math.min(...nums))}–${fmt(Math.max(...nums))} Ways`;
+    else if (nums.length === 1) mech = `Way Games - ${fmt(nums[0])} Ways`;
+    else mech = 'Way Games';
+  } else {
+    const ln = all.match(/(\d+)\s*(?:line|lines|線|條線)/i);
+    if (ln) mech = `Line Games - ${ln[1]} Lines`;
+  }
+  if (!mech) return type;   // 認不出來就照原文顯示
+
+  // 附加特色：把「遊戲類型」拆開，去掉 Video Slot 與已經被 mech 表達的字眼
+  const extras = type
+    .split(/[\/\-–—]/)
+    .map(s => s.trim())
+    .filter(s => s && !/^video\s*slot$/i.test(s)
+      && !/^cluster\s*pays?$/i.test(s)
+      && !/^count\s*anywhere$/i.test(s)
+      && !/^pay\s*anywhere$/i.test(s)
+      && !/^ways?$/i.test(s)
+      && !/^\d+\s*lines?$/i.test(s));
+
+  return extras.length ? `${mech} · ${extras.join(' / ')}` : mech;
+}
+
+// 從遊戲資料夾的 game_rule.md 讀「遊戲類型」「PARsheet ID」「玩法」
 // 表格列：| 遊戲類型 | Video Slot - Ways / Cascade | 、| PARsheet ID | H0131 |
 // 版本列：> 文件版本：v1.1（可能後面接「（草稿）」等註記，只取版號）
 async function fetchRuleInfo(gameBase) {
@@ -251,9 +290,11 @@ async function fetchRuleInfo(gameBase) {
       const v = m ? m[1].trim().replace(/^`|`$/g, '') : '';
       return (!v || v === '-') ? '' : v;
     };
-    const vm = text.match(/文件版本\s*[：:]\s*([vV]?[\d.]+)/);
-    const version = vm ? (vm[1].startsWith('v') || vm[1].startsWith('V') ? vm[1] : 'v' + vm[1]) : '';
-    return { gameType: cell('遊戲類型'), parsheetId: cell('PARsheet ID'), version };
+    return {
+      gameType: cell('遊戲類型'),
+      parsheetId: cell('PARsheet ID'),
+      play: normalizePlay(cell('遊戲類型'), cell('中獎方式'), cell('最小 / 最大 Ways')),
+    };
   } catch { return empty; }
 }
 
@@ -366,11 +407,12 @@ async function init() {
       const [rule, mathDate, version] = await Promise.all([
         g.hasRule
           ? fetchRuleInfo(gameBase)
-          : Promise.resolve({ gameType: '', parsheetId: '' }),
+          : Promise.resolve({ gameType: '', parsheetId: '', play: '' }),
         fetchMathDate(g.folderName),
         fetchDemoVersion(gameBase),
       ]);
       g.gameType = rule.gameType;
+      g.play = rule.play;
       g.parsheetId = rule.parsheetId;
       g.version = version;
       g.mathDate = mathDate;
@@ -420,9 +462,8 @@ function render() {
       const playUrl  = `${gameBase}/`;
       // 封面統一抓 Slots/其他/遊戲資源/<ID>.png
       const coverUrl = `${ASSETS_BASE}/${encodeURIComponent(g.id)}.png`;
-      // 遊戲類型只留「Video Slot」後面的玩法，例：Video Slot - Ways / Cascade → Ways / Cascade
-      const type = (g.gameType || '').replace(/^\s*video\s*slot\s*[-–—/]\s*/i, '').trim();
-      const desc = type || (g.hasDemo ? '' : 'Demo 製作中，敬請期待。 🚧');
+      // 玩法統一寫法（Cluster Pay / Pay Anywhere / Way Games - N Ways / Line Games - N Lines）
+      const desc = g.play || (g.hasDemo ? '' : 'Demo 製作中，敬請期待。 🚧');
       return `
         <div class="card ${g.hasDemo ? 'has-demo' : ''}">
           ${newIds.has(g.id) ? '<div class="ribbon"><span>NEW</span></div>' : ''}
