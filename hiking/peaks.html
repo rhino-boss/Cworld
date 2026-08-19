@@ -284,6 +284,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="peaks-data.js"></script>
+<script src="sync.js"></script>
 <script>
 
 // ═══════════════════════════════════════════════
@@ -649,6 +650,13 @@ function showToast(msg) {
 initMarkers();
 updateStats();
 renderList();
+
+// 雲端資料抓回來後重畫標記與清單
+HikeSync.onReady(() => {
+  PEAKS.forEach(p => refreshMarker(p.name));
+  updateStats();
+  renderList();
+});
 </script>
 </body>
 </html>

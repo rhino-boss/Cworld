@@ -143,27 +143,48 @@
     }
     .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
     .hint { font-size: .78rem; color: var(--gray-500); margin-top: 6px; }
+
+    /* ── 與 Cworld 其他頁一致的外殼（麵包屑 + hero + 米白底） ── */
+    body { background: #f7f7f5; }
+    .site-nav {
+      background: #1a4731; padding: 0 32px; height: 52px;
+      display: flex; align-items: center; gap: 8px;
+      position: sticky; top: 0; z-index: 1000;
+    }
+    .site-nav a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
+    .site-nav a:hover { color: #fff; }
+    .site-nav .sep { color: rgba(255,255,255,.3); font-size: .85rem; }
+    .site-nav .current { color: #fff; font-weight: 600; font-size: .85rem; }
+    .site-hero {
+      background: linear-gradient(135deg, #1a4731, #2d6a4f);
+      padding: 40px 48px 36px; color: #fff;
+    }
+    .site-hero h1 { font-size: 1.75rem; font-weight: 700; }
+    .site-hero p { margin-top: 6px; font-size: .9rem; opacity: .7; }
+    @media (max-width: 640px) {
+      .site-nav { padding: 0 20px; }
+      .site-hero { padding: 28px 24px; }
+    }
   </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo"><span class="icon">⛰️</span>我的登山紀錄</a>
-    <ul class="nav-links">
-      <li><a href="index.html">首頁</a></li>
-      <li><a href="records.html" class="active">紀錄列表</a></li>
-      <li><a href="gear.html">裝備清單</a></li>
-    </ul>
-  </div>
+<nav class="site-nav">
+  <a href="../index.html">Cworld</a>
+  <span class="sep">/</span>
+  <a href="index.html">爬山</a>
+  <span class="sep">/</span>
+  <span class="current">紀錄列表</span>
 </nav>
+
+<div class="site-hero">
+  <h1>📋 紀錄列表</h1>
+  <p id="totalCount">共 0 筆紀錄</p>
+</div>
 
 <main class="page">
   <div class="section-header">
-    <div>
-      <h1 class="page-title">紀錄列表</h1>
-      <p class="page-subtitle" id="totalCount">共 0 筆紀錄</p>
-    </div>
+    <div></div>
     <button class="btn btn-primary" onclick="openAddModal()">＋ 新增紀錄</button>
   </div>
 
@@ -326,6 +347,7 @@
 </div>
 
 <script src="peaks-data.js"></script>
+<script src="sync.js"></script>
 <script>
 // ── State ──────────────────────────────────────────
 let records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
@@ -939,6 +961,12 @@ function renderCards() {
 
 // Init
 renderAll();
+
+// 雲端資料抓回來後重讀並重畫
+HikeSync.onReady(() => {
+  records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
+  renderAll();
+});
 </script>
 </body>
 </html>

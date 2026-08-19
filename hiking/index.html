@@ -146,7 +146,9 @@
 <div class="footer">© 2026 Cworld · 爬山紀錄</div>
 
 <script src="peaks-data.js"></script>
+<script src="sync.js"></script>
 <script>
+function renderHome() {
   const records = JSON.parse(localStorage.getItem('hikeRecords') || '[]');
 
   const totalGain = records.reduce((s, r) => s + (Number(r.gain) || 0), 0);
@@ -186,6 +188,10 @@
           </a>`).join('')}
       </div>`;
   }
+}
+
+renderHome();
+HikeSync.onReady(renderHome);   // 雲端資料抓回來後再畫一次
 </script>
 </body>
 </html>
