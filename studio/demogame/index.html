@@ -296,15 +296,17 @@ function normalizePlay(type, winWay, waysCell) {
   if (!mech) return type;   // 認不出來就照原文顯示
 
   // 附加特色：把「遊戲類型」拆開，去掉 Video Slot 與已經被 mech 表達的字眼
+  // 只在「/」與「前後有空白的破折號」處切開，才不會把 2,025–32,400 這種區間切斷
   const extras = type
-    .split(/[\/\-–—]/)
+    .split(/\s*\/\s*|\s+[-–—]\s+/)
     .map(s => s.trim())
     .filter(s => s && !/^video\s*slot$/i.test(s)
       && !/^cluster\s*pays?$/i.test(s)
       && !/^count\s*anywhere$/i.test(s)
       && !/^pay\s*anywhere$/i.test(s)
-      && !/^[\d,]*\s*ways?$/i.test(s)        // Ways、1,024 Ways 都算重複
-      && !/^[\d,]*\s*lines?$/i.test(s));
+      && !/^[\d,\s–—-]*ways?$/i.test(s)      // Ways、1,024 Ways、2,025–32,400 Ways 都算重複
+      && !/^[\d,\s–—-]*lines?$/i.test(s)
+      && !/^[\d,–—-]+$/.test(s));            // 落單的數字（切壞的區間殘骸）
 
   // 全部用 / 串起來，並濾掉重複的字眼（不分大小寫）
   const seen = new Set();
