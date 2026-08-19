@@ -303,10 +303,19 @@ function normalizePlay(type, winWay, waysCell) {
       && !/^cluster\s*pays?$/i.test(s)
       && !/^count\s*anywhere$/i.test(s)
       && !/^pay\s*anywhere$/i.test(s)
-      && !/^ways?$/i.test(s)
-      && !/^\d+\s*lines?$/i.test(s));
+      && !/^[\d,]*\s*ways?$/i.test(s)        // Ways、1,024 Ways 都算重複
+      && !/^[\d,]*\s*lines?$/i.test(s));
 
-  return extras.length ? `${mech} · ${extras.join(' / ')}` : mech;
+  // 全部用 / 串起來，並濾掉重複的字眼（不分大小寫）
+  const seen = new Set();
+  return [mech, ...extras]
+    .filter(s => {
+      const k = s.toLowerCase().replace(/[\s,]/g, '');
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .join(' / ');
 }
 
 // 從遊戲資料夾的 game_rule.md 讀「遊戲類型」「PARsheet ID」「玩法」
@@ -509,7 +518,7 @@ function render() {
           </div>
           <div class="row-main">
             <div class="row-title">${g.title}${ver}${newIds.has(g.id) ? '<span class="new-tag">NEW</span>' : ''}</div>
-            <div class="row-desc">${g.id}${desc ? ` · ${desc}` : ''}</div>
+            <div class="row-desc">${g.id}${desc ? ` / ${desc}` : ''}</div>
           </div>
           ${g.hasDemo
             ? `<button class="btn btn-play" type="button" data-play="${playUrl}" data-title="${g.title}">開始遊玩 <span class="ico">🎮</span></button>`
