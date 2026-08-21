@@ -68,7 +68,8 @@
       headers: { ...headers(), 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: `hiking: add photo ${name}`, content: m[2], branch: GH.branch }),
     });
-    if (!res.ok) throw new Error(`照片上傳失敗 HTTP ${res.status}`);
+    // 422 通常代表同名檔已存在（重推同一筆紀錄），直接沿用既有路徑
+    if (!res.ok && res.status !== 422) throw new Error(`照片上傳失敗 HTTP ${res.status}`);
     return `images/${name}.${ext}`;
   }
 
