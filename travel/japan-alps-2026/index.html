@@ -229,6 +229,16 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ck .del{border:none;background:none;color:#c9c9c2;cursor:pointer;font-size:12px;padding:2px 4px;flex:none}
 .ck .del:hover{color:#c0392b}
 .ck .addrow{margin-top:8px}
+/* 攜帶物品：左右兩人並排，項目不換行、太長就左右捲動 */
+.packcols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.packcol h4,.packshared h4{font-size:14px;font-weight:800;margin:2px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--cardline)}
+.packshared{margin-top:16px}
+.packcol .ck,.packshared .ck{overflow-x:auto;overflow-y:hidden}
+.packcol .ck li,.packshared .ck li{width:max-content;min-width:100%;flex-wrap:nowrap}
+.packcol .ck .txt,.packshared .ck .txt{white-space:nowrap}
+.packcol .ck::-webkit-scrollbar,.packshared .ck::-webkit-scrollbar{height:6px}
+.packcol .ck::-webkit-scrollbar-thumb,.packshared .ck::-webkit-scrollbar-thumb{background:#dcdcd6;border-radius:99px}
+@media (max-width:720px){ .packcols{grid-template-columns:1fr} }
 .ck .addin{flex:1;border:1px dashed var(--cardline);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;background:var(--paper)}
 .ck .addbtn{border:none;background:#2f9e44;color:#fff;border-radius:8px;padding:2px 12px;font-size:15px;cursor:pointer;flex:none}
 .ichart{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden}
@@ -369,8 +379,8 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div id="lmap"></div>
 <div class="ichart"><svg id="ichart" viewBox="0 0 960 200"></svg></div>
 <div class="mapbar">
-  <button class="gpx" id="gpxbtn">⬇ 下載GPX</button>
-  <a class="gpx detailbtn" href="map.html">🔎 詳細資訊</a>
+  <button class="gpx" id="gpxbtn">下載GPX</button>
+  <a class="gpx detailbtn" href="map.html">詳細資訊</a>
   <label class="modetoggle"><input type="checkbox" id="daymode"> 依日期分色</label>
   <span class="mapnote">軌跡取自 OpenStreetMap 步道資料，行前請再與官方圖資核對</span>
 </div>
@@ -945,25 +955,31 @@ function editList(el, key, seed){
   }
   render();
 }
-const PACK = [
- ['證件與錢', [
-   {t:'護照'},{t:'日幣現金（山屋幾乎只收現金，7 天要帶足）'},{t:'信用卡'},{t:'山屋預訂紀錄（截圖）'},{t:'零錢包（山屋飲料、廁所小費）'}]],
- ['主裝備', [
-   {t:'背包 30–40L＋背包防水套'},{t:'頭盔（西穗–奧穗、大切戶）'},{t:'登山杖'},{t:'頭燈＋備用電池'},{t:'太陽眼鏡'},{t:'離線地圖／GPX（手機先載好）'}]],
- ['衣物', [
-   {t:'排汗底層 ×2–3'},{t:'保暖中層（刷毛）'},{t:'羽絨外套'},{t:'雨衣＋雨褲'},{t:'替換襪 ×3'},{t:'岩稜用手套＋保暖手套'},{t:'毛帽、遮陽帽'}]],
- ['飲食', [
-   {t:'水壺／水袋（2L）'},{t:'行動糧 7 日份'},{t:'電解質粉'},{t:'簡易餐具'}]],
- ['電子', [
-   {t:'手機＋eSIM/SIM'},{t:'行動電源 10000mAh↑（山屋充電多收費）'},{t:'充電線'},{t:'相機（選）'}]],
- ['藥品盥洗', [
-   {t:'個人藥品、止痛藥、腸胃藥'},{t:'防曬乳、護唇膏'},{t:'牙刷、小毛巾、濕紙巾'},{t:'耳塞＋眼罩（山屋通鋪）'}]],
- ['其他', [
-   {t:'垃圾袋、夾鏈袋'},{t:'輕便拖鞋（山屋內）'},{t:'暖暖包'},{t:'旅平險／山岳保險資料、緊急聯絡卡'}]]
+// 個人裝備分左右兩欄，分類順序固定；共同裝備獨立一區、不分欄
+const PACK_CATS = [['must','必帶'],['cloth','服裝'],['hike','爬山'],['wash','盥洗'],['other','其他']];
+const PACK_PEOPLE = [
+ {key:'shen', name:'沈的攜帶物品', items:{
+   must:['頭燈2 電池6','風雨衣 雨褲','帽子','快乾巾','水袋','行動糧 果膠n 燕麥棒'],
+   cloth:['羽絨','alpha','頭巾 手套','大阪 bonaz m襪','琵琶湖 繭型褲 m襪','襯衫 短褲','背心 束褲'],
+   hike:['睡袋','帳篷','彈殼睡墊','營燈','濾水器','急救小包','急救毯','Y拖','野跑鞋','黑熊','登山杖'],
+   wash:['刮鬍刀','牙刷','牙膏'],
+   other:['萌萌的熊'],
+ }},
+ {key:'tsai', name:'蔡的攜帶物品', items:{must:[],cloth:[],hike:[],wash:[],other:[]}},
 ];
+const PACK_SHARED = [];
+
 const packBox=document.getElementById('packlist');
-packBox.innerHTML = PACK.map((g,gi)=>`<div class="ckcat">${g[0]}</div><ul class="ck" data-g="${gi}"></ul>`).join('');
-packBox.querySelectorAll('ul.ck').forEach((ul,gi)=>editList(ul, 'pack'+gi, PACK[gi][1]));
+packBox.innerHTML =
+  `<div class="packcols">${PACK_PEOPLE.map(p=>
+     `<div class="packcol"><h4>${p.name}</h4>${PACK_CATS.map(([k,label])=>
+        `<div class="ckcat">${label}</div><ul class="ck" data-list="${p.key}-${k}"></ul>`).join('')}</div>`).join('')}</div>`
+  + `<div class="packshared"><h4>共同裝備</h4><ul class="ck" data-list="shared"></ul></div>`;
+
+PACK_PEOPLE.forEach(p=>PACK_CATS.forEach(([k])=>
+  editList(packBox.querySelector(`ul[data-list="${p.key}-${k}"]`), `pack-${p.key}-${k}`,
+           p.items[k].map(t=>({t})))));
+editList(packBox.querySelector('ul[data-list="shared"]'), 'pack-shared', PACK_SHARED.map(t=>({t})));
 editList(document.getElementById('todolist'), 'todo', [
  {t:'西穗山莊已訂——確認能否推進到穗高岳，並問西穗山莊能不能取消', n:'⚠ 行程關鍵'},
  {t:'穗高岳山莊 訂房（一個月前預定：約 8/12 開放）'},
