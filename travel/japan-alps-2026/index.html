@@ -213,8 +213,8 @@ details[open]>summary::before{transform:rotate(90deg)}
 .mhead{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin-bottom:10px}
 .mhead i{width:12px;height:12px;border-radius:4px;display:inline-block}
 .mhead span{color:var(--muted);font-size:.9rem}
-.mroute{font-size:14px;line-height:1.7;margin-bottom:8px}
-.mmeta{font-size:13px;color:var(--muted);margin-bottom:12px}
+.mroute{font-size:13.5px;line-height:1.7;margin-bottom:8px}
+.mmeta{font-size:13.5px;color:var(--muted);margin-bottom:12px}
 .mmeta .stay{color:var(--stayicon);font-weight:700}
 .mmeta .warn{color:var(--warn);font-weight:700}
 .mstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
@@ -255,7 +255,11 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ck .catsel.c-cloth{background:#e6effb;border-color:#a9c2e5;color:#204a8f}
 .ck .catsel.c-hike{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
 .ck .catsel.c-other{background:#f0efe9;border-color:#cfcdc2;color:#5f5c50}
-.statsel{font:inherit;font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;cursor:pointer;
+.ed{border-radius:4px;padding:0 2px}
+body:not(.viewmode) .ed,body:not(.viewmode) .cleg .ctext{cursor:text}
+body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:#f2f1ea;outline:1px dashed var(--cardline)}
+.itin a.site{text-decoration:none;color:#2e6ea6;font-weight:700;margin-left:2px}
+.statsel{min-width:74px;text-align:center;font:inherit;font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;cursor:pointer;
   -webkit-appearance:none;appearance:none;border:1px solid var(--cardline);background:var(--card);color:var(--ink)}
 .statsel.s-paid{background:var(--staybg);border-color:var(--stayborder)}
 .statsel.s-booked{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
@@ -389,16 +393,16 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="secbody">
 <div class="tblwrap">
 <table class="itin">
-<tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>費用</th><th>狀態</th></tr>
-<tr><td>D1</td><td>9/11</td><td>上高地</td><td><a href="https://nishiitoya.com/" target="_blank" rel="noopener">上高地西糸屋山莊</a></td><td>—</td><td><select class="statsel" data-k="d1"></select></td></tr>
-<tr><td>D2</td><td>9/12</td><td>穗高岳山莊</td><td><a href="https://www.hotakadakesanso.com/" target="_blank" rel="noopener">穗高岳山莊（營地）</a></td><td>2,000 日圓</td><td><select class="statsel" data-k="d2"></select></td></tr>
-<tr><td>D3</td><td>9/13</td><td>槍岳山莊</td><td><a href="https://www.yarigatake.co.jp/" target="_blank" rel="noopener">槍岳山莊（含晚餐＋隔日早餐）</a></td><td>已刷 $6,507</td><td><select class="statsel" data-k="d3"></select></td></tr>
-<tr><td>D4</td><td>9/14</td><td>三俁山莊</td><td><a href="https://kumonodaira.com/" target="_blank" rel="noopener">三俁山莊</a></td><td>預刷 1,245 台幣・餘額現金</td><td><select class="statsel" data-k="d4"></select></td></tr>
-<tr><td>D5</td><td>9/15</td><td>太郎平小屋</td><td><a href="https://www.taroudaira.com/" target="_blank" rel="noopener">太郎平小屋（山屋＋晚餐＋早/午便當）</a></td><td>全額到場付</td><td><select class="statsel" data-k="d5"></select></td></tr>
-<tr><td>D6</td><td>9/16</td><td>五色原山莊</td><td><a href="https://www.alpen-route.com/tateyama_area/goshikigahara/" target="_blank" rel="noopener">五色原山莊</a></td><td>—</td><td><select class="statsel" data-k="d6"></select></td></tr>
-<tr><td>D7</td><td>9/17</td><td>劍山莊</td><td><a href="https://tsurugi-sanso.com/" target="_blank" rel="noopener">劍山莊（晚餐＋隔日早餐便當）</a></td><td>—</td><td><select class="statsel" data-k="d7"></select></td></tr>
-<tr><td>D8</td><td>9/18</td><td>富山市</td><td><a href="https://www.booking.com/" target="_blank" rel="noopener">inn（booking／tinghike@gmail.com）</a></td><td>$1,750</td><td><select class="statsel" data-k="d8"></select></td></tr>
-<tr><td>D9</td><td>9/19</td><td>名古屋</td><td>名古屋市區（未訂）</td><td>—</td><td><select class="statsel" data-k="d9"></select></td></tr>
+<tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>費用</th><th>備註</th><th>狀態</th></tr>
+<tr><td>D1</td><td>9/11</td><td>上高地</td><td><span class="ed" data-ek="stay.d1.name" data-ek-default="上高地西糸屋山莊">上高地西糸屋山莊</span> <a class="site" href="https://nishiitoya.com/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d1.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d1.note" data-ek-default="無附餐">無附餐</span></td><td><select class="statsel" data-k="d1"></select></td></tr>
+<tr><td>D2</td><td>9/12</td><td>穗高岳山莊</td><td><span class="ed" data-ek="stay.d2.name" data-ek-default="穗高岳山莊">穗高岳山莊</span> <a class="site" href="https://www.hotakadakesanso.com/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d2.fee" data-ek-default="2,000 日圓">2,000 日圓</span></td><td><span class="ed" data-ek="stay.d2.note" data-ek-default="營地・不含餐">營地・不含餐</span></td><td><select class="statsel" data-k="d2"></select></td></tr>
+<tr><td>D3</td><td>9/13</td><td>槍岳山莊</td><td><span class="ed" data-ek="stay.d3.name" data-ek-default="槍岳山莊">槍岳山莊</span> <a class="site" href="https://www.yarigatake.co.jp/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d3.fee" data-ek-default="已刷 $6,507">已刷 $6,507</span></td><td><span class="ed" data-ek="stay.d3.note" data-ek-default="含晚餐＋隔日早餐">含晚餐＋隔日早餐</span></td><td><select class="statsel" data-k="d3"></select></td></tr>
+<tr><td>D4</td><td>9/14</td><td>三俁山莊</td><td><span class="ed" data-ek="stay.d4.name" data-ek-default="三俁山莊">三俁山莊</span> <a class="site" href="https://kumonodaira.com/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d4.fee" data-ek-default="預刷 1,245 台幣・餘額現金">預刷 1,245 台幣・餘額現金</span></td><td><span class="ed" data-ek="stay.d4.note" data-ek-default="餐食待確認">餐食待確認</span></td><td><select class="statsel" data-k="d4"></select></td></tr>
+<tr><td>D5</td><td>9/15</td><td>太郎平小屋</td><td><span class="ed" data-ek="stay.d5.name" data-ek-default="太郎平小屋">太郎平小屋</span> <a class="site" href="https://www.taroudaira.com/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d5.fee" data-ek-default="全額到場付">全額到場付</span></td><td><span class="ed" data-ek="stay.d5.note" data-ek-default="山屋＋晚餐＋隔日早餐／午餐便當">山屋＋晚餐＋隔日早餐／午餐便當</span></td><td><select class="statsel" data-k="d5"></select></td></tr>
+<tr><td>D6</td><td>9/16</td><td>五色原山莊</td><td><span class="ed" data-ek="stay.d6.name" data-ek-default="五色原山莊">五色原山莊</span> <a class="site" href="https://www.alpen-route.com/tateyama_area/goshikigahara/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d6.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d6.note" data-ek-default="餐食待確認">餐食待確認</span></td><td><select class="statsel" data-k="d6"></select></td></tr>
+<tr><td>D7</td><td>9/17</td><td>劍山莊</td><td><span class="ed" data-ek="stay.d7.name" data-ek-default="劍山莊">劍山莊</span> <a class="site" href="https://tsurugi-sanso.com/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d7.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d7.note" data-ek-default="晚餐＋隔日早餐便當">晚餐＋隔日早餐便當</span></td><td><select class="statsel" data-k="d7"></select></td></tr>
+<tr><td>D8</td><td>9/18</td><td>富山市</td><td><span class="ed" data-ek="stay.d8.name" data-ek-default="富山 inn（booking／tinghike@gmail.com）">富山 inn（booking／tinghike@gmail.com）</span> <a class="site" href="https://www.booking.com/" target="_blank" rel="noopener" title="官網">↗</a></td><td><span class="ed" data-ek="stay.d8.fee" data-ek-default="$1,750">$1,750</span></td><td><span class="ed" data-ek="stay.d8.note" data-ek-default="無附餐">無附餐</span></td><td><select class="statsel" data-k="d8"></select></td></tr>
+<tr><td>D9</td><td>9/19</td><td>名古屋</td><td><span class="ed" data-ek="stay.d9.name" data-ek-default="名古屋市區（未訂）">名古屋市區（未訂）</span></td><td><span class="ed" data-ek="stay.d9.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d9.note" data-ek-default="未訂">未訂</span></td><td><select class="statsel" data-k="d9"></select></td></tr>
 </table>
 </div>
 <p class="hint">全程住宿一覽；點住宿名稱可開官網。</p>
@@ -943,14 +947,44 @@ const DETAIL={
    ['00:55','桃園機場 第1航廈']]}
 };
 // 把 chain 畫成「地點 → 路段 → 地點」的直式串列
-function chainHTML(chain){
+/* 使用者改過的文字（分段說明、住宿、費用）都存在這裡 */
+const EDITS = (()=>{ try{ return JSON.parse(localStorage.getItem('alps26.edits'))||{}; }catch(e){ return {}; } })();
+const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+window.EDITS = EDITS;
+function saveEdits(){ try{ localStorage.setItem('alps26.edits', JSON.stringify(EDITS)); }catch(e){} }
+window.saveEdits = saveEdits;
+
+// 讓任何 [data-ek] 元素在編輯模式下可以直接改字
+window.bindEditable = bindEditable;
+function bindEditable(root){
+  (root||document).querySelectorAll('[data-ek]').forEach(el=>{
+    if(el.dataset.ekBound) return;
+    el.dataset.ekBound='1';
+    el.addEventListener('click',()=>{
+      if(document.body.classList.contains('viewmode') || el.isContentEditable) return;
+      el.contentEditable='true'; el.focus();
+    });
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
+    el.addEventListener('blur',()=>{
+      el.contentEditable='false';
+      const v=el.textContent.trim();
+      if(v && v!==el.dataset.ekDefault){ EDITS[el.dataset.ek]=v; } else { delete EDITS[el.dataset.ek]; }
+      saveEdits();
+    });
+  });
+}
+
+function chainHTML(chain, dayKey){
   if(!chain) return '';
+  let li=0;
   return '<div class="chain">'+chain.map(item=>{
     if(Array.isArray(item))
       // 節點格式：[預計抵達時間, 地點, 標高(可省略)]
       return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span>${item[2]?`<span class="celev">${item[2].toLocaleString()} m</span>`:''}</div>`;
     const bits=[item.t, item.km].filter(Boolean).join('・');
-    return `<div class="cleg"><span class="cbar"></span><span class="ctext">${item.n?item.n+'，':''}${bits}</span></div>`;
+    const def=(item.n?item.n+'，':'')+bits;
+    const k='leg.'+dayKey+'.'+(li++);
+    return `<div class="cleg"><span class="cbar"></span><span class="ctext" data-ek="${k}" data-ek-default="${esc(def)}">${esc(EDITS[k]||def)}</span></div>`;
   }).join('')+'</div>';
 }
 
@@ -971,7 +1005,8 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
         <div><span>爬升</span><b>↑ ${dx.up}</b></div>
         <div><span>下降</span><b>↓ ${dx.down}</b></div>
       </div>`:''}
-      ${dx.chain?`<div class="mlegs"><b>分段資訊${dx.time?'（標準CT）':''}</b>${chainHTML(dx.chain)}</div>`:''}`;
+      ${dx.chain?`<div class="mlegs"><b>分段資訊${dx.time?'（標準CT）':''}</b>${chainHTML(dx.chain, v.d)}</div>`:''}`;
+    bindEditable(mbg);
     mbg.style.display='flex';
   });
 });
@@ -1145,6 +1180,15 @@ function packList(el, key, seed){
 }
 PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
 
+
+/* 住宿與費用的文字覆寫 */
+(function(){
+  document.querySelectorAll('#sec-stay [data-ek]').forEach(el=>{
+    const v=window.EDITS[el.dataset.ek];
+    if(v) el.textContent=v;
+  });
+  window.bindEditable(document.getElementById('sec-stay'));
+})();
 
 /* 住宿狀態：可自選並記住 */
 (function(){
