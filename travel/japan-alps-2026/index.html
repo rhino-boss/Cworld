@@ -217,6 +217,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 .chain{margin-top:8px}
 .chain .cnode{display:flex;align-items:baseline;gap:8px;padding:5px 8px;border-radius:6px;background:var(--card);
   border:1px solid var(--cardline);font-weight:700}
+.chain .ctime{font-size:12px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;min-width:34px}
 .chain .cname{font-size:13.5px}
 .chain .celev{font-size:12px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
 .chain .cleg{display:flex;gap:10px;padding:5px 0 5px 14px}
@@ -230,9 +231,14 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ck .del:hover{color:#c0392b}
 .ck .addrow{margin-top:8px}
 /* 攜帶物品：左右兩人並排，項目不換行、太長就左右捲動 */
-.packcols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.packshared{margin-top:16px}
-.packcol>summary,.packshared>summary{font-size:14px;font-weight:800}
+.packcols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.packshared{margin-top:10px}
+.packcol>summary,.packshared>summary{font-size:14px;font-weight:800;padding:8px 12px}
+.packcol,.packshared{margin-bottom:0}
+.packcol .subbody,.packshared .subbody{padding:0 12px 8px}
+.packcol .ckcat,.packshared .ckcat{margin:8px 0 2px}
+.packcol .ck,.packshared .ck{margin:0}
+.packcol .ck li,.packshared .ck li{margin:2px 0}
 .packcol .ck,.packshared .ck{overflow-x:auto;overflow-y:hidden}
 .packcol .ck li,.packshared .ck li{width:max-content;min-width:100%;flex-wrap:nowrap}
 .packcol .ck .txt,.packshared .ck .txt{white-space:nowrap}
@@ -381,7 +387,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="mapbar">
   <button class="gpx" id="gpxbtn">下載GPX</button>
   <a class="gpx detailbtn" href="map.html">詳細資訊</a>
-  <label class="modetoggle"><input type="checkbox" id="daymode"> 依日期分色</label>
+  <label class="modetoggle"><input type="checkbox" id="daymode" checked> 依日期分色</label>
   <span class="mapnote">軌跡取自 OpenStreetMap 步道資料，行前請再與官方圖資核對</span>
 </div>
 
@@ -766,7 +772,7 @@ txt(300,1470,'5 km','scaletext','middle',gN);
 /* ---------- day cards ---------- */
 const DAYS=[
  {d:'D1',date:'9/11',transport:1,route:'台中 → 桃園機場 → 中部機場 → 名古屋 → 松本 → 上高地',
-  meta:'<span class="stay">宿：上高地西糸屋山莊</span>（<a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">地圖</a>）｜目標 15:00 前 Check in'},
+  meta:'<span class="stay">宿：上高地西糸屋山莊</span>'},
  {d:'D2',date:'9/12',c:1,
   card:'上高地 → 德澤 → 橫尾 → 涸澤圈谷 → 穗高岳山莊',stay:'穗高岳山莊（營地）',
   route:'04:00 上高地 <b>–2hr–</b> 德澤 <b>–1hr–</b> 橫尾 <b>–3hr–</b> 涸澤圈谷 <b>–3hr–</b> 穗高岳山莊',
@@ -829,24 +835,77 @@ const DETAIL={
    <div class="mf-leg">9/11（五）<b>06:05</b> 名古屋（中部）第1航廈 抵達</div>
    <ul><li>座位 7F・7E｜託運行李各 1 件</li><li>手提每人 2 件・合計 ≤ 7kg</li><li>國際線報到：起飛前 120～50 分鐘</li><li>訂單編號 JQ5EHX｜TWD 30,320 已付</li><li>清晨抵達名古屋後移動至松本／上高地方向</li></ul></div>`,
   chain:[
-   ['台中'],{t:'接駁',n:'夜間出發前往桃園機場'},
-   ['桃園機場 第1航廈'],{t:'02:10 → 06:00',n:'MM722 樂桃航空'},
-   ['中部國際機場'],{t:'06:05 出發・約 0:40',n:'名鐵特急'},
-   ['名古屋'],{t:'約 08:00 出發・約 2:00',n:'JR 特急しなの（信濃）；名古屋只留吃一餐的時間'},
-   ['松本'],{t:'約 2:00',n:'松本電鐵上高地線＋新島島轉巴士'},
-   ['上高地'],{t:'目標 15:00 前',n:'Check in'},
-   ['上高地西糸屋山莊',1505]]},
+   ['—','台中'],{t:'接駁',n:'夜間出發前往桃園機場'},
+   ['0010','桃園機場 第1航廈'],{t:'02:10 → 06:00',n:'MM722 樂桃航空'},
+   ['0600','中部國際機場'],{t:'0:40',n:'名鐵特急（06:05 出發）'},
+   ['0645','名古屋'],{t:'2:00',n:'JR 特急しなの（信濃）；名古屋只留吃一餐的時間，08:00 前上車'},
+   ['1000','松本'],{t:'2:00',n:'松本電鐵上高地線＋新島島轉巴士'},
+   ['1230','上高地'],{t:'0:30',n:'步行至山莊 Check in'},
+   ['1300','上高地西糸屋山莊',1505]]},
+ 1:{time:'約 9:00',dist:'約 17.4 km',up:'約 1,570 m',down:'約 100 m',chain:[
+   ['0400','上高地',1505],{t:'2:00',km:'6.8 km',n:'梓川左岸平緩林道，經明神'},
+   ['0600','德澤',1562],{t:'1:00',km:'3.5 km',n:'續行平路'},
+   ['0700','橫尾',1620],{t:'3:00',km:'6.0 km',n:'本谷橋後開始陡上'},
+   ['1000','涸澤圈谷',2309],{t:'3:00',km:'2.5 km',n:'ザイテングラート岩稜陡上'},
+   ['1300','穗高岳山莊',2996]]},
+ 2:{time:'約 10:00',dist:'約 8 km',up:'約 1,100 m',down:'約 1,020 m',chain:[
+   ['0400','穗高岳山莊',2996],{t:'0:45',km:'0.8 km',n:'放大背包，輕裝上奧穗看日出'},
+   ['0445','奧穗高岳',3190],{t:'0:45',km:'0.8 km',n:'看完日出原路回山莊'},
+   ['0530','穗高岳山莊（回山莊）',2996],{t:'2:30',km:'2.0 km',n:'07:00 前出發；經涸澤岳 3,110 m，鎖鏈陡下'},
+   ['0930','北穗高岳／北穗高小屋',3106],{t:'3:00',km:'2.0 km',n:'大切戶：長梯與連續鎖場，全程最難'},
+   ['1230','南岳小屋／南岳',3033],{t:'3:00',km:'3.3 km',n:'中岳 3,084 m・大喰岳 3,101 m 緩稜'},
+   ['1530','槍岳山莊',3080],{t:'0:20',km:'0.2 km',n:'放大背包，傍晚輕裝上槍岳看日落'},
+   ['1700','槍岳',3180],{t:'0:20',km:'0.2 km',n:'原路下山回山莊'},
+   ['1730','槍岳山莊（回山莊）',3080]]},
+ 3:{time:'約 8:20',dist:'約 11.1 km',up:'約 700 m',down:'約 1,230 m',chain:[
+   ['0500','槍岳山莊',3080],{t:'1:00～1:30',km:'1.2 km',n:'極陡峭碎石、鎖鏈岩壁下切'},
+   ['0615','千丈乘越',2720],{t:'2:30～3:00',km:'3.5 km',n:'西鎌尾根：連續陡峭岩稜、鐵梯攀爬'},
+   ['0900','樅澤岳',2755],{t:'0:30',km:'1.5 km',n:'下切至鞍部'},
+   ['0930','雙六小屋',2550],{t:'2:30',km:'3.4 km',n:'補給後再次長稜上，經雙六岳或走卷道　★ 重要補給／撤退點'},
+   ['1200','三俁蓮華岳',2841],{t:'0:40',km:'1.5 km',n:'一路緩下切'},
+   ['1240','三俁山莊',2550]]},
+ 4:{time:'約 5:50',dist:'約 12.1 km',up:'約 500 m',down:'約 700 m',chain:[
+   ['0600','三俁山莊',2550],{t:'1:00',km:'2.0 km',n:'往黑部川源頭下切'},
+   ['0700','黑部源流',2350],{t:'2:00',km:'5.5 km',n:'沿源流河谷，數次渡溪'},
+   ['0900','藥師澤小屋',1912],{t:'2:50',km:'4.6 km',n:'原訂住宿改為到現場取消；緩上太郎兵衛平'},
+   ['1150','太郎平小屋',2330]]},
+ 5:{time:'約 10:00',dist:'約 14.6 km',up:'約 1,410 m',down:'約 1,240 m',chain:[
+   ['0430','太郎平小屋',2330],{t:'1:50',km:'3.0 km',n:'經藥師峠營地'},
+   ['0620','藥師岳山莊',2700],{t:'0:40',km:'1.3 km',n:'碎石坡上主峰'},
+   ['0700','藥師岳',2926],{t:'2:10',km:'3.0 km',n:'北藥師岳 2,900 m 後長稜下降'},
+   ['0910','間山',2585],{t:'1:00',km:'1.7 km',n:'緩下'},
+   ['1010','スゴ乘越小屋',2270],{t:'2:00',km:'2.3 km',n:'本日最陡上坡'},
+   ['1210','越中澤岳',2591],{t:'1:40',km:'2.0 km',n:'稜線起伏'},
+   ['1350','鳶山',2616],{t:'0:40',km:'1.3 km',n:'緩下至五色原台地'},
+   ['1430','五色原山莊',2500]]},
+ 6:{time:'約 8:15',dist:'約 11.9 km',up:'約 1,100 m',down:'約 1,120 m',chain:[
+   ['0500','五色原山莊',2500],{t:'0:30',km:'0.8 km',n:'下切至鞍部'},
+   ['0530','ザラ峠',2348],{t:'1:30',km:'1.3 km',n:'砂礫陡上'},
+   ['0700','獅子岳',2714],{t:'1:40',km:'2.0 km',n:'鬼岳東面雪溪橫渡'},
+   ['0840','龍王岳',2872],{t:'0:30',km:'0.7 km',n:'下至鞍部'},
+   ['0910','一之越',2700],{t:'1:00',km:'1.0 km',n:'碎石陡上'},
+   ['1010','雄山',3003],{t:'1:05',km:'1.8 km',n:'大汝山 3,015 m・富士之折立 2,999 m'},
+   ['1115','真砂岳',2861],{t:'0:40',km:'1.3 km',n:'稜線緩行'},
+   ['1155','別山',2880],{t:'1:20',km:'3.0 km',n:'經劍澤；劍岳看日落或隔日看日出'},
+   ['1315','劍山莊',2475]]},
+ 7:{time:'約 8:15（含劍岳往返）',dist:'約 11.5 km',up:'約 1,450 m',down:'約 1,480 m',chain:[
+   ['0400','劍山莊',2475],{t:'3:00',km:'約 3 km',n:'放下大背包，輕裝上劍岳（一服劍・前劍・鎖場カニのタテバイ）'},
+   ['0700','劍岳',2999],{t:'2:30',km:'約 3 km',n:'原路下山（カニのヨコバイ），回劍山莊取包收拾'},
+   ['0930','劍山莊（回山莊）',2475],{t:'0:50',km:'1.5 km',n:'收拾後 10:00 出發，上至別山乘越'},
+   ['1050','劍御前小舍',2750],{t:'1:10',km:'2.2 km',n:'雷鳥坂下降'},
+   ['1200','雷鳥澤',2277],{t:'0:45',km:'1.8 km',n:'最後緩上回室堂'},
+   ['1245','室堂',2450]]},
  8:{chain:[
-   ['富山'],{t:'約 3:00',n:'JR 特急ひだ，或北陸新幹線經金澤／東京轉乘'},
-   ['名古屋']]},
+   ['0900','富山'],{t:'3:00',n:'JR 特急ひだ，或北陸新幹線經金澤／東京轉乘'},
+   ['1200','名古屋']]},
  9:{html:`<div class="mflight"><div class="mf-no">✈️ MM723 <span>樂桃航空・Standard Plus</span></div>
    <div class="mf-leg">9/20（日）<b>22:50</b> 名古屋（中部）第1航廈 出發</div>
    <div class="mf-leg">9/21（一）<b>00:55</b> 台北（桃園）第1航廈 抵達（隔日凌晨）</div>
    <ul><li>座位 2F・2E｜託運行李各 1 件</li><li>國際線報到：起飛前 120～50 分鐘｜22:50 起飛 → 最晚 22:00 前完成報到</li><li>訂單編號 JQ5EHX</li></ul></div>`,
   chain:[
-   ['名古屋'],{t:'約 0:40',n:'名鐵特急前往中部國際機場，起飛前 2 小時抵達'},
-   ['中部國際機場'],{t:'22:50 → 00:55（9/21 凌晨）',n:'MM723 樂桃航空'},
-   ['桃園機場 第1航廈']]},
+   ['2000','名古屋'],{t:'0:40',n:'名鐵特急前往中部國際機場，起飛前 2 小時抵達'},
+   ['2045','中部國際機場'],{t:'22:50 → 00:55',n:'MM723 樂桃航空（9/21 凌晨抵達）'},
+   ['0055','桃園機場 第1航廈']]},
  // chain：交錯排列「地點」與「路段」——['名稱',標高] 為地點，{t,km,n} 為到下一個地點的時間／距離／說明
  1:{time:'約 9:00',dist:'約 18.8 km',up:'約 1,500 m',down:'約 0 m',chain:[
    ['上高地',1505],{t:'2:00',km:'6.8 km',n:'梓川左岸平緩林道，經明神'},
@@ -905,7 +964,8 @@ function chainHTML(chain){
   if(!chain) return '';
   return '<div class="chain">'+chain.map(item=>{
     if(Array.isArray(item))
-      return `<div class="cnode"><span class="cname">${item[0]}</span>${item[1]?`<span class="celev">${item[1].toLocaleString()} m</span>`:''}</div>`;
+      // 節點格式：[預計抵達時間, 地點, 標高(可省略)]
+      return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span>${item[2]?`<span class="celev">${item[2].toLocaleString()} m</span>`:''}</div>`;
     const bits=[item.t, item.km].filter(Boolean).join('・');
     return `<div class="cleg"><span class="cbar"></span><span class="ctext">${item.n?item.n+'，':''}${bits}</span></div>`;
   }).join('')+'</div>';
@@ -1030,15 +1090,15 @@ function editList(el, key, seed){
 const PACK_CATS = [['must','必帶'],['cloth','服裝'],['hike','爬山'],['wash','盥洗'],['other','其他']];
 const PACK_PEOPLE = [
  {key:'shen', name:'沈的攜帶物品', items:{
-   must:['頭燈2 電池6','風雨衣 雨褲','帽子','快乾巾','水袋','行動糧 果膠n 燕麥棒'],
+   must:['護照','日幣','頭燈2 電池6','風雨衣 雨褲','帽子','快乾巾','水袋','行動糧 果膠n 燕麥棒'],
    cloth:['羽絨','alpha','頭巾 手套','大阪 bonaz m襪','琵琶湖 繭型褲 m襪','襯衫 短褲','背心 束褲'],
-   hike:['睡袋','帳篷','彈殼睡墊','營燈','濾水器','急救小包','急救毯','Y拖','野跑鞋','黑熊','登山杖'],
+   hike:['睡袋','彈殼睡墊','營燈','急救毯','Y拖','野跑鞋','黑熊','登山杖'],
    wash:['刮鬍刀','牙刷','牙膏'],
    other:['萌萌的熊'],
  }},
- {key:'tsai', name:'蔡的攜帶物品', items:{must:[],cloth:[],hike:[],wash:[],other:[]}},
+ {key:'tsai', name:'蔡的攜帶物品', items:{must:['護照','日幣'],cloth:[],hike:[],wash:[],other:[]}},
 ];
-const PACK_SHARED = [];
+const PACK_SHARED = ['帳篷','濾水器','急救小包'];
 
 const packBox=document.getElementById('packlist');
 packBox.innerHTML =
@@ -1048,9 +1108,9 @@ packBox.innerHTML =
   + `<details class="sub packshared" id="pack-shared-sec" open><summary>共同裝備</summary><div class="subbody"><ul class="ck" data-list="shared"></ul></div></details>`;
 
 PACK_PEOPLE.forEach(p=>PACK_CATS.forEach(([k])=>
-  editList(packBox.querySelector(`ul[data-list="${p.key}-${k}"]`), `pack-${p.key}-${k}`,
+  editList(packBox.querySelector(`ul[data-list="${p.key}-${k}"]`), `pack2-${p.key}-${k}`,
            p.items[k].map(t=>({t})))));
-editList(packBox.querySelector('ul[data-list="shared"]'), 'pack-shared', PACK_SHARED.map(t=>({t})));
+editList(packBox.querySelector('ul[data-list="shared"]'), 'pack2-shared', PACK_SHARED.map(t=>({t})));
 editList(document.getElementById('todolist'), 'todo', [
  {t:'藥師澤小屋：到現場取消住宿（改住太郎平小屋）', n:'⚠ 行程關鍵'},
  {t:'穗高岳山莊 營地 2000 日圓（現場付現）'},

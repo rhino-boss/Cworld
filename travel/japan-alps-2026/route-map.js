@@ -68,9 +68,10 @@ const dayLines=DAYROUTES.map((r,i)=>
    .bindPopup(`<b>D${r.d+1}</b>（${r.date}）<br>${r.from} → ${r.to}`)
    .addTo(map));
 
-document.getElementById('daymode').addEventListener('change',e=>{
-  dayLines.forEach((pl,i)=>pl.setStyle({color:e.target.checked?DAYCOLORS[i]:HNBLUE}));
-});
+const dayModeBox=document.getElementById('daymode');
+function applyDayMode(){ dayLines.forEach((pl,i)=>pl.setStyle({color:dayModeBox.checked?DAYCOLORS[i]:HNBLUE})); }
+dayModeBox.addEventListener('change',applyDayMode);
+applyDayMode();
 
 function icon(html){return L.divIcon({html,className:'lmkwrap',iconSize:null,iconAnchor:[7,8]});}
 const gStay=L.layerGroup().addTo(map), gHut=L.layerGroup().addTo(map),
