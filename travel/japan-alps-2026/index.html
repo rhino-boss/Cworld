@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>北阿爾卑斯大縱走 2026 · Cworld</title>
+<title>槍劍縱走 2026 · Cworld</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -239,7 +239,19 @@ details[open]>summary::before{transform:rotate(90deg)}
 .packcol .ckcat,.packshared .ckcat{margin:8px 0 2px}
 /* 分類標籤：像徽章的下拉選單 */
 .ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center}
-.ck .catsel:hover{filter:brightness(.97)}
+.ck .catsel:hover{filter:brightness(.95)}
+.ck .catsel.c-must{background:#fde8e6;border-color:#e5a9a2;color:#8f2c20}
+.ck .catsel.c-cloth{background:#e6effb;border-color:#a9c2e5;color:#204a8f}
+.ck .catsel.c-hike{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
+.ck .catsel.c-other{background:#f0efe9;border-color:#cfcdc2;color:#5f5c50}
+.statsel{font:inherit;font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;cursor:pointer;
+  -webkit-appearance:none;appearance:none;border:1px solid var(--cardline);background:var(--card);color:var(--ink)}
+.statsel.s-paid{background:var(--staybg);border-color:var(--stayborder)}
+.statsel.s-booked{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
+.statsel.s-todo{background:#fdeeea;border-color:#e8b3a6;color:#a33a1e}
+.statsel.s-cancel{background:#f0efe9;border-color:#cfcdc2;color:#8a8a80;text-decoration:line-through}
+.itin .stay{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:0 7px;
+  background:var(--staybg);border:1px solid var(--stayborder);color:var(--stayicon);margin-right:4px}
 .ck li{align-items:center}
 .packcol .ck,.packshared .ck{margin:0}
 .packcol .ck li,.packshared .ck li{margin:2px 0}
@@ -295,14 +307,14 @@ details[open]>summary::before{transform:rotate(90deg)}
   <span class="sep">/</span>
   <a href="../index.html">旅遊</a>
   <span class="sep">/</span>
-  <span class="current">北阿爾卑斯大縱走</span>
+  <span class="current">槍劍縱走</span>
 </nav>
 
 
 <div class="wrap">
 <header>
   <div class="hicon">🗻</div>
-  <h1>北阿爾卑斯大縱走</h1>
+  <h1>槍劍縱走</h1>
   <p class="subtitle">穗高岳山莊 → 槍岳山莊 → 三俁山莊 → 太郎平小屋 → 五色原山莊 → 劍山莊 → 室堂</p>
 </header>
 
@@ -488,9 +500,9 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="tblwrap">
 <table class="itin">
 <tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>費用</th><th>狀態</th></tr>
-<tr><td>D1</td><td>9/11</td><td>上高地</td><td><a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">上高地西糸屋山莊</a></td><td>—</td><td><span class="paid">已付</span></td></tr>
-<tr><td>D8</td><td>9/18</td><td>富山市</td><td>inn（booking／tinghike@gmail.com）</td><td>$1,750</td><td><span class="paid">已付</span></td></tr>
-<tr><td>D9</td><td>9/19</td><td>名古屋</td><td>未訂</td><td>—</td><td><span class="warn">待訂</span></td></tr>
+<tr><td>D1</td><td>9/11</td><td>上高地</td><td><span class="stay">宿</span> <a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">上高地西糸屋山莊</a></td><td>—</td><td><select class="statsel" data-k="d1"></select></td></tr>
+<tr><td>D8</td><td>9/18</td><td>富山市</td><td><span class="stay">宿</span> inn（booking／tinghike@gmail.com）</td><td>$1,750</td><td><select class="statsel" data-k="d8"></select></td></tr>
+<tr><td>D9</td><td>9/19</td><td>名古屋</td><td><span class="stay">宿</span> 名古屋市區（未訂）</td><td>—</td><td><select class="statsel" data-k="d9"></select></td></tr>
 </table>
 </div>
 <p class="hint">只記錄山下住宿；山屋住宿見「爬山篇」各日卡片。</p>
@@ -1129,7 +1141,7 @@ function packList(el, key, seed){
     localStorage.setItem(K, JSON.stringify(items));
     el.innerHTML = items.map((it,i)=>`
       <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <select class="catsel" data-i="${i}">${PACK_CATS.map(([c,l])=>
+      <select class="catsel c-${it.c}" data-i="${i}">${PACK_CATS.map(([c,l])=>
         `<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}</select>
       <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}</span>
       <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
@@ -1150,6 +1162,27 @@ function packList(el, key, seed){
   render();
 }
 PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
+
+
+/* 住宿狀態：可自選並記住 */
+(function(){
+  const OPTS=[['paid','已付'],['booked','已訂'],['todo','待訂'],['cancel','取消']];
+  const DEF={d1:'paid',d8:'paid',d9:'todo'};
+  const K='alps26.stay';
+  let st={};
+  try{ st=JSON.parse(localStorage.getItem(K))||{}; }catch(e){}
+  document.querySelectorAll('select.statsel').forEach(se=>{
+    const k=se.dataset.k;
+    const cur=st[k]||DEF[k]||'todo';
+    se.innerHTML=OPTS.map(([v,l])=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+l+'</option>').join('');
+    se.className='statsel s-'+cur;
+    se.addEventListener('change',()=>{
+      se.className='statsel s-'+se.value;
+      st[k]=se.value;
+      try{ localStorage.setItem(K, JSON.stringify(st)); }catch(e){}
+    });
+  });
+})();
 
 editList(document.getElementById('todolist'), 'todo', [
  {t:'藥師澤小屋：到現場取消住宿（改住太郎平小屋）', n:'⚠ 行程關鍵'},
@@ -1312,8 +1345,8 @@ function bindExport(svgId,copyId,dlId,msgId,fname){
     },'image/png'));
   });
 }
-bindExport('map','copysketch','dlsketch','copymsg','北阿爾卑斯大縱走_手繪路線圖.png');
-bindExport('elev','copyelev','dlelev','copymsg2','北阿爾卑斯大縱走_高度圖.png');
+bindExport('map','copysketch','dlsketch','copymsg','槍劍縱走_手繪路線圖.png');
+bindExport('elev','copyelev','dlelev','copymsg2','槍劍縱走_高度圖.png');
 })();
 </script>
 </body>

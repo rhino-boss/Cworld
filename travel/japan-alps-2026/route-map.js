@@ -228,10 +228,10 @@ document.getElementById('gpxbtn').addEventListener('click',()=>{
   PEAKS.forEach(p=>wpt(p[1],p[2],p[0],p[3],'Summit'));
   wpt(36.577,137.5955,'室堂（終點）',2450);
   const segs=DAYROUTES.map(r=>`<trkseg>`+r.pts.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"/>`).join('')+`</trkseg>`).join('');
-  const gpx=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Cworld travel" xmlns="http://www.topografix.com/GPX/1/1"><metadata><name>北阿爾卑斯大縱走 2026（示意）</name></metadata>${w.join('')}<trk><name>北阿爾卑斯大縱走 2026</name>${segs}</trk></gpx>`;
+  const gpx=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Cworld travel" xmlns="http://www.topografix.com/GPX/1/1"><metadata><name>槍劍縱走 2026（示意）</name></metadata>${w.join('')}<trk><name>槍劍縱走 2026</name>${segs}</trk></gpx>`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([gpx],{type:'application/gpx+xml'}));
-  a.download='北阿爾卑斯大縱走2026_示意.gpx';
+  a.download='槍劍縱走2026_示意.gpx';
   a.click();
   URL.revokeObjectURL(a.href);
 });
