@@ -478,7 +478,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 <div class="tblwrap">
 <table class="itin">
 <tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>費用</th><th>狀態</th></tr>
-<tr><td>D1</td><td>9/11</td><td>名古屋／松本方向</td><td><a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">Google Maps 訂房</a></td><td>—</td><td><span class="paid">已付</span></td></tr>
+<tr><td>D1</td><td>9/11</td><td>上高地</td><td><a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">上高地西糸屋山莊</a></td><td>—</td><td><span class="paid">已付</span></td></tr>
 <tr><td>D8</td><td>9/18</td><td>富山市</td><td>inn（booking／tinghike@gmail.com）</td><td>$1,750</td><td><span class="paid">已付</span></td></tr>
 <tr><td>D9</td><td>9/19</td><td>名古屋</td><td>未訂</td><td>—</td><td><span class="warn">待訂</span></td></tr>
 </table>
@@ -765,8 +765,8 @@ txt(300,1470,'5 km','scaletext','middle',gN);
 
 /* ---------- day cards ---------- */
 const DAYS=[
- {d:'D1',date:'9/11',transport:1,route:'交通日（移動・耍廢）',
-  meta:'晚上住宿：<a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">Google Maps</a>'},
+ {d:'D1',date:'9/11',transport:1,route:'台中 → 桃園機場 → 中部機場 → 名古屋 → 松本 → 上高地',
+  meta:'<span class="stay">宿：上高地西糸屋山莊</span>（<a href="https://maps.app.goo.gl/FoByLiKGyhwtgvwT9" target="_blank" rel="noopener">地圖</a>）｜目標 15:00 前 Check in'},
  {d:'D2',date:'9/12',c:1,
   card:'上高地 → 德澤 → 橫尾 → 涸澤圈谷 → 穗高岳山莊',stay:'穗高岳山莊（營地）',
   route:'04:00 上高地 <b>–2hr–</b> 德澤 <b>–1hr–</b> 橫尾 <b>–3hr–</b> 涸澤圈谷 <b>–3hr–</b> 穗高岳山莊',
@@ -827,11 +827,26 @@ const DETAIL={
  0:{html:`<div class="mflight"><div class="mf-no">✈️ MM722 <span>樂桃航空・Standard Plus</span></div>
    <div class="mf-leg">9/11（五）<b>02:10</b> 台北（桃園）第1航廈 出發</div>
    <div class="mf-leg">9/11（五）<b>06:05</b> 名古屋（中部）第1航廈 抵達</div>
-   <ul><li>座位 7F・7E｜託運行李各 1 件</li><li>手提每人 2 件・合計 ≤ 7kg</li><li>國際線報到：起飛前 120～50 分鐘</li><li>訂單編號 JQ5EHX｜TWD 30,320 已付</li><li>清晨抵達名古屋後移動至松本／上高地方向</li></ul></div>`},
+   <ul><li>座位 7F・7E｜託運行李各 1 件</li><li>手提每人 2 件・合計 ≤ 7kg</li><li>國際線報到：起飛前 120～50 分鐘</li><li>訂單編號 JQ5EHX｜TWD 30,320 已付</li><li>清晨抵達名古屋後移動至松本／上高地方向</li></ul></div>`,
+  chain:[
+   ['台中'],{t:'接駁',n:'夜間出發前往桃園機場'},
+   ['桃園機場 第1航廈'],{t:'02:10 → 06:00',n:'MM722 樂桃航空'},
+   ['中部國際機場'],{t:'06:05 出發・約 0:40',n:'名鐵特急'},
+   ['名古屋'],{t:'約 08:00 出發・約 2:00',n:'JR 特急しなの（信濃）；名古屋只留吃一餐的時間'},
+   ['松本'],{t:'約 2:00',n:'松本電鐵上高地線＋新島島轉巴士'},
+   ['上高地'],{t:'目標 15:00 前',n:'Check in'},
+   ['上高地西糸屋山莊',1505]]},
+ 8:{chain:[
+   ['富山'],{t:'約 3:00',n:'JR 特急ひだ，或北陸新幹線經金澤／東京轉乘'},
+   ['名古屋']]},
  9:{html:`<div class="mflight"><div class="mf-no">✈️ MM723 <span>樂桃航空・Standard Plus</span></div>
    <div class="mf-leg">9/20（日）<b>22:50</b> 名古屋（中部）第1航廈 出發</div>
    <div class="mf-leg">9/21（一）<b>00:55</b> 台北（桃園）第1航廈 抵達（隔日凌晨）</div>
-   <ul><li>座位 2F・2E｜託運行李各 1 件</li><li>國際線報到：起飛前 120～50 分鐘｜22:50 起飛 → 最晚 22:00 前完成報到</li><li>訂單編號 JQ5EHX</li></ul></div>`},
+   <ul><li>座位 2F・2E｜託運行李各 1 件</li><li>國際線報到：起飛前 120～50 分鐘｜22:50 起飛 → 最晚 22:00 前完成報到</li><li>訂單編號 JQ5EHX</li></ul></div>`,
+  chain:[
+   ['名古屋'],{t:'約 0:40',n:'名鐵特急前往中部國際機場，起飛前 2 小時抵達'},
+   ['中部國際機場'],{t:'22:50 → 00:55（9/21 凌晨）',n:'MM723 樂桃航空'},
+   ['桃園機場 第1航廈']]},
  // chain：交錯排列「地點」與「路段」——['名稱',標高] 為地點，{t,km,n} 為到下一個地點的時間／距離／說明
  1:{time:'約 9:00',dist:'約 18.8 km',up:'約 1,500 m',down:'約 0 m',chain:[
    ['上高地',1505],{t:'2:00',km:'6.8 km',n:'梓川左岸平緩林道，經明神'},
@@ -905,14 +920,15 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
       <div class="mhead"><i style="background:${v.c?`var(--d${v.c})`:'var(--transport)'}"></i><b>${v.d}</b><span>${v.date}</span></div>
       <div class="mroute">${v.route}</div>
       ${v.meta?`<div class="mmeta">${v.meta}</div>`:''}
-      ${dx.html?dx.html:`
+      ${dx.html || ''}
+      ${dx.time?`
       <div class="mstats">
         <div><b>${dx.time}</b><span>總時長</span></div>
         <div><b>${dx.dist}</b><span>距離</span></div>
         <div><b>↑ ${dx.up}</b><span>爬升</span></div>
         <div><b>↓ ${dx.down}</b><span>下降</span></div>
-      </div>
-      <div class="mlegs"><b>分段資訊（標準CT）</b>${chainHTML(dx.chain)}</div>`}`;
+      </div>`:''}
+      ${dx.chain?`<div class="mlegs"><b>分段資訊${dx.time?'（標準CT）':''}</b>${chainHTML(dx.chain)}</div>`:''}`;
     mbg.style.display='flex';
   });
 });
