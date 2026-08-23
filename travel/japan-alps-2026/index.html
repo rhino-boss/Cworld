@@ -237,6 +237,10 @@ details[open]>summary::before{transform:rotate(90deg)}
 .packcol,.packshared{margin-bottom:0}
 .packcol .subbody,.packshared .subbody{padding:0 12px 8px}
 .packcol .ckcat,.packshared .ckcat{margin:8px 0 2px}
+/* 分類標籤：像徽章的下拉選單 */
+.ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center}
+.ck .catsel:hover{filter:brightness(.97)}
+.ck li{align-items:center}
 .packcol .ck,.packshared .ck{margin:0}
 .packcol .ck li,.packshared .ck li{margin:2px 0}
 .packcol .ck,.packshared .ck{overflow-x:auto;overflow-y:hidden}
@@ -1086,31 +1090,67 @@ function editList(el, key, seed){
   }
   render();
 }
-// 個人裝備分左右兩欄，分類順序固定；共同裝備獨立一區、不分欄
-const PACK_CATS = [['must','必帶'],['cloth','服裝'],['hike','爬山'],['wash','盥洗'],['other','其他']];
-const PACK_PEOPLE = [
- {key:'shen', name:'沈的攜帶物品', items:{
-   must:['護照','日幣','頭燈2 電池6','風雨衣 雨褲','帽子','快乾巾','水袋','行動糧 果膠n 燕麥棒'],
-   cloth:['羽絨','alpha','頭巾 手套','大阪 bonaz m襪','琵琶湖 繭型褲 m襪','襯衫 短褲','背心 束褲'],
-   hike:['睡袋','彈殼睡墊','營燈','急救毯','Y拖','野跑鞋','黑熊','登山杖'],
-   wash:['刮鬍刀','牙刷','牙膏'],
-   other:['萌萌的熊'],
- }},
- {key:'tsai', name:'蔡的攜帶物品', items:{must:['護照','日幣'],cloth:[],hike:[],wash:[],other:[]}},
+// 攜帶物品：共同裝備在最上面，接著沈與蔡；每個項目前面有可切換的分類標籤
+const PACK_CATS = [['must','必帶'],['cloth','服裝'],['hike','爬山'],['other','其他']];
+const PACK_LISTS = [
+ {key:'shared', name:'共同裝備', wide:1, items:[
+   ['hike','帳篷'],['hike','濾水器'],['must','急救小包'],
+ ]},
+ {key:'shen', name:'沈的攜帶物品', items:[
+   ['must','護照'],['must','日幣'],['must','頭燈2 電池6'],['must','風雨衣 雨褲'],['must','帽子'],
+   ['must','快乾巾'],['must','水袋'],['must','行動糧 果膠n 燕麥棒'],
+   ['cloth','羽絨'],['cloth','alpha'],['cloth','頭巾 手套'],['cloth','大阪 bonaz m襪'],
+   ['cloth','琵琶湖 繭型褲 m襪'],['cloth','襯衫 短褲'],['cloth','背心 束褲'],
+   ['hike','睡袋'],['hike','彈殼睡墊'],['hike','營燈'],['hike','急救毯'],['hike','Y拖'],
+   ['hike','野跑鞋'],['hike','黑熊'],['hike','登山杖'],
+   ['other','刮鬍刀'],['other','牙刷'],['other','牙膏'],['other','萌萌的熊'],
+ ]},
+ {key:'tsai', name:'蔡的攜帶物品', items:[
+   ['must','護照'],['must','日幣'],
+ ]},
 ];
-const PACK_SHARED = ['帳篷','濾水器','急救小包'];
 
 const packBox=document.getElementById('packlist');
 packBox.innerHTML =
-  `<div class="packcols">${PACK_PEOPLE.map(p=>
-     `<details class="sub packcol" id="pack-${p.key}" open><summary>${p.name}</summary><div class="subbody">${PACK_CATS.map(([k,label])=>
-        `<div class="ckcat">${label}</div><ul class="ck" data-list="${p.key}-${k}"></ul>`).join('')}</div></details>`).join('')}</div>`
-  + `<details class="sub packshared" id="pack-shared-sec" open><summary>共同裝備</summary><div class="subbody"><ul class="ck" data-list="shared"></ul></div></details>`;
+  PACK_LISTS.filter(l=>l.wide).map(l=>
+    `<details class="sub packshared" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')
+  + `<div class="packcols">${PACK_LISTS.filter(l=>!l.wide).map(l=>
+      `<details class="sub packcol" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')}</div>`;
 
-PACK_PEOPLE.forEach(p=>PACK_CATS.forEach(([k])=>
-  editList(packBox.querySelector(`ul[data-list="${p.key}-${k}"]`), `pack2-${p.key}-${k}`,
-           p.items[k].map(t=>({t})))));
-editList(packBox.querySelector('ul[data-list="shared"]'), 'pack2-shared', PACK_SHARED.map(t=>({t})));
+// 分類標籤可直接切換，切換後依 必帶→服裝→爬山→其他 重新排序
+function packList(el, key, seed){
+  const K='alps26.items.'+key;
+  let items;
+  try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
+  if(!Array.isArray(items)) items=seed.map(([c,t])=>({t,c,done:false}));
+  const order=c=>Math.max(0,PACK_CATS.findIndex(x=>x[0]===c));
+  function render(){
+    items.sort((a,b)=>order(a.c)-order(b.c));
+    localStorage.setItem(K, JSON.stringify(items));
+    el.innerHTML = items.map((it,i)=>`
+      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
+      <select class="catsel" data-i="${i}">${PACK_CATS.map(([c,l])=>
+        `<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}</select>
+      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}</span>
+      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
+      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
+    el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{items[+se.dataset.i].c=se.value;render();}));
+    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
+    el.querySelectorAll('.txt').forEach(sp=>{
+      sp.addEventListener('click',()=>{ if(sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
+      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
+      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
+    });
+    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
+    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,c:'other',done:false}); render(); };
+    ab.addEventListener('click',add);
+    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
+  }
+  render();
+}
+PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
+
 editList(document.getElementById('todolist'), 'todo', [
  {t:'藥師澤小屋：到現場取消住宿（改住太郎平小屋）', n:'⚠ 行程關鍵'},
  {t:'穗高岳山莊 營地 2000 日圓（現場付現）'},
