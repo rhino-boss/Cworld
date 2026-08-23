@@ -228,8 +228,7 @@
       <button class="sort-btn" type="button" data-key="gameid">遊戲編號</button>
       <button class="sort-btn sort-dir" type="button" id="sort-dir">↓</button>
       <span class="sort-sep"></span>
-      <button class="sort-btn" type="button" data-view="list">☰ 清單</button>
-      <button class="sort-btn" type="button" data-view="card">▦ 卡片</button>
+      <button class="sort-btn view-toggle" type="button" id="view-toggle">▦ 卡片</button>
     </div>
   </div>
   <div class="grid" id="game-grid">
@@ -555,9 +554,9 @@ function render() {
   document.querySelectorAll('#sort-bar [data-key]').forEach(b => {
     b.classList.toggle('active', b.dataset.key === sortKey);
   });
-  document.querySelectorAll('#sort-bar [data-view]').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === viewMode);
-  });
+  const vb = document.getElementById('view-toggle');
+  vb.textContent = viewMode === 'list' ? '☰ 清單' : '▦ 卡片';
+  vb.title = viewMode === 'list' ? '點一下切換成卡片' : '點一下切換成清單';
   const dirBtn = document.getElementById('sort-dir');
   dirBtn.textContent = sortDesc ? '↓' : '↑';
   dirBtn.title = sortDesc
@@ -576,12 +575,10 @@ document.querySelectorAll('#sort-bar [data-key]').forEach(btn => {
 });
 document.getElementById('sort-dir').addEventListener('click', () => setSort(sortKey, !sortDesc));
 
-document.querySelectorAll('#sort-bar [data-view]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    viewMode = btn.dataset.view;
-    try { localStorage.setItem('demogame-view', viewMode); } catch {}
-    render();
-  });
+document.getElementById('view-toggle').addEventListener('click', () => {
+  viewMode = viewMode === 'list' ? 'card' : 'list';
+  try { localStorage.setItem('demogame-view', viewMode); } catch {}
+  render();
 });
 
 init();

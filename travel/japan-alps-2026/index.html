@@ -125,6 +125,12 @@ footer a{color:#2e6ea6}
 .cnav a:hover{color:#fff}
 .cnav .sep{color:rgba(255,255,255,.3);font-size:.85rem}
 .cnav .current{color:#fff;font-weight:600;font-size:.85rem}
+.modebtn{margin-left:auto;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;
+  background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;padding:6px 14px}
+.modebtn:hover{background:rgba(255,255,255,.28)}
+body.viewmode .ck .del,body.viewmode .ck .addrow{display:none}
+body.viewmode .ck .catsel,body.viewmode .statsel{pointer-events:none}
+body.viewmode .ck .txt{cursor:default}
 /* --- interactive map --- */
 /* 詳細資訊：同分頁跳到全螢幕地圖頁 */
 .detailbtn{background:#fff;color:#2f9e44;border:1.5px solid #2f9e44;text-decoration:none}
@@ -313,6 +319,7 @@ details[open]>summary::before{transform:rotate(90deg)}
   <a href="../index.html">旅遊</a>
   <span class="sep">/</span>
   <span class="current">槍劍縱走</span>
+  <button class="modebtn" id="modebtn" type="button">檢視模式</button>
 </nav>
 
 
@@ -970,6 +977,21 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
 
 <script>
 (function(){
+
+/* 檢視模式 ↔ 編輯模式 */
+(function(){
+  const K='alps26.mode';
+  const btn=document.getElementById('modebtn');
+  let edit = localStorage.getItem(K)==='edit';
+  function apply(){
+    document.body.classList.toggle('viewmode', !edit);
+    btn.textContent = edit ? '編輯模式' : '檢視模式';
+    btn.title = edit ? '點一下切回檢視模式' : '點一下切換成編輯模式';
+  }
+  btn.addEventListener('click',()=>{ edit=!edit; localStorage.setItem(K, edit?'edit':'view'); apply(); });
+  apply();
+})();
+
 /* --- collapsible helpers --- */
 document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{
   if(d.open && d.querySelector('#lmap') && window._tripMap)
@@ -1044,7 +1066,7 @@ function editList(el, key, seed){
     el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
     el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
     el.querySelectorAll('.txt').forEach(sp=>{
-      sp.addEventListener('click',()=>{ if(sp.isContentEditable) return; sp.textContent=items[+sp.dataset.i].t; sp.contentEditable='true'; sp.focus(); });
+      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.textContent=items[+sp.dataset.i].t; sp.contentEditable='true'; sp.focus(); });
       sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
       sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
     });
@@ -1103,7 +1125,7 @@ function packList(el, key, seed){
     el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{items[+se.dataset.i].c=se.value;render();}));
     el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
     el.querySelectorAll('.txt').forEach(sp=>{
-      sp.addEventListener('click',()=>{ if(sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
+      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
       sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
       sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
     });
