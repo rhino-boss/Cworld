@@ -65,7 +65,7 @@ osm.addTo(map);
 
 const dayLines=DAYROUTES.map((r,i)=>
   L.polyline(r.pts,{color:HNBLUE,weight:5,opacity:.9})
-   .bindPopup(`<b>D${r.d}</b>（${r.date}）<br>${r.from} → ${r.to}`)
+   .bindPopup(`<b>D${r.d+1}</b>（${r.date}）<br>${r.from} → ${r.to}`)
    .addTo(map));
 
 document.getElementById('daymode').addEventListener('change',e=>{
