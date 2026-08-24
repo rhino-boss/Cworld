@@ -19,6 +19,8 @@
 
   let sha = null;              // records.json 目前的 blob sha，PUT 時要帶
   let pushTimer = null;
+let ready = false;          // 初次 pull 完成前禁止上傳
+let remoteCount = 0;        // 雲端目前筆數，用來擋掉誤刪
   let pushing = false;
   const readyCbs = [];
 
@@ -42,6 +44,7 @@
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
+          remoteCount = data.length;
           localStorage.setItem(KEY, JSON.stringify(data), { fromSync: true });
           status(`已同步（${data.length} 筆）`, 'ok');
         }
@@ -54,6 +57,7 @@
     } catch (e) {
       status('讀取雲端失敗，顯示本機資料', 'err');
     }
+    ready = true;
     readyCbs.forEach(cb => { try { cb(); } catch (e) { console.error(e); } });
   }
 
@@ -81,6 +85,11 @@
     status('同步中…', '');
     try {
       const records = JSON.parse(localStorage.getItem(KEY) || '[]');
+      if (records.length === 0 && remoteCount > 0) {   // 防止把雲端資料清空
+        status('本機無資料，改為重新讀取雲端', 'err');
+        pushing = false;
+        return pull();
+      }
 
       // 先把還是 data URL 的照片上傳成檔案，避免 records.json 被 base64 撐爆
       for (const r of records) {
@@ -122,6 +131,7 @@
   }
 
   function schedulePush() {
+  if (!ready) return;        // 還沒讀完雲端資料，先不要覆蓋
     clearTimeout(pushTimer);
     pushTimer = setTimeout(push, 800);   // 連續多次寫入只推一次
   }

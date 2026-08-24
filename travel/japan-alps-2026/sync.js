@@ -19,6 +19,8 @@
 
   let sha = null;
   let pushTimer = null;
+  let ready = false;        // 初次 pull 完成前禁止上傳
+  let remoteCount = 0;      // 雲端目前項目數，用來擋掉誤刪
   let pushing = false;
 
   const token = () => localStorage.getItem('gh_token') || '';
@@ -53,6 +55,7 @@
       const res = await fetch(`${RAW}?t=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const remote = await res.json();
+        remoteCount = Object.keys(remote).length;
         const local = snapshot();
         let changed = false;
         for (const [k, v] of Object.entries(remote)) {
@@ -76,6 +79,7 @@
     } catch (e) {
       status('讀取雲端失敗，顯示本機資料', 'err');
     }
+    ready = true;
   }
 
   /* ── 寫 ── */
@@ -86,6 +90,11 @@
     status('同步中…', '');
     try {
       const data = snapshot();
+      if (Object.keys(data).length === 0 && remoteCount > 0) {   // 防止把雲端資料清空
+        status('本機無資料，改為重新讀取雲端', 'err');
+        pushing = false;
+        return pull();
+      }
       const body = {
         message: 'alps26: update trip data',
         content: b64(JSON.stringify(data, null, 2)),
@@ -114,6 +123,7 @@
   }
 
   function schedulePush() {
+    if (!ready) return;      // 還沒讀完雲端資料，先不要覆蓋
     clearTimeout(pushTimer);
     pushTimer = setTimeout(push, 1000);
   }
