@@ -60,6 +60,11 @@ body{
 .lmk.major .lbl{font-size:12px;font-weight:800;color:#26261f}
 .lmk.ref .tri{color:#9a9a90}
 .lmk.ref .lbl{color:#8a8a80;font-weight:500}
+.lmk.peak .lbl{background:rgba(58,110,204,.16);border:1px solid #3e63c4;border-radius:6px;padding:0 6px;font-weight:700;color:#1f3f8f}
+.lmk.peak .tri{color:#3e63c4}
+.lmk.meizan .lbl{background:rgba(211,48,48,.18);border:1px solid #d33030;border-radius:6px;padding:0 6px;color:#a31f1f;font-weight:800}
+.lmk.peak.meizan .tri{color:#d33030}
+.lmk.ref.meizan .lbl{background:rgba(211,48,48,.10);border:1px dashed #d33030;border-radius:6px;padding:0 6px;color:#a31f1f;font-weight:700}
 .lmk .dot{width:11px;height:11px;border-radius:3px;background:#fff;border:2px solid #4a4a44;box-shadow:0 0 3px rgba(0,0,0,.35);flex:none}
 .lmk.stay .dot{background:#e2801f;border-color:#fff;width:13px;height:13px}
 .lmk.stay .lbl{font-weight:800;color:#8a4a00;font-size:12px}
@@ -91,7 +96,7 @@ body{
 <div id="lmap"></div>
 
 <div class="ichart"><svg id="ichart" viewBox="0 0 960 200"></svg></div>
-<div class="mapnote">軌跡取自 OpenStreetMap 步道資料，行前請再與官方圖資核對</div>
+<div class="mapnote"><b style="color:#1f3f8f">藍底</b>為一般山頭，<b style="color:#a31f1f">紅底</b>為日本百名山（虛線框＝看得到但不經過）｜軌跡取自 OpenStreetMap 步道資料，行前請再與官方圖資核對</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="route-map.js"></script>
