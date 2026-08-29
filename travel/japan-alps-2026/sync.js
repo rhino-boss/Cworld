@@ -18,10 +18,11 @@
   const API = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents`;
 
   let sha = null;
-  let pushTimer = null;
+  let dirtyTimer = null;
   let ready = false;        // 初次 pull 完成前禁止上傳
   let remoteCount = 0;      // 雲端目前項目數，用來擋掉誤刪
   let pushing = false;
+  let syncedJSON = null;    // 上次與雲端一致時的內容，用來判斷有沒有未上傳的變更
 
   const token = () => localStorage.getItem('gh_token') || '';
   const headers = () => {
@@ -66,6 +67,7 @@
         for (const k of Object.keys(local)) {
           if (!(k in remote)) { origRemove(k); changed = true; }
         }
+        syncedJSON = JSON.stringify(snapshot());
         status(changed ? '已更新' : '已是最新', 'ok');
         // 頁面在載入時就讀過 localStorage，資料有變要重畫一次
         // 手動按「更新」是使用者主動觸發，不受每回合只重整一次的限制
@@ -91,15 +93,29 @@
     if (!token()) { status('未設定 Token，僅存本機', ''); return; }
     // 還沒讀完雲端就上傳，可能拿舊的本機資料蓋掉雲端
     if (!ready) { status('正在讀取雲端，請稍候再上傳', ''); return; }
-    if (pushing) { if (!manual) schedulePush(); return; }
+    if (pushing) return;
     pushing = true;
-    status('同步中…', '');
+    status('上傳中…', '');
     try {
       const data = snapshot();
       if (Object.keys(data).length === 0 && remoteCount > 0) {   // 防止把雲端資料清空
         status('本機無資料，改為重新讀取雲端', 'err');
         pushing = false;
         return pull();
+      }
+      // 上傳前先確認雲端沒有被別台裝置改過，避免蓋掉對方的變更
+      const chk = await fetch(`${API}/${GH.dataFile}?ref=${GH.branch}`, { headers: headers() });
+      if (chk.ok) {
+        const remoteSha = (await chk.json()).sha;
+        if (sha && remoteSha !== sha) {
+          const ok = confirm(
+            '雲端有其他裝置上傳的較新資料。\n\n' +
+            '按「確定」＝用這台裝置的資料覆蓋雲端（對方的變更會不見）\n' +
+            '按「取消」＝先不要上傳，建議改按「↓ 更新」把雲端資料抓下來'
+          );
+          if (!ok) { status('已取消上傳', ''); pushing = false; return; }
+        }
+        sha = remoteSha;
       }
       const body = {
         message: 'alps26: update trip data',
@@ -112,37 +128,44 @@
         headers: { ...headers(), 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      if (res.status === 409) {            // 另一台剛好也寫過 → 重抓 sha 再試
-        const meta = await fetch(`${API}/${GH.dataFile}?ref=${GH.branch}`, { headers: headers() });
-        sha = meta.ok ? (await meta.json()).sha : null;
-        pushing = false;
-        return push();
-      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       sha = (await res.json()).content.sha;
       remoteCount = Object.keys(data).length;
+      syncedJSON = JSON.stringify(data);
       status('已上傳', 'ok');
+      refreshDirty();
     } catch (e) {
-      status(`同步失敗：${e.message}`, 'err');
+      status(`上傳失敗：${e.message}`, 'err');
     } finally {
       pushing = false;
     }
   }
 
-  function schedulePush() {
-    if (!ready) return;      // 還沒讀完雲端資料，先不要覆蓋
-    clearTimeout(pushTimer);
-    pushTimer = setTimeout(push, 1000);
+  /* ── 本機有沒有還沒上傳的變更 ── */
+  function isDirty() {
+    return ready && syncedJSON !== null && JSON.stringify(snapshot()) !== syncedJSON;
+  }
+  function refreshDirty() {
+    const btn = document.getElementById('sync-push');
+    const dirty = isDirty();
+    if (btn) btn.classList.toggle('dirty', dirty);
+    if (dirty) status('有未上傳的變更', 'warn');
+  }
+  function scheduleDirty() {
+    clearTimeout(dirtyTimer);
+    dirtyTimer = setTimeout(refreshDirty, 300);
   }
 
-  /* ── 任何本機寫入都排一次上傳 ── */
+  /* ── 本機寫入只標記「有變更」，不再自動上傳 ──
+     自動上傳會讓開著的舊分頁把別台裝置剛上傳的資料蓋掉，
+     所以改成一定要自己按「↑ 上傳」。 */
   localStorage.setItem = function (k, v) {
     origSet(k, v);
-    if (k.startsWith(PREFIX) && !SKIP.includes(k)) schedulePush();
+    if (k.startsWith(PREFIX) && !SKIP.includes(k)) scheduleDirty();
   };
   localStorage.removeItem = function (k) {
     origRemove(k);
-    if (k.startsWith(PREFIX) && !SKIP.includes(k)) schedulePush();
+    if (k.startsWith(PREFIX) && !SKIP.includes(k)) scheduleDirty();
   };
 
   /* ── 右下角狀態列 ── */
@@ -156,6 +179,11 @@
       "font-family:'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif}",
       "#sync-status[data-kind=ok]{color:#2d6a4f;font-weight:600}",
       "#sync-status[data-kind=err]{color:#c0392b;font-weight:600}",
+      "#sync-status[data-kind=warn]{color:#b3621e;font-weight:600}",
+      "#sync-push.dirty{background:#c2601c;animation:syncpulse 1.6s ease-in-out infinite}",
+      "#sync-push.dirty:not(:disabled):hover{background:#a95214}",
+      "@keyframes syncpulse{0%,100%{box-shadow:0 0 0 0 rgba(194,96,28,.55)}50%{box-shadow:0 0 0 5px rgba(194,96,28,0)}}",
+      "@media (prefers-reduced-motion:reduce){#sync-push.dirty{animation:none}}",
       "#sync-bar button{border:0;font:inherit;font-weight:700;padding:5px 12px;",
       "border-radius:99px;cursor:pointer;white-space:nowrap}",
       "#sync-bar button:disabled{opacity:.45;cursor:default}",
@@ -183,7 +211,14 @@
       return b;
     };
     const bPull = mk('sync-pull', '↓ 更新', '從雲端抓最新資料蓋掉這台裝置',
-      async () => { await busy(() => pull({ manual: true })); });
+      async () => {
+        if (isDirty() && !confirm(
+          '這台裝置有還沒上傳的變更。\n\n' +
+          '按「確定」＝抓雲端資料下來，這些變更會不見\n' +
+          '按「取消」＝先按「↑ 上傳」把變更存上去'
+        )) { status('已取消更新', ''); return; }
+        await busy(() => pull({ manual: true }));
+      });
     const bPush = mk('sync-push', '↑ 上傳', '把這台裝置的資料存回雲端',
       async () => { await busy(() => push({ manual: true })); });
     const bCfg = mk('sync-token', '⚙', '設定 GitHub Token',
@@ -191,8 +226,13 @@
 
     async function busy(fn) {
       bPull.disabled = bPush.disabled = true;
-      try { await fn(); } finally { bPull.disabled = bPush.disabled = false; }
+      try { await fn(); } finally { bPull.disabled = bPush.disabled = false; refreshDirty(); }
     }
+
+    // 有未上傳的變更就別讓它默默關掉
+    window.addEventListener('beforeunload', e => {
+      if (isDirty()) { e.preventDefault(); e.returnValue = ''; }
+    });
 
     bar.appendChild(st);
     bar.appendChild(bPull);
@@ -208,12 +248,12 @@
       if (t === null) return;
       if (t.trim()) localStorage.setItem('gh_token', t.trim());
       else localStorage.removeItem('gh_token');
-      status(t.trim() ? 'Token 已儲存' : 'Token 已清除', '');
-      if (t.trim()) push();
+      status(t.trim() ? 'Token 已儲存，可以按「↑ 上傳」了' : 'Token 已清除', '');
+      refreshDirty();
     },
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountUI);
   else mountUI();
-  pull();
+  pull().then(refreshDirty);
 })();
