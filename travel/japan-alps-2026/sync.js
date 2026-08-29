@@ -50,7 +50,9 @@
   const origRemove = localStorage.removeItem.bind(localStorage);
 
   /* ── 讀：雲端資料覆蓋本機，內容有變就重新整理一次 ── */
-  async function pull() {
+  async function pull(opts) {
+    const manual = !!(opts && opts.manual);
+    if (manual) status('讀取中…', '');
     try {
       const res = await fetch(`${RAW}?t=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
@@ -64,9 +66,10 @@
         for (const k of Object.keys(local)) {
           if (!(k in remote)) { origRemove(k); changed = true; }
         }
-        status(`已同步（${Object.keys(remote).length} 項）`, 'ok');
+        status(changed ? `已更新（${Object.keys(remote).length} 項）` : `已是最新（${Object.keys(remote).length} 項）`, 'ok');
         // 頁面在載入時就讀過 localStorage，資料有變要重畫一次
-        if (changed && !sessionStorage.getItem('alps26.reloaded')) {
+        // 手動按「更新」是使用者主動觸發，不受每回合只重整一次的限制
+        if (changed && (manual || !sessionStorage.getItem('alps26.reloaded'))) {
           sessionStorage.setItem('alps26.reloaded', '1');
           location.reload();
           return;
@@ -83,9 +86,12 @@
   }
 
   /* ── 寫 ── */
-  async function push() {
+  async function push(opts) {
+    const manual = !!(opts && opts.manual);
     if (!token()) { status('未設定 Token，僅存本機', ''); return; }
-    if (pushing) { schedulePush(); return; }
+    // 還沒讀完雲端就上傳，可能拿舊的本機資料蓋掉雲端
+    if (!ready) { status('正在讀取雲端，請稍候再上傳', ''); return; }
+    if (pushing) { if (!manual) schedulePush(); return; }
     pushing = true;
     status('同步中…', '');
     try {
@@ -114,7 +120,8 @@
       }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       sha = (await res.json()).content.sha;
-      status(`已同步（${Object.keys(data).length} 項）`, 'ok');
+      remoteCount = Object.keys(data).length;
+      status(`已上傳（${Object.keys(data).length} 項）`, 'ok');
     } catch (e) {
       status(`同步失敗：${e.message}`, 'err');
     } finally {
@@ -149,10 +156,17 @@
       "font-family:'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif}",
       "#sync-status[data-kind=ok]{color:#2d6a4f;font-weight:600}",
       "#sync-status[data-kind=err]{color:#c0392b;font-weight:600}",
-      "#sync-token{border:0;background:#112840;color:#fff;font:inherit;font-weight:700;",
-      "padding:5px 12px;border-radius:99px;cursor:pointer}",
-      "#sync-token:hover{background:#1e4a7a}",
-      "@media (max-width:640px){#sync-bar{right:8px;bottom:8px;font-size:.72rem}}",
+      "#sync-bar button{border:0;font:inherit;font-weight:700;padding:5px 12px;",
+      "border-radius:99px;cursor:pointer;white-space:nowrap}",
+      "#sync-bar button:disabled{opacity:.45;cursor:default}",
+      "#sync-pull{background:#fff;color:#112840;box-shadow:inset 0 0 0 1px #c9ced6}",
+      "#sync-pull:not(:disabled):hover{background:#eef1f5}",
+      "#sync-push{background:#112840;color:#fff}",
+      "#sync-push:not(:disabled):hover{background:#1e4a7a}",
+      "#sync-token{background:transparent;color:#8a8a84;padding:5px 7px;font-size:.95em}",
+      "#sync-token:hover{color:#112840}",
+      "@media (max-width:640px){#sync-bar{right:8px;bottom:8px;font-size:.72rem;gap:5px;padding:6px 6px 6px 10px}",
+      "#sync-bar button{padding:5px 9px}}",
     ].join('');
     document.head.appendChild(css);
 
@@ -161,13 +175,29 @@
     const st = document.createElement('span');
     st.id = 'sync-status';
     st.textContent = '讀取雲端資料…';
-    const btn = document.createElement('button');
-    btn.id = 'sync-token';
-    btn.type = 'button';
-    btn.textContent = '☁ 同步設定';
-    btn.addEventListener('click', () => window.AlpsSync.setToken());
+
+    const mk = (id, label, title, fn) => {
+      const b = document.createElement('button');
+      b.id = id; b.type = 'button'; b.textContent = label; b.title = title;
+      b.addEventListener('click', fn);
+      return b;
+    };
+    const bPull = mk('sync-pull', '↓ 更新', '從雲端抓最新資料蓋掉這台裝置',
+      async () => { await busy(() => pull({ manual: true })); });
+    const bPush = mk('sync-push', '↑ 上傳', '把這台裝置的資料存回雲端',
+      async () => { await busy(() => push({ manual: true })); });
+    const bCfg = mk('sync-token', '⚙', '設定 GitHub Token',
+      () => window.AlpsSync.setToken());
+
+    async function busy(fn) {
+      bPull.disabled = bPush.disabled = true;
+      try { await fn(); } finally { bPull.disabled = bPush.disabled = false; }
+    }
+
     bar.appendChild(st);
-    bar.appendChild(btn);
+    bar.appendChild(bPull);
+    bar.appendChild(bPush);
+    bar.appendChild(bCfg);
     document.body.appendChild(bar);
   }
 

@@ -1176,7 +1176,26 @@ function editList(el, key, seed){
   render();
 }
 // 攜帶物品：共同裝備在最上面，接著沈與蔡；每個項目前面有可切換的分類標籤
-const PACK_CATS = [['must','必帶'],['cloth','服裝'],['hike','爬山'],['other','其他']];
+/* 分類：前四個是內建的，使用者自己加的存在 localStorage，插在「其他」前面 */
+const PACK_CATS_HEAD = [['must','必帶'],['cloth','服裝'],['hike','爬山']];
+const PACK_CATS_TAIL = [['other','其他']];
+const CAT_PALETTE = [
+  ['#f0e9f7','#c3aad9','#5b3a80'],['#e2f2f2','#9fcccc','#1f6060'],
+  ['#fdf1dd','#e0c48a','#86611a'],['#fbe9f0','#e2a8bf','#8f2c56'],
+  ['#e9edf2','#b4c0cd','#3d4d5e']
+];
+const CATS_KEY='alps26.packcats';
+let CUSTOM_CATS=(()=>{ try{ const v=JSON.parse(localStorage.getItem(CATS_KEY)); return Array.isArray(v)?v:[]; }catch(e){ return []; } })();
+const PACK_CATS=()=>PACK_CATS_HEAD.concat(CUSTOM_CATS,PACK_CATS_TAIL);
+function saveCats(){ localStorage.setItem(CATS_KEY,JSON.stringify(CUSTOM_CATS)); }
+function syncCatStyles(){
+  let st=document.getElementById('catstyles');
+  if(!st){ st=document.createElement('style'); st.id='catstyles'; document.head.appendChild(st); }
+  st.textContent=CUSTOM_CATS.map((c,i)=>{
+    const p=CAT_PALETTE[i%CAT_PALETTE.length];
+    return `.ck .catsel.c-${c[0]}{background:${p[0]};border-color:${p[1]};color:${p[2]}}`;
+  }).join('');
+}
 const PACK_LISTS = [
  {key:'shared', name:'共同裝備', wide:1, items:[
    ['hike','帳篷'],['hike','濾水器'],['must','急救小包'],
@@ -1202,25 +1221,57 @@ packBox.innerHTML =
   + `<div class="packcols">${PACK_LISTS.filter(l=>!l.wide).map(l=>
       `<details class="sub packcol" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')}</div>`;
 
-// 分類標籤可直接切換，切換後依 必帶→服裝→爬山→其他 重新排序
+// 分類標籤可直接切換，切換後依 必帶→服裝→爬山→自訂→其他 重新排序
+const packRenders=[];
+function renderAllPacks(){ packRenders.forEach(f=>f()); }
+/* 沒有任何項目在用的自訂分類會自動消失：把該分類的項目都改掉即可刪除分類 */
+function gcCats(){
+  const used=new Set();
+  PACK_LISTS.forEach(l=>{
+    try{
+      const arr=JSON.parse(localStorage.getItem('alps26.items.pack3-'+l.key));
+      if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c));
+    }catch(e){}
+  });
+  const before=CUSTOM_CATS.length;
+  CUSTOM_CATS=CUSTOM_CATS.filter(c=>used.has(c[0]));
+  if(CUSTOM_CATS.length!==before){ saveCats(); syncCatStyles(); return true; }
+  return false;
+}
 function packList(el, key, seed){
   const K='alps26.items.'+key;
   let items;
   try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
   if(!Array.isArray(items)) items=seed.map(([c,t])=>({t,c,done:false}));
-  const order=c=>Math.max(0,PACK_CATS.findIndex(x=>x[0]===c));
+  const order=c=>{ const i=PACK_CATS().findIndex(x=>x[0]===c); return i<0?PACK_CATS().length:i; };
   function render(){
+    const cats=PACK_CATS(), ids=cats.map(c=>c[0]);
+    items.forEach(it=>{ if(!ids.includes(it.c)) it.c='other'; });
     items.sort((a,b)=>order(a.c)-order(b.c));
     localStorage.setItem(K, JSON.stringify(items));
     el.innerHTML = items.map((it,i)=>`
       <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <select class="catsel c-${it.c}" data-i="${i}">${PACK_CATS.map(([c,l])=>
-        `<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}</select>
+      <select class="catsel c-${it.c}" data-i="${i}">${cats.map(([c,l])=>
+        `<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}<option value="__new">＋ 新增分類…</option></select>
       <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}</span>
       <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
       + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
     el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-    el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{items[+se.dataset.i].c=se.value;render();}));
+    el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{
+      if(se.value==='__new'){
+        const name=(prompt('新分類名稱：')||'').trim();
+        if(!name){ render(); return; }
+        const id='u'+Date.now().toString(36);
+        CUSTOM_CATS.push([id,name]); saveCats(); syncCatStyles();
+        items[+se.dataset.i].c=id;
+        localStorage.setItem(K, JSON.stringify(items));
+        renderAllPacks();
+        return;
+      }
+      items[+se.dataset.i].c=se.value;
+      localStorage.setItem(K, JSON.stringify(items));
+      if(gcCats()) renderAllPacks(); else render();
+    }));
     el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
     el.querySelectorAll('.txt').forEach(sp=>{
       sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
@@ -1232,8 +1283,10 @@ function packList(el, key, seed){
     ab.addEventListener('click',add);
     ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
   }
+  packRenders.push(render);
   render();
 }
+syncCatStyles();
 PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
 
 
