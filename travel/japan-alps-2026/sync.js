@@ -66,7 +66,7 @@
         for (const k of Object.keys(local)) {
           if (!(k in remote)) { origRemove(k); changed = true; }
         }
-        status(changed ? `已更新（${Object.keys(remote).length} 項）` : `已是最新（${Object.keys(remote).length} 項）`, 'ok');
+        status(changed ? '已更新' : '已是最新', 'ok');
         // 頁面在載入時就讀過 localStorage，資料有變要重畫一次
         // 手動按「更新」是使用者主動觸發，不受每回合只重整一次的限制
         if (changed && (manual || !sessionStorage.getItem('alps26.reloaded'))) {
@@ -121,7 +121,7 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       sha = (await res.json()).content.sha;
       remoteCount = Object.keys(data).length;
-      status(`已上傳（${Object.keys(data).length} 項）`, 'ok');
+      status('已上傳', 'ok');
     } catch (e) {
       status(`同步失敗：${e.message}`, 'err');
     } finally {
