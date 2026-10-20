@@ -90,13 +90,20 @@ const TRIPS = [
     dates: '2026/9/11 – 9/20',
     route: '穗高岳山莊 → 槍岳山莊 → 三俁山莊 → 太郎平小屋 → 五色原山莊 → 劍山莊 → 室堂',
     href: 'japan-alps-2026/',
-    status: 'planning'   // planning=籌備中, done=已完成
+    status: 'done'       // planning=籌備中, done=已完成
+  },
+  {
+    name: '大阪馬拉松 🏃',
+    dates: '2027/2/26 – 3/1',
+    route: 'TPE ✈ KIX → EXPO 領物 → 賽前勘查 → 2/28 大阪馬拉松 42.195 km → KIX ✈ TPE',
+    href: 'osaka-marathon-2027/',
+    status: 'planning'
   }
 ];
 
 const STATUS_LABEL = { planning: '籌備中', done: '已完成' };
 
-document.getElementById('trip-grid').innerHTML = TRIPS.map(t => `
+document.getElementById('trip-grid').innerHTML = TRIPS.slice().sort((a, b) => (a.status === 'done') - (b.status === 'done')).map(t => `
   <a class="card" href="${t.href}">
     <div class="badge ${t.status}">${STATUS_LABEL[t.status] || ''}</div>
     <div class="card-title">${t.name}</div>
