@@ -156,11 +156,13 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 .gf-conf b{font-size:14px;font-weight:700}
 .gf-meta{font-size:12px;color:var(--muted);margin-top:10px;border-top:1px solid #e2e7ee;padding-top:8px}
 .fnote{font-size:12px;color:var(--muted);margin-top:12px}
-/* --- race info grid --- */
-.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:6px 0 4px}
-.kv div{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:8px 12px}
-.kv span{display:block;font-size:11px;color:var(--muted)}
-.kv b{font-size:14px}
+/* --- race info table --- */
+.info{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0}
+.info th{text-align:left;font-size:12px;letter-spacing:.08em;color:var(--muted);padding:12px 8px 4px;border-bottom:2px solid var(--cardline)}
+.info tr:first-child th{padding-top:2px}
+.info td{padding:6px 8px;border-bottom:1px solid var(--cardline);vertical-align:top;line-height:1.55}
+.info td:first-child{width:92px;color:var(--muted);font-weight:700;white-space:nowrap}
+.info b{font-weight:800}
 /* --- course --- */
 .cmap{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
 .cmap+.cmap{margin-top:8px}
@@ -257,17 +259,24 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 <details class="sub" open>
 <summary>賽事資訊</summary>
 <div class="subbody">
-<div class="kv">
-  <div><span>比賽日</span><b>2027/2/28（日）</b></div>
-  <div><span>起跑時間</span><b><span class="ed" data-ek="race.start" data-ek-default="09:15 第1波，之後第2、3波依序出發">09:15 第1波，之後第2、3波依序出發</span></b></div>
-  <div><span>起點／終點</span><b><span class="ed" data-ek="race.course" data-ek-default="大阪府廳前 → 大阪城公園內">大阪府廳前 → 大阪城公園內</span></b></div>
-  <div><span>關門時間</span><b><span class="ed" data-ek="race.cutoff" data-ek-default="7 小時（16:15 結束）・中途關門點見跑者手冊">7 小時（16:15 結束）・中途關門點見跑者手冊</span></b></div>
-  <div><span>號碼布領取</span><b><span class="ed" data-ek="race.expo" data-ek-default="EXPO・INTEX 大阪 6 號館・2/26（五）11:00–19:00・2/27（六）10:00–18:00">EXPO・INTEX 大阪 6 號館・2/26（五）11:00–19:00・2/27（六）10:00–18:00</span></b></div>
-  <div><span>定員</span><b>全馬 31,970 人（總 34,000）</b></div>
-  <div><span>海外報名費</span><b>個人 US$145 ＋慈善 2 口 $10 ＋手續費 11%（約 $172）</b></div>
-  <div><span>目標時間</span><b><span class="ed" data-ek="race.goal" data-ek-default="—">—</span></b></div>
+<table class="info">
+<tr><th colspan="2">比賽</th></tr>
+<tr><td>日期</td><td><b>2027/2/28（日）</b></td></tr>
+<tr><td>起跑</td><td><b>09:15</b> 第 1 波，第 2、3 波依序出發（區塊依申報成績）</td></tr>
+<tr><td>路線</td><td>大阪府廳前 → 大阪城公園內・42.195 km</td></tr>
+<tr><td>關門</td><td>7 小時（16:15）・中途關門點等跑者手冊</td></tr>
+<tr><td>目標時間</td><td><span class="ed" data-ek="race.goal" data-ek-default="—">—</span></td></tr>
+<tr><th colspan="2">領號碼布（EXPO）</th></tr>
+<tr><td>地點</td><td>INTEX 大阪 6 號館（Metro 中央線 コスモスクエア → New Tram 中ふ頭）</td></tr>
+<tr><td>時間</td><td>2/26（五）11:00–19:00・2/27（六）10:00–18:00</td></tr>
+<tr><td>規定</td><td>本人＋護照，不可代領；比賽當天不受理</td></tr>
+<tr><th colspan="2">報名</th></tr>
+<tr><td>定員</td><td>全馬 31,970 人（總 34,000）</td></tr>
+<tr><td>海外費用</td><td>US$145 ＋ 慈善 2 口 $10 ＋ 手續費 11% ≈ <b>$172</b></td></tr>
+<tr><td>抽籤</td><td>7/28–8/28 登記・9/28 公布結果</td></tr>
+</table>
 </div>
-<p class="hint">依官方「大会要項」（2026/10 查）；中途關門點、補給站位置要等賽前公布的跑者手冊。</p>
+<p class="hint">依官方「大会要項」（2026/10 查）。目標時間在編輯模式點一下可填。</p>
 </div>
 </details>
 
