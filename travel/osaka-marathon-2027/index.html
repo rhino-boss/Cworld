@@ -535,7 +535,7 @@ function editList(el, key, seed){
   render();
 }
 
-/* ── 攜帶物品：共同裝備在上，沈與蔡並排；分類標籤可切換 ── */
+/* ── 攜帶物品：單一清單；分類標籤可切換 ── */
 const PACK_CATS_HEAD = [['must','必帶'],['cloth','服裝'],['run','比賽']];
 const PACK_CATS_TAIL = [['other','其他']];
 const CAT_PALETTE = [
@@ -554,18 +554,13 @@ function syncCatStyles(){
     return `.ck .catsel.c-${c[0]}{background:${p[0]};border-color:${p[1]};color:${p[2]}}`; }).join('');
 }
 const PACK_LISTS = [
- {key:'shared', name:'共同裝備', wide:1, items:[
-   ['must','參賽確認信（列印＋截圖）'],['must','eSIM'],['other','行動電源'],['other','轉接頭'],
- ]},
- {key:'shen', name:'沈的攜帶物品', items:[
-   ['must','護照'],['must','日幣'],['must','信用卡'],
+ // 這次只有沈一個人，單一清單
+ {key:'all', name:'攜帶物品清單', wide:1, items:[
+   ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信（列印＋截圖）'],['must','eSIM'],
    ['run','跑鞋'],['run','比賽衣褲'],['run','壓力襪／小腿套'],['run','GPS 錶＋充電線'],['run','號碼布別針（備用）'],
    ['run','能量膠 ×4'],['run','鹽錠'],['run','凡士林／防磨膏'],['run','可丟棄保暖層（起跑前）'],
    ['cloth','羽絨'],['cloth','長袖＋外套'],['cloth','帽子 手套'],['cloth','換洗衣物 ×3'],['cloth','拖鞋'],
-   ['other','刮鬍刀'],['other','牙刷 牙膏'],['other','肌內效貼布'],
- ]},
- {key:'tsai', name:'蔡的攜帶物品', items:[
-   ['must','護照'],['must','日幣'],
+   ['other','行動電源'],['other','轉接頭'],['other','刮鬍刀'],['other','牙刷 牙膏'],['other','肌內效貼布'],
  ]},
 ];
 const packBox=document.getElementById('packlist');
