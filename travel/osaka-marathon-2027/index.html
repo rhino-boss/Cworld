@@ -161,6 +161,15 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 .kv div{background:var(--bg);border:1px solid var(--cardline);border-radius:10px;padding:8px 12px}
 .kv span{display:block;font-size:11px;color:var(--muted)}
 .kv b{font-size:14px}
+/* --- course --- */
+.cmap{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.cmap+.cmap{margin-top:8px}
+.km{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.km th{font-size:11.5px;color:var(--muted);font-weight:700;text-align:left;padding:4px 8px;border-bottom:1px solid var(--cardline)}
+.km td{padding:5px 8px;border-bottom:1px solid var(--cardline);vertical-align:top}
+.km td:first-child{white-space:nowrap;font-weight:800;font-variant-numeric:tabular-nums}
+.km tr.hill td{background:#fdf1dd}
+.km .tip{color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
@@ -259,6 +268,49 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
   <div><span>目標時間</span><b><span class="ed" data-ek="race.goal" data-ek-default="—">—</span></b></div>
 </div>
 <p class="hint">依官方「大会要項」（2026/10 查）；中途關門點、補給站位置要等賽前公布的跑者手冊。</p>
+</div>
+</details>
+
+<details class="sub" open>
+<summary>跑步路線</summary>
+<div class="subbody">
+<a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener"><img class="cmap" src="https://www.osaka-marathon.com/2027/assets/img/sub/info/course/img_map.jpg" alt="大阪マラソン2027 コース図" loading="lazy"></a>
+<img class="cmap" src="https://www.osaka-marathon.com/2027/assets/img/sub/info/course/img_map_02.jpg" alt="コース高低図" loading="lazy">
+<p class="hint" style="margin-top:4px">圖片來自大會官網「コース紹介」；高低圖全程 0–30 m，只有 32–34 km 上町台地一段爬到約 20 m。</p>
+<table class="km">
+<tr><th>km</th><th>位置</th><th>怎麼跑</th></tr>
+<tr><td>0</td><td>大阪府廳前 START → 北上天神橋筋</td><td class="tip">人多，不要為了超車頻繁變速；前幾公里慢幾秒不用追</td></tr>
+<tr><td>5</td><td>扇町公園／天神橋 6 折返</td><td class="tip">折返後南下，經 東天滿・天神橋</td></tr>
+<tr><td>7–8</td><td>中之島：大阪市中央公會堂 → 渡辺橋南詰 → 肥後橋 → 淀屋橋</td><td class="tip">720 馬拉松在こども本の森中之島前結束，人會突然少</td></tr>
+<tr><td>10</td><td>御堂筋 南下（新橋附近）</td><td class="tip">大阪最寬的大道，氣氛好容易超速，照配速</td></tr>
+<tr><td>15</td><td>本田 1 → 伯楽橋西詰 → みなと通 西行</td><td class="tip">開始補給：膠、水、電解質照計畫</td></tr>
+<tr><td>17</td><td>市岡元町 3 折返（京セラドーム附近）</td><td class="tip">折返後往大正橋</td></tr>
+<tr><td>20</td><td>大正橋 → 幸町 1 → 難波</td><td class="tip">半馬點在難波附近，看一下時間</td></tr>
+<tr><td>22–27</td><td>なにわ筋 南下（塩草 2・中開）→ 25 km → 柳通 折返</td><td class="tip">長直線，單調，用步頻撐住</td></tr>
+<tr><td>29–30</td><td>回北 → 千日前通 東行 → 松屋町筋（30 km）→ 下寺町</td><td class="tip">30 km 後進入起伏段，準備收輸出</td></tr>
+<tr class="hill"><td>31–34</td><td>谷町 9 → 上本町 6 → 上町筋 南下 → 五條宮前西 → 四天王寺旁 → 勝山 4</td><td class="tip">⛰ 全程唯一的坡（上町台地，到約 20 m）：縮步幅、維持步頻，下坡不要追時間</td></tr>
+<tr><td>35</td><td>勝山通 東行（35 km）→ 大池橋</td><td class="tip">坡過了，重新穩定配速</td></tr>
+<tr><td>36–39</td><td>今里筋 北上：今里 → 緑橋</td><td class="tip">最後長直線，風通常從北邊來</td></tr>
+<tr><td>40</td><td>鴫野東 2 折向西 → 城見 1 西</td><td class="tip">大阪城前還有地下道、轉折與短坡，路面轉平再衝</td></tr>
+<tr><td>42.195</td><td>大阪城公園內 FINISH</td><td class="tip">完賽證不郵寄，官網自行下載；紀念品忘了領 3/12 前可聯絡補寄</td></tr>
+</table>
+<p class="hint">位置依官方コース図判讀，各公里標的精確位置、給水所與關門點以 2 月初寄出的參加案內（跑者手冊）為準。</p>
+</div>
+</details>
+
+<details class="sub" open>
+<summary>比賽日重要資訊</summary>
+<div class="subbody">
+<ul class="notes">
+  <li><b>起跑</b> 09:15 第 1 波，第 2、3 波依序出發；區塊由申報 PB／預估時間決定。<b>提早於指定波次起跑＝取消資格</b>。</li>
+  <li><b>安全手環</b>（領物時給）沒戴不能進起跑區；號碼布正面別好，晶片別拆。</li>
+  <li><b>寄物</b>：會場有寄物與更衣空間，<b>沒有淋浴</b>；袋子尺寸與寄物時間寫在 2 月初的參加案內。大件行李大會不運送，放飯店或用便利商店宅配。</li>
+  <li><b>起終點</b>都在大阪城公園一帶：起點大阪府廳前（Metro 谷町四丁目／天滿橋）、終點大阪城公園內（JR 大阪城公園／森ノ宮）。比賽日<b>交通管制 12 月初公布</b>。</li>
+  <li><b>關門</b>：全程 7 小時（16:15）；中途關門點等跑者手冊。</li>
+  <li><b>天候</b>：雨天照跑；暴風雨等可能中止，<b>當天清晨 5:00 左右</b>官網／官方社群公布。</li>
+  <li><b>完賽後</b>：完賽證不郵寄，官網下載；紀念品忘了領可在 2027/3/12 前聯絡客服到付寄送。</li>
+  <li><b>禁止</b>：A 區塊與田徑聯盟登記者禁止變裝；會有藥檢；申報成績造假取消資格。</li>
+</ul>
 </div>
 </details>
 
@@ -374,7 +426,7 @@ const DAYS=[
    chain:[['09:00','早餐後慢跑 3–5 km'],{t:'',n:'大阪城公園一圈，順便看終點動線'},['12:00','午餐'],{t:'',n:'碳水為主，不要吃生食'},['14:00','起點勘查＋寄物處位置'],{t:'',n:'大阪府廳前'},['17:00','便利商店買隔天早餐、補給'],['21:00','整理裝備、別號碼布、早睡']]},
   {d:'D3', date:'2/28 日', c:3, route:'<b>🏁 大阪馬拉松 42.195 km</b>・09:15 起跑・關門 7 小時・賽後泡澡、大餐',
    meta:'<span class="stay">宿 大阪</span>・比賽日',
-   chain:[['05:30','起床・早餐（賽前 3 小時）'],['07:30','抵達起點、寄物'],{t:'',n:'寄物截止往年約 08:30'},['09:15','第1波起跑（第2、3波依序）'],{t:'42.195 km',n:'目標：—'},['14:30','完賽・領完賽物資'],['16:00','回飯店泡澡'],['18:30','慶功：燒肉／大阪燒']]},
+   chain:[['05:30','起床・早餐（賽前 3 小時）'],['07:30','抵達起點（谷町四丁目／天滿橋站）、寄物'],{t:'',n:'寄物截止看參加案內；戴安全手環才能進起跑區'},['09:15','第1波起跑（第2、3波依序）'],{t:'42.195 km',n:'目標：—'},['14:30','完賽・領完賽物資（終點 大阪城公園內）'],['16:00','回飯店泡澡'],['18:30','慶功：燒肉／大阪燒']]},
   {d:'D4', date:'3/1 一', c:4, route:'早上自由活動（可選奈良半日：近鐵難波→奈良 35 分）→ 南海電鐵到關西機場 → <b>關西 KIX 15:25 ✈ 桃園 TPE 17:55</b>',
    meta:'MM027・關西第2航廈・起飛前 120～50 分鐘報到',
    chain:[['10:00','飯店 Check-out、寄行李'],{t:'',n:'難波買伴手禮'},['12:30','難波出發'],{t:'約 50 分',n:'南海電鐵到關西機場'},['13:25','關西機場 T2 報到'],{t:'2h30',n:'樂桃 MM027'},['17:55','桃園機場 T1']]},
