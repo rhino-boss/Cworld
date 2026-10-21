@@ -9,7 +9,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #f7f7f5; --surface: #fff; --border: #e8e8e4;
-      --text: #1a1a1a; --muted: #6b6b6b;
+      --text: #1a1a1a; --muted: #6b6b6b; --accent: #112840;
       --radius: 14px;
     }
     body { font-family: 'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -24,13 +24,36 @@
     .hero h1 { font-size: 1.75rem; font-weight: 700; }
     .hero p { margin-top: 6px; font-size: .9rem; opacity: .7; }
 
-    .container { max-width: 1100px; margin: 0 auto; padding: 36px 48px 80px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 48px 80px; }
 
-    .status-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; font-size: .82rem; color: var(--muted); }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #3a8a50; flex-shrink: 0; }
+    /* 搜尋 */
+    .search {
+      width: 100%; font: inherit; font-size: .9rem; padding: 12px 16px;
+      border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text);
+    }
+    .search:focus { outline: 2px solid rgba(30,87,153,.25); border-color: #9fb3cc; }
 
+    /* 工具列：數量・排序・切換 */
+    .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 18px 0 12px; font-size: .82rem; color: var(--muted); }
+    .toolbar .count { margin-right: auto; }
+    .tbtn {
+      font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer;
+      background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px;
+    }
+    .tbtn:hover { border-color: #b9c3cf; }
+
+    /* 篩選標籤 */
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .chip {
+      font: inherit; font-size: .78rem; font-weight: 700; cursor: pointer;
+      background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 99px; padding: 5px 12px;
+    }
+    .chip b { font-weight: 600; color: var(--muted); margin-left: 4px; }
+    .chip.on { background: #3e5a78; color: #fff; border-color: #3e5a78; }
+    .chip.on b { color: rgba(255,255,255,.75); }
+
+    /* 卡片模式 */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
-
     .card {
       position: relative; display: block;
       background: var(--surface); border: 1px solid var(--border);
@@ -40,23 +63,44 @@
       text-decoration: none; color: var(--text);
     }
     .card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.13); transform: translateY(-3px); }
-
-    .badge {
-      position: absolute; top: 14px; right: 14px;
-      padding: 3px 10px; border-radius: 99px;
-      font-size: .68rem; font-weight: 800; letter-spacing: .5px; color: #fff;
-    }
-    .badge.planning { background: #d97316; }
-    .badge.done { background: #3a8a50; }
-
+    .card .badge { position: absolute; top: 14px; right: 14px; }
     .card-title { font-size: 1.05rem; font-weight: 700; padding-right: 64px; }
     .card-date { margin-top: 6px; font-size: .8rem; color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
     .card-route { margin-top: 4px; font-size: .82rem; color: var(--muted); line-height: 1.55; }
 
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 99px;
+      font-size: .68rem; font-weight: 800; letter-spacing: .5px; color: #fff; white-space: nowrap;
+    }
+    .badge.planning { background: #d97316; }
+    .badge.done { background: #3a8a50; }
+
+    /* 清單模式：一列一趟，標籤／名稱固定寬，讓名稱與路線各自對齊 */
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      text-decoration: none; color: inherit;
+      transition: box-shadow .15s, transform .15s;
+    }
+    .row:hover { box-shadow: 0 6px 18px rgba(0,0,0,.10); transform: translateY(-1px); }
+    .row .badge { flex: none; min-width: 60px; text-align: center; }
+    .row .r-title { flex: 0 0 150px; font-size: .9rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .row .r-desc { min-width: 0; font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .row .r-meta { margin-left: auto; flex: none; font-size: .76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .empty { padding: 28px; text-align: center; color: var(--muted); font-size: .85rem; background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); }
+
     @media (max-width: 640px) {
       .hero { padding: 28px 24px; }
-      .container { padding: 24px 20px 60px; }
+      .container { padding: 20px 16px 60px; }
       .grid { grid-template-columns: 1fr; gap: 14px; }
+      .row { flex-wrap: wrap; gap: 6px 10px; }
+      .row .r-title { flex: 1 1 auto; }
+      .row .r-desc { flex: 1 1 100%; white-space: normal; }
+      .row .r-meta { margin-left: 0; }
     }
   </style>
 </head>
@@ -74,19 +118,27 @@
 </div>
 
 <div class="container">
-  <div class="status-bar">
-    <div class="dot"></div>
-    <span id="status-text"></span>
+  <input class="search" id="q" type="search" placeholder="搜尋旅行名稱、路線、日期…" autocomplete="off">
+
+  <div class="toolbar">
+    <span class="count" id="count"></span>
+    <span>排序</span>
+    <button class="tbtn" id="sortkey" type="button"></button>
+    <button class="tbtn" id="sortdir" type="button" title="切換升／降冪"></button>
+    <button class="tbtn" id="view" type="button"></button>
   </div>
-  <div class="grid" id="trip-grid"></div>
+
+  <div class="chips" id="chips"></div>
+  <div id="body"></div>
 </div>
 
 <script>
-// 新增旅行：在這裡加一筆，name 隨你取名；
+// 新增旅行：在這裡加一筆，name 隨你取名；start 用 YYYY-MM-DD 給排序用；
 // 再到 travel/ 底下開對應資料夾放該次旅行的 index.html
 const TRIPS = [
   {
     name: '槍劍縱走 🏔️',
+    start: '2026-09-11',
     dates: '2026/9/11 – 9/20',
     route: '穗高岳山莊 → 槍岳山莊 → 三俁山莊 → 太郎平小屋 → 五色原山莊 → 劍山莊 → 室堂',
     href: 'japan-alps-2026/',
@@ -94,6 +146,7 @@ const TRIPS = [
   },
   {
     name: '大阪馬拉松 🏃',
+    start: '2027-02-26',
     dates: '2027/2/26 – 3/1',
     route: 'TPE ✈ KIX → EXPO 領物 → 賽前勘查 → 2/28 大阪馬拉松 42.195 km → KIX ✈ TPE',
     href: 'osaka-marathon-2027/',
@@ -102,18 +155,77 @@ const TRIPS = [
 ];
 
 const STATUS_LABEL = { planning: '計畫中', done: '已結束' };
+const SORTS = [{ key: 'date', label: '日期' }, { key: 'name', label: '名稱' }];
 
-document.getElementById('trip-grid').innerHTML = TRIPS.slice().sort((a, b) => (a.status === 'done') - (b.status === 'done')).map(t => `
-  <a class="card" href="${t.href}">
-    <div class="badge ${t.status}">${STATUS_LABEL[t.status] || ''}</div>
-    <div class="card-title">${t.name}</div>
-    <div class="card-date">${t.dates}</div>
-    <div class="card-route">${t.route}</div>
-  </a>
-`).join('');
+/* 檢視、排序、篩選記在這台裝置 */
+const PK = 'travel.';
+const pref = (k, d) => localStorage.getItem(PK + k) ?? d;
+let view = pref('view', 'card');         // card | list
+let sortKey = pref('sort', 'date');
+let sortDesc = pref('dir', 'desc') === 'desc';
+let filter = pref('filter', 'all');      // all | planning | done
+let q = '';
 
-document.getElementById('status-text').textContent =
-  `共 ${TRIPS.length} 個旅行計畫，${TRIPS.filter(t => t.status === 'planning').length} 個計畫中`;
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const hay = t => (t.name + ' ' + t.dates + ' ' + t.route + ' ' + STATUS_LABEL[t.status]).toLowerCase();
+
+function render() {
+  // 工具列文字
+  document.getElementById('sortkey').textContent = '⇅ ' + SORTS.find(s => s.key === sortKey).label;
+  document.getElementById('sortdir').textContent = sortDesc ? '↓' : '↑';
+  document.getElementById('view').textContent = view === 'card' ? '☰ 清單' : '▦ 卡片';
+
+  // 篩選標籤
+  const n = k => k === 'all' ? TRIPS.length : TRIPS.filter(t => t.status === k).length;
+  document.getElementById('chips').innerHTML = [['all', '全部'], ['planning', '計畫中'], ['done', '已結束']]
+    .map(([k, l]) => `<button class="chip${filter === k ? ' on' : ''}" data-f="${k}" type="button">${l}<b>${n(k)}</b></button>`).join('');
+  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    filter = c.dataset.f; localStorage.setItem(PK + 'filter', filter); render();
+  }));
+
+  // 篩選＋搜尋＋排序
+  let list = TRIPS.filter(t => (filter === 'all' || t.status === filter) && (!q || hay(t).includes(q)));
+  list.sort((a, b) => {
+    const r = sortKey === 'date' ? a.start.localeCompare(b.start) : a.name.localeCompare(b.name, 'zh-Hant');
+    return sortDesc ? -r : r;
+  });
+  document.getElementById('count').textContent = `${list.length} 趟`;
+
+  const body = document.getElementById('body');
+  if (!list.length) { body.className = ''; body.innerHTML = '<div class="empty">沒有符合的旅行。</div>'; return; }
+  if (view === 'card') {
+    body.className = 'grid';
+    body.innerHTML = list.map(t => `
+      <a class="card" href="${esc(t.href)}">
+        <span class="badge ${t.status}">${STATUS_LABEL[t.status] || ''}</span>
+        <div class="card-title">${esc(t.name)}</div>
+        <div class="card-date">${esc(t.dates)}</div>
+        <div class="card-route">${esc(t.route)}</div>
+      </a>`).join('');
+  } else {
+    body.className = 'list';
+    body.innerHTML = list.map(t => `
+      <a class="row" href="${esc(t.href)}">
+        <span class="badge ${t.status}">${STATUS_LABEL[t.status] || ''}</span>
+        <span class="r-title">${esc(t.name)}</span>
+        <span class="r-desc">${esc(t.route)}</span>
+        <span class="r-meta">${esc(t.dates)}</span>
+      </a>`).join('');
+  }
+}
+
+document.getElementById('q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
+document.getElementById('sortkey').addEventListener('click', () => {
+  const i = SORTS.findIndex(s => s.key === sortKey);
+  sortKey = SORTS[(i + 1) % SORTS.length].key; localStorage.setItem(PK + 'sort', sortKey); render();
+});
+document.getElementById('sortdir').addEventListener('click', () => {
+  sortDesc = !sortDesc; localStorage.setItem(PK + 'dir', sortDesc ? 'desc' : 'asc'); render();
+});
+document.getElementById('view').addEventListener('click', () => {
+  view = view === 'card' ? 'list' : 'card'; localStorage.setItem(PK + 'view', view); render();
+});
+render();
 </script>
 </body>
 </html>
