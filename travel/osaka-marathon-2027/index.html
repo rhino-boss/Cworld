@@ -287,61 +287,15 @@ footer{border-top:2px dashed var(--b-sky);color:var(--muted)}
 footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align:center;letter-spacing:.4em;margin-bottom:8px;font-size:14px}
 .banner{margin:14px 0 2px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.75);border:2px solid #fff;
   text-align:center;font-size:18px;letter-spacing:.35em;box-shadow:0 2px 8px rgba(47,127,198,.12)}
-/* 吉祥物 */
-.pk{display:inline-block;overflow:visible;filter:drop-shadow(0 2px 2px rgba(90,58,26,.25))}
-.pk.flip{transform:scaleX(-1)}
-.hdr{position:relative;padding-left:118px;min-height:140px}
-.hdr .hdr-l{position:absolute;left:0;top:6px;width:108px;height:108px}
-.hdr .hdr-r{position:absolute;right:0;top:0;width:74px;height:74px;transform:scaleX(-1)}
-.hdr .bolt{position:absolute;font-size:18px;opacity:.9}
-.hdr .b1{left:104px;top:0}.hdr .b2{right:84px;top:48px}.hdr .b3{right:6px;top:78px;font-size:14px}
-.banner{display:flex;align-items:center;justify-content:center;gap:10px}
-.banner .bn{width:46px;height:46px;margin:-14px 0}
-details.sec>summary{position:relative;padding-right:60px}
-.pk.corner{position:absolute;right:14px;top:4px;width:40px;height:40px}
-.ftr{position:relative;padding-right:90px}
-.ftr .ftr-z{position:absolute;right:0;bottom:-6px;width:84px;height:84px}
 .mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
 .mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800}
 .mapbtn:hover{background:#1d5a93}
 .mapbtn.ghost{background:#fff;color:#2f7fc6;border:2px solid #aacfea}
 .mapbtn.ghost:hover{background:#e4f1fb}
-@media (max-width:640px){ .datepill{font-size:1.35rem;padding:6px 16px} .datepill small{font-size:.85rem}
-  .hdr{padding-left:0;padding-top:70px} .hdr .hdr-l{width:64px;height:64px;top:0} .hdr .hdr-r{width:50px;height:50px}
-  .hdr .b1{left:66px;top:4px} .banner .bn{width:34px;height:34px} }
+@media (max-width:640px){ .datepill{font-size:1.35rem;padding:6px 16px} .datepill small{font-size:.85rem} }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="pika" viewBox="0 0 100 100">
-    <g stroke="#8a5a00" stroke-width="2.2" stroke-linejoin="round">
-      <polygon points="74,58 90,28 84,50 97,44 72,76" fill="#f7c948"/>
-      <polygon points="30,40 16,4 44,32" fill="#f7c948"/><polygon points="16,4 22,18 32,15" fill="#2b2b2b"/>
-      <polygon points="70,40 84,4 56,32" fill="#f7c948"/><polygon points="84,4 78,18 68,15" fill="#2b2b2b"/>
-      <ellipse cx="50" cy="62" rx="33" ry="30" fill="#f7c948"/>
-      <path d="M36 86 q4 -10 10 -4 M54 86 q4 -10 10 -4" fill="none"/>
-    </g>
-    <circle cx="39" cy="56" r="4.2" fill="#2b2b2b"/><circle cx="40.5" cy="54.5" r="1.4" fill="#fff"/>
-    <circle cx="61" cy="56" r="4.2" fill="#2b2b2b"/><circle cx="62.5" cy="54.5" r="1.4" fill="#fff"/>
-    <circle cx="30" cy="67" r="5.5" fill="#e8415c"/><circle cx="70" cy="67" r="5.5" fill="#e8415c"/>
-    <polygon points="48,62 52,62 50,65" fill="#2b2b2b"/>
-    <path d="M43 70 q7 7 14 0" fill="none" stroke="#2b2b2b" stroke-width="2" stroke-linecap="round"/>
-  </symbol>
-  <symbol id="pika-cap" viewBox="0 0 100 100">
-    <use href="#pika"/>
-    <path d="M22 36 q28 -22 56 0 l4 6 q-32 -10 -64 0 z" fill="#2f7fc6" stroke="#1d5a93" stroke-width="2" stroke-linejoin="round"/>
-    <ellipse cx="50" cy="26" rx="7" ry="4.5" fill="#e8415c" stroke="#8a2b3a" stroke-width="1.5"/>
-  </symbol>
-  <symbol id="pika-run" viewBox="0 0 100 100">
-    <g transform="rotate(-12 50 60)"><use href="#pika"/></g>
-    <path d="M6 70 h14 M4 78 h10 M8 86 h12" stroke="#2f7fc6" stroke-width="3" stroke-linecap="round" opacity=".8"/>
-  </symbol>
-  <symbol id="pika-zzz" viewBox="0 0 100 100">
-    <g transform="rotate(90 50 60) translate(0 -6)"><use href="#pika"/></g>
-    <text x="68" y="22" font-size="16" font-weight="800" fill="#2f7fc6" font-family="M PLUS Rounded 1c,sans-serif">z</text>
-    <text x="80" y="12" font-size="12" font-weight="800" fill="#2f7fc6" font-family="M PLUS Rounded 1c,sans-serif">z</text>
-  </symbol>
-</svg>
 
 <nav class="cnav">
   <a href="../../index.html">Cworld</a>
@@ -353,10 +307,7 @@ details.sec>summary{position:relative;padding-right:60px}
 </nav>
 
 <div class="wrap">
-<header class="hdr">
-  <svg class="pk hdr-l"><use href="#pika-cap"/></svg>
-  <svg class="pk hdr-r"><use href="#pika-run"/></svg>
-  <span class="bolt b1">⚡</span><span class="bolt b2">✨</span><span class="bolt b3">⚡</span>
+<header>
   <div class="hicon">🏃</div>
   <h1>大阪馬拉松 2027</h1>
   <div class="datepill"><span class="dp-cloud">☁️</span>2/26<small>（五）</small> – 3/1<small>（一）</small><span class="dp-ico">🚃</span></div>
@@ -364,16 +315,16 @@ details.sec>summary{position:relative;padding-right:60px}
 </header>
 
 <details class="sec" id="sec-days" open>
-<summary>行程<svg class="pk corner"><use href="#pika-cap"/></svg></summary>
+<summary>行程</summary>
 <div class="secbody">
 <p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日分段；編輯模式下分段文字可直接改。</p>
 <div class="days" id="days"></div>
 </div>
 </details>
 
-<div class="banner" aria-hidden="true"><svg class="pk bn"><use href="#pika-cap"/></svg>⚡🚃☁️🗼☁️🏯☁️🏃⚡<svg class="pk bn flip"><use href="#pika"/></svg></div>
+<div class="banner" aria-hidden="true">⚡🚃☁️🗼☁️🏯☁️🏃⚡</div>
 <details class="sec" id="sec-flight">
-<summary>航班資訊<svg class="pk corner"><use href="#pika"/></svg></summary>
+<summary>航班資訊</summary>
 <div class="secbody">
 <div class="gflights">
   <div class="gfcard">
@@ -410,7 +361,7 @@ details.sec>summary{position:relative;padding-right:60px}
 </details>
 
 <details class="sec" id="sec-stay">
-<summary>住宿資訊<svg class="pk corner"><use href="#pika"/></svg></summary>
+<summary>住宿資訊</summary>
 <div class="secbody">
 <div class="tblwrap">
 <table class="itin">
@@ -424,9 +375,9 @@ details.sec>summary{position:relative;padding-right:60px}
 </div>
 </details>
 
-<div class="banner" aria-hidden="true"><svg class="pk bn"><use href="#pika-run"/></svg>🏁🎽⏱️🍙🏃‍♂️💨🏯✨<svg class="pk bn flip"><use href="#pika-run"/></svg></div>
+<div class="banner" aria-hidden="true">🏁🎽⏱️🍙🏃‍♂️💨🏯✨</div>
 <details class="sec" id="sec-race" open>
-<summary>馬拉松篇<svg class="pk corner"><use href="#pika-run"/></svg></summary>
+<summary>馬拉松篇</summary>
 <div class="secbody">
 
 <details class="sub" open>
@@ -526,7 +477,7 @@ details.sec>summary{position:relative;padding-right:60px}
 </details>
 
 <details class="sec" id="sec-travel">
-<summary>旅行篇<svg class="pk corner"><use href="#pika"/></svg></summary>
+<summary>旅行篇</summary>
 <div class="secbody">
 
 <details class="sub">
@@ -548,7 +499,7 @@ details.sec>summary{position:relative;padding-right:60px}
 </details>
 
 <details class="sec" id="sec-pack">
-<summary>攜帶物品<svg class="pk corner"><use href="#pika-cap"/></svg></summary>
+<summary>攜帶物品</summary>
 <div class="secbody">
 <div id="packlist"></div>
 <p class="hint">每個項目前面的標籤可以切換分類；選「＋ 新增分類」可自訂。</p>
@@ -556,12 +507,11 @@ details.sec>summary{position:relative;padding-right:60px}
 </details>
 
 <details class="sec" id="sec-todo">
-<summary>待確認項目<svg class="pk corner"><use href="#pika-run"/></svg></summary>
+<summary>待確認項目</summary>
 <div class="secbody"><ul class="ck" id="todolist"></ul></div>
 </details>
 
-<footer class="ftr">
-  <svg class="pk ftr-z"><use href="#pika-zzz"/></svg>
+<footer>
   資料來源：樂桃訂單 QAJ7AN（2026/10/18）、大阪マラソン官網。賽事資訊依官方大会要項（2026/10 查），中途關門點與補給站以跑者手冊為準。
 </footer>
 </div>
