@@ -45,9 +45,10 @@ body{font-family:'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif;
 const map = L.map('lmap', { zoomControl: true });
 window._tripMap = map;
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors', maxZoom: 19 }).addTo(map);
+// 先定視野再畫線（Leaflet 的 path 要在地圖有中心／縮放後才會建 renderer）
+map.fitBounds(L.latLngBounds(COURSE), { padding: [24, 24] });
+L.polyline(COURSE, { color: '#fff', weight: 9, opacity: .6 }).addTo(map);          // 白色描邊
 const line = L.polyline(COURSE, { color: '#2f7fc6', weight: 5, opacity: .9 }).addTo(map);
-L.polyline(COURSE, { color: '#fff', weight: 9, opacity: .6 }).addTo(map).bringToBack();
-map.fitBounds(line.getBounds(), { padding: [24, 24] });
 const icon = (html, cls, anchor) => L.divIcon({ html, className: 'lmkwrap' + (cls ? ' ' + cls : ''), iconSize: null, iconAnchor: anchor || [15, 15] });
 // 起終點
 L.marker(COURSE[0], { icon: icon('<div class="kmk sf">START 大阪府廳前</div>', '', [10, 15]), zIndexOffset: 1000 }).addTo(map);
