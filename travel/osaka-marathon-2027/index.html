@@ -6,6 +6,7 @@
 <title>大阪馬拉松 2027 · Cworld</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <style>
 :root{
@@ -287,6 +288,15 @@ footer{border-top:2px dashed var(--b-sky);color:var(--muted)}
 footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align:center;letter-spacing:.4em;margin-bottom:8px;font-size:14px}
 .banner{margin:14px 0 2px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.75);border:2px solid #fff;
   text-align:center;font-size:18px;letter-spacing:.35em;box-shadow:0 2px 8px rgba(47,127,198,.12)}
+#lmap{height:62vh;min-height:380px;border:3px solid #fff;border-radius:16px;background:#e8ede4;z-index:0;box-shadow:0 2px 10px rgba(90,58,26,.08)}
+.lmkwrap{background:none;border:none}
+.kmk{width:28px;height:28px;border-radius:50%;background:#e8457c;color:#fff;font:800 11px/28px 'Helvetica Neue',sans-serif;text-align:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap}
+.kmk.sf{background:#2f7fc6;width:auto;padding:0 9px;border-radius:999px}
+.wpk{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.wpk .dot{width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid #2f7fc6;flex:none}
+.wpk .lbl{font:700 11px/1.15 'Microsoft JhengHei','PingFang TC',sans-serif;color:#26261f;text-shadow:0 0 3px #fff,0 0 3px #fff,0 1px 2px #fff}
+.lz .wpk{display:none}
+@media (max-width:640px){ #lmap{height:52vh} }
 .mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
 .mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800}
 .mapbtn:hover{background:#1d5a93}
@@ -311,7 +321,6 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
   <div class="hicon">🏃</div>
   <h1>大阪馬拉松 2027</h1>
   <div class="datepill"><span class="dp-cloud">☁️</span>2/26<small>（五）</small> – 3/1<small>（一）</small><span class="dp-ico">🚃</span></div>
-  <p class="subtitle">四天三夜・關西機場進出 ✨</p>
 </header>
 
 <details class="sec" id="sec-days" open>
@@ -405,9 +414,11 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 <details class="sub" id="course" open>
 <summary>跑步路線</summary>
 <div class="subbody">
+<div class="mapbar" style="margin:4px 0 8px"><a class="mapbtn" href="map.html">⛶ 全螢幕地圖</a><a class="mapbtn ghost" href="course.gpx" download="osaka-marathon-2027.gpx">⬇ 下載 GPX</a></div>
+<div id="lmap"></div>
+<p class="hint" style="margin:4px 0 12px">依官方コース圖的經過路口用 OpenStreetMap 道路串接（概略）；粉紅圓點＝官方 km 標記位置，放大可看經過路口名。</p>
 <a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener"><img class="cmap" src="course_map.jpg" alt="大阪マラソン2027 コース図" loading="lazy"></a>
 <img class="cmap" src="course_elev.jpg" alt="コース高低図" loading="lazy">
-<div class="mapbar"><a class="mapbtn" href="map.html">🗺️ 互動地圖（OSM 道路串接）</a><a class="mapbtn ghost" href="course.gpx" download="osaka-marathon-2027.gpx">⬇ 下載 GPX</a></div>
 <p class="hint" style="margin-top:4px">圖片來自大會官網「コース紹介」；高低圖全程 0–30 m，只有 32–34 km 上町台地一段爬到約 20 m。</p>
 <table class="km">
 <tr><th>km</th><th>位置</th><th>怎麼跑</th></tr>
@@ -802,6 +813,29 @@ editList(document.getElementById('eatlist'), 'eat', [
  {t:'章魚燒'},
  {t:'串炸（新世界）'},
 ]);
+})();
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="course.js"></script>
+<script>
+(function(){
+  // 頁內互動地圖（與 map.html 同一份路線資料）
+  const el=document.getElementById('lmap'); if(!el||!window.COURSE) return;
+  const map=L.map('lmap',{scrollWheelZoom:false}); window._tripMap=map;
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
+  map.fitBounds(L.latLngBounds(COURSE),{padding:[20,20]});
+  L.polyline(COURSE,{color:'#fff',weight:9,opacity:.6}).addTo(map);
+  L.polyline(COURSE,{color:'#2f7fc6',weight:5,opacity:.9}).addTo(map);
+  const icon=(html,anchor)=>L.divIcon({html,className:'lmkwrap',iconSize:null,iconAnchor:anchor||[14,14]});
+  L.marker(COURSE[0],{icon:icon('<div class="kmk sf">START 大阪府廳前</div>',[10,14]),zIndexOffset:1000}).addTo(map);
+  L.marker(COURSE[COURSE.length-1],{icon:icon('<div class="kmk sf">FINISH 大阪城公園</div>',[10,14]),zIndexOffset:1000}).addTo(map);
+  COURSE_KM.forEach(([km,lat,lon])=>L.marker([lat,lon],{icon:icon('<div class="kmk">'+km+'</div>'),zIndexOffset:900}).addTo(map).bindTooltip(km+' km',{direction:'top',offset:[0,-14]}));
+  COURSE_WP.slice(1,-1).forEach(([name,lat,lon])=>L.marker([lat,lon],{icon:icon('<div class="wpk"><span class="dot"></span><span class="lbl">'+name+'</span></div>',[6,6])}).addTo(map));
+  const sync=()=>el.classList.toggle('lz',map.getZoom()<14); map.on('zoomend',sync); sync();
+  // 區塊收合中初始化會量錯尺寸，展開時重新量一次
+  let fitted=false;
+  document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open&&d.contains(el)) setTimeout(()=>{ map.invalidateSize(); if(!fitted){ map.fitBounds(L.latLngBounds(COURSE),{padding:[20,20]}); fitted=true; } },80); }));
+  window.addEventListener('load',()=>map.invalidateSize());
 })();
 </script>
 <script src="sync.js"></script>
