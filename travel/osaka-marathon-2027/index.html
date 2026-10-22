@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>大阪馬拉松 2027 · Cworld</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <style>
 :root{
@@ -173,6 +175,116 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 .km td:first-child{white-space:nowrap;font-weight:800;font-variant-numeric:tabular-nums}
 .km tr.hill td{background:#fdf1dd}
 .km .tip{color:var(--muted);font-size:12px}
+
+/* ════════ 視覺主題：皮卡丘風日本交通行程卡（淡藍天空＋粉彩圓角卡＋圓潤粗體） ════════ */
+:root{
+  --sky:#dff1fb; --sky2:#f4fbff; --brown:#5a3a1a; --pink:#e8457c; --blue:#2f7fc6; --yellow:#ffc53d; --mint:#bfe8d2;
+  --c-pink:#ffe3ec; --c-mint:#e2f6ea; --c-lav:#ece4f8; --c-yel:#fff5d6; --c-sky:#e4f1fb;
+  --b-pink:#f6b7cd; --b-mint:#a8dcc0; --b-lav:#c9b6e8; --b-yel:#f3dc8f; --b-sky:#aacfea;
+  --ink:#3b2a1a; --muted:#7a6a5a; --faint:#a39484; --line:#e3ecf3; --card:#fffdf7; --cardline:#efe6d6; --paper:#fffefa;
+  --d1:#e8457c; --d2:#5aa86e; --d3:#8a5fd8; --d4:#2f7fc6;
+}
+body{
+  font-family:'M PLUS Rounded 1c','Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif;font-weight:500;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 8%,rgba(255,255,255,.95) 0 46px,transparent 47px),
+    radial-gradient(circle at 20% 11%,rgba(255,255,255,.95) 0 34px,transparent 35px),
+    radial-gradient(circle at 84% 18%,rgba(255,255,255,.9) 0 40px,transparent 41px),
+    radial-gradient(circle at 90% 22%,rgba(255,255,255,.9) 0 28px,transparent 29px),
+    radial-gradient(circle at 6% 62%,rgba(255,255,255,.85) 0 38px,transparent 39px),
+    radial-gradient(circle at 94% 70%,rgba(255,255,255,.85) 0 44px,transparent 45px),
+    linear-gradient(180deg,#cfe9fa 0,var(--sky) 30%,var(--sky2) 100%);
+  background-attachment:fixed;
+}
+b,strong,h1,h2,summary,.day .dnum,.ctime{font-weight:800}
+h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
+.subtitle{color:var(--muted);font-weight:700}
+.datepill{
+  display:inline-flex;align-items:center;gap:8px;margin:8px 0 6px;padding:8px 22px;border-radius:999px;
+  background:#fff;border:3px solid #fff;box-shadow:0 4px 0 rgba(90,58,26,.08),0 6px 18px rgba(47,127,198,.18);
+  color:var(--brown);font-size:1.75rem;font-weight:800;letter-spacing:.5px;font-variant-numeric:tabular-nums
+}
+.datepill small{font-size:1rem;font-weight:800;margin:0 2px}
+.datepill .dp-cloud{font-size:1.1rem;margin-right:2px}
+.datepill .dp-ico{font-size:1.4rem;margin-left:4px}
+.cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc)}
+.modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:800}
+.modebtn:hover{background:var(--yellow);color:var(--brown)}
+details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
+details.sec::before{display:none}
+details.sec>summary{color:var(--brown);font-size:1.15rem;padding:14px 20px 10px}
+summary::before{color:var(--pink)}
+#sec-days{background:var(--c-pink);border-color:var(--b-pink)}
+#sec-flight{background:var(--c-sky);border-color:var(--b-sky)}
+#sec-stay{background:var(--c-yel);border-color:var(--b-yel)}
+#sec-race{background:var(--c-mint);border-color:var(--b-mint)}
+#sec-travel{background:var(--c-lav);border-color:var(--b-lav)}
+#sec-pack{background:var(--c-pink);border-color:var(--b-pink)}
+#sec-todo{background:var(--c-sky);border-color:var(--b-sky)}
+details.sub{background:#fff;border:2px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
+details.sub>summary{color:var(--brown)}
+.secbody{padding:2px 12px 12px}
+.day{background:#fff;border:2px solid #fff;border-radius:18px;padding:12px 16px;grid-template-columns:72px 1fr;box-shadow:0 2px 10px rgba(90,58,26,.08)}
+.day .tag{align-items:center;gap:6px}
+.day .dnum{width:44px;height:44px;border-radius:50%;color:#fff;font-size:15px;justify-content:center;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.day .dnum i{display:none}
+.days .day:nth-child(1) .dnum{background:var(--d1)}
+.days .day:nth-child(2) .dnum{background:var(--d2)}
+.days .day:nth-child(3) .dnum{background:var(--d3)}
+.days .day:nth-child(4) .dnum{background:var(--d4)}
+.day .date{background:var(--c-sky);color:var(--blue);font-weight:800;border-radius:999px;padding:1px 9px;font-size:11.5px}
+.day .routeline{font-size:14px;color:var(--ink)}
+.day .routeline b{color:var(--brown)}
+.day .meta .stay{color:var(--pink)}
+.day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
+.chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
+.chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
+.chain .ctime::before{content:'🕒';font-size:11px;margin-right:4px}
+.chain .cname{color:var(--brown)}
+.chain .cbar{background:var(--b-sky);width:3px;border-radius:3px}
+.chain .ctext{color:var(--muted);font-weight:700}
+.modal{border-radius:22px;border:3px solid var(--b-sky);font-family:inherit}
+.mhead i{border-radius:50%;width:16px;height:16px}
+.gfcard{background:#fff;border:2px solid var(--b-sky);border-radius:18px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
+.gf-ap b{color:var(--brown);font-weight:800}
+.gf-conf b{color:var(--pink)}
+.gf-title{color:var(--brown)}
+.gf-meta{border-top-color:var(--line)}
+.itin,.info,.km{background:#fff;border-radius:14px;overflow:hidden}
+.itin th,.info th,.km th{color:var(--pink);letter-spacing:.06em}
+.info th{border-bottom-color:var(--c-pink)}
+.itin td,.info td,.km td{border-bottom-color:#f3eee4}
+.itin td:first-child,.km td:first-child{color:var(--blue)}
+.info td:first-child{color:var(--muted)}
+.km tr.hill td{background:var(--c-yel)}
+.tblwrap{border-radius:14px}
+.paid{background:var(--c-yel);border:2px solid var(--b-yel);color:var(--brown);font-weight:800}
+.statsel{border-width:2px;font-weight:800}
+.statsel.s-paid{background:var(--c-yel);border-color:var(--b-yel);color:var(--brown)}
+.statsel.s-booked{background:var(--c-mint);border-color:var(--b-mint)}
+.statsel.s-todo{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
+.statsel.s-onsite{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
+.ck .catsel{border-width:2px;font-weight:800}
+.ck .catsel.c-must{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
+.ck .catsel.c-cloth{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
+.ck .catsel.c-run{background:var(--c-mint);border-color:var(--b-mint);color:#2f7a4c}
+.ck .catsel.c-other{background:var(--c-yel);border-color:var(--b-yel);color:var(--brown)}
+.ck input[type=checkbox]{accent-color:var(--pink);width:16px;height:16px}
+.ck .addbtn{background:var(--pink);border-radius:999px}
+.ck .addin{border:2px dashed var(--b-sky);border-radius:999px;background:#fff}
+.ck .txt[contenteditable="true"]{outline:2px solid var(--b-sky)}
+.ed{border-radius:999px}
+body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:var(--c-yel);outline:1px dashed var(--b-yel)}
+.hint{color:var(--faint)}
+.notes li::marker,.srcs li::marker{color:var(--pink)}
+.srcs a{color:var(--blue);font-weight:700}
+.cmap{border:3px solid #fff;border-radius:16px;box-shadow:0 2px 10px rgba(90,58,26,.08)}
+footer{border-top:2px dashed var(--b-sky);color:var(--muted)}
+footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align:center;letter-spacing:.4em;margin-bottom:8px;font-size:14px}
+.banner{margin:14px 0 2px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.75);border:2px solid #fff;
+  text-align:center;font-size:18px;letter-spacing:.35em;box-shadow:0 2px 8px rgba(47,127,198,.12)}
+@media (max-width:640px){ .datepill{font-size:1.35rem;padding:6px 16px} .datepill small{font-size:.85rem} }
 </style>
 </head>
 <body>
@@ -190,7 +302,8 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 <header>
   <div class="hicon">🏃</div>
   <h1>大阪馬拉松 2027</h1>
-  <p class="subtitle">2027/2/26（五）– 3/1（一）・四天三夜・關西機場進出</p>
+  <div class="datepill"><span class="dp-cloud">☁️</span>2/26<small>（五）</small> – 3/1<small>（一）</small><span class="dp-ico">🚃</span></div>
+  <p class="subtitle">四天三夜・關西機場進出 ✨</p>
 </header>
 
 <details class="sec" id="sec-days" open>
@@ -201,6 +314,7 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 </div>
 </details>
 
+<div class="banner" aria-hidden="true">⚡🚃☁️🗼☁️🏯☁️🏃⚡</div>
 <details class="sec" id="sec-flight">
 <summary>航班資訊</summary>
 <div class="secbody">
@@ -253,6 +367,7 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 </div>
 </details>
 
+<div class="banner" aria-hidden="true">🏁🎽⏱️🍙🏃‍♂️💨🏯✨</div>
 <details class="sec" id="sec-race" open>
 <summary>馬拉松篇</summary>
 <div class="secbody">
