@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>路線地圖 · 大阪馬拉松 2027</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f7f7f5;--paper:#fff;--ink:#1a1a1a;--muted:#6b6b6b;--faint:#9a9a94;--line:#e8e8e4;--bar:#2f7fc6;--pink:#e8457c}
+html,body{height:100%}
+body{font-family:'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif;color:var(--ink);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.topbar{flex:none;height:52px;background:linear-gradient(90deg,#2f7fc6,#5aa0dc);color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px}
+.back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:7px 13px;font-size:.85rem;font-weight:700}
+.back:hover{background:rgba(255,255,255,.32)}
+.topbar h1{font-size:.95rem;font-weight:700}
+.topbar .spacer{margin-left:auto}
+.gpx{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--bar);border:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;text-decoration:none}
+.gpx:hover{background:#ffe3ec;color:var(--pink)}
+#lmap{flex:1;min-height:0;background:#e8ede4;font-family:inherit;z-index:0}
+.mapnote{flex:none;background:var(--paper);border-top:1px solid var(--line);padding:6px 14px 8px;font-size:12px;color:var(--faint)}
+.lmkwrap{background:none;border:none}
+.kmk{width:30px;height:30px;border-radius:50%;background:var(--pink);color:#fff;font:800 11px/30px 'Helvetica Neue',sans-serif;text-align:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap}
+.kmk.sf{background:#2f7fc6;width:auto;padding:0 9px;border-radius:999px;font-size:11px}
+.wpk{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.wpk .dot{width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid #2f7fc6;flex:none}
+.wpk .lbl{font:700 11px/1.15 'Microsoft JhengHei','PingFang TC',sans-serif;color:#26261f;text-shadow:0 0 3px #fff,0 0 3px #fff,0 1px 2px #fff}
+.lz .wpk{display:none}
+@media (max-width:640px){.topbar{height:48px;padding:0 10px;gap:8px}.topbar h1{font-size:.85rem}.gpx{padding:7px 10px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="./">← 返回行程</a>
+  <h1>大阪馬拉松 2027・路線地圖</h1>
+  <span class="spacer"></span>
+  <a class="gpx" href="course.gpx" download="osaka-marathon-2027.gpx">⬇ 下載 GPX</a>
+</div>
+<div id="lmap"></div>
+<div class="mapnote">路線依官方コース図的經過路口，用 OpenStreetMap 道路串接而成（概略，轉彎細節以大會跑者手冊為準）；<b style="color:#e8457c">粉紅圓點</b>＝官方 km 標記位置，放大後顯示經過路口名。</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="course.js"></script>
+<script>
+const map = L.map('lmap', { zoomControl: true });
+window._tripMap = map;
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors', maxZoom: 19 }).addTo(map);
+const line = L.polyline(COURSE, { color: '#2f7fc6', weight: 5, opacity: .9 }).addTo(map);
+L.polyline(COURSE, { color: '#fff', weight: 9, opacity: .6 }).addTo(map).bringToBack();
+map.fitBounds(line.getBounds(), { padding: [24, 24] });
+const icon = (html, cls, anchor) => L.divIcon({ html, className: 'lmkwrap' + (cls ? ' ' + cls : ''), iconSize: null, iconAnchor: anchor || [15, 15] });
+// 起終點
+L.marker(COURSE[0], { icon: icon('<div class="kmk sf">START 大阪府廳前</div>', '', [10, 15]), zIndexOffset: 1000 }).addTo(map);
+L.marker(COURSE[COURSE.length - 1], { icon: icon('<div class="kmk sf">FINISH 大阪城公園</div>', '', [10, 15]), zIndexOffset: 1000 }).addTo(map);
+// 官方 km 標記
+COURSE_KM.forEach(([km, lat, lon]) => L.marker([lat, lon], { icon: icon('<div class="kmk">' + km + '</div>'), zIndexOffset: 900 }).addTo(map).bindTooltip(km + ' km', { direction: 'top', offset: [0, -14] }));
+// 經過路口（放大才顯示）
+COURSE_WP.slice(1, -1).forEach(([name, lat, lon]) => L.marker([lat, lon], { icon: icon('<div class="wpk"><span class="dot"></span><span class="lbl">' + name + '</span></div>', '', [6, 6]) }).addTo(map));
+function syncZoom() { map.getContainer().classList.toggle('lz', map.getZoom() < 14); }
+map.on('zoomend', syncZoom); syncZoom();
+window.addEventListener('load', () => map.invalidateSize());
+window.addEventListener('resize', () => map.invalidateSize());
+</script>
+</body>
+</html>
