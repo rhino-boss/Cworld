@@ -148,6 +148,9 @@ body.modal-open{overflow:hidden}
 .mhead{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin-bottom:10px}
 .mhead i{width:12px;height:12px;border-radius:4px;display:inline-block}
 .mhead span{color:var(--muted);font-size:.9rem}
+details.alt{margin-top:14px;border:2px dashed #aacfea;border-radius:14px;background:#f4fbff}
+details.alt>summary{padding:10px 14px;font-weight:700;color:#2f7fc6;cursor:pointer;font-size:14px}
+details.alt .altbody{padding:0 14px 12px}
 .mhead .mfull{margin-left:auto;margin-right:28px;font-size:12px;font-weight:700;color:#2f7fc6;background:#e4f1fb;border:1.5px solid #aacfea;border-radius:999px;padding:3px 10px;text-decoration:none;white-space:nowrap}
 .mhead .mfull:hover{background:#2f7fc6;color:#fff}
 .mroute{font-size:13.5px;line-height:1.7;margin-bottom:8px}
@@ -615,7 +618,8 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
       <div class="mhead"><i style="background:var(--d${v.c})"></i><b>${v.d}</b><span>${v.date}</span><a class="mfull" href="plan.html#${v.d}" title="開啟完整行程頁">⛶ 完整行程</a></div>
       <div class="mroute">${v.route}</div>
       ${v.meta?`<div class="mmeta">${v.meta}</div>`:''}
-      <div class="mlegs"><b>分段資訊</b>${chainHTML(v.chain, v.d)}</div>`;
+      <div class="mlegs"><b>分段資訊</b>${chainHTML(v.chain, v.d)}</div>
+      ${v.alt?`<details class="alt"><summary>☃ ${v.alt.title}</summary><div class="altbody"><div class="mroute">${v.alt.route}</div>${v.alt.note?`<div class="mmeta">${v.alt.note}</div>`:''}${chainHTML(v.alt.chain, v.d+'alt')}</div></details>`:''}`;
     bindEditable(mbg);
     window.bindCarousels&&window.bindCarousels(mbg);
     mbg.style.display='flex';
