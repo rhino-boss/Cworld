@@ -86,7 +86,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ck{list-style:none;margin:4px 0;padding:0;font-size:13.5px}
 .ck li{margin:4px 0;line-height:1.7;display:flex;gap:8px;align-items:center}
 .ck input[type=checkbox]{margin-top:0;flex:none;accent-color:#2f9e44}
-.ck .note{color:var(--stayicon);font-weight:700}
+.ck .note{color:var(--stayicon);font-weight:700;font-style:normal}
 .ck .txt{flex:1;cursor:text;border-radius:4px;padding:0 2px}
 .ck .txt.done{color:var(--muted);text-decoration:line-through}
 .ck .txt[contenteditable="true"]{outline:2px solid #a8d4b8;background:#fff}
@@ -135,7 +135,16 @@ body.modal-open{overflow:hidden}
 .chain .cnode .lnk.map{background:#ffe3ec;border-color:#f6b7cd;font-size:12px}
 .chain .cnode .lnk.map:hover{background:#e8457c}
 .chain .cphoto{margin:6px 0 2px 14px}
-.chain .cphoto img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12)}
+.chain .cphoto{position:relative;border-radius:12px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12);background:#000}
+.chain .cphoto .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chain .cphoto .track::-webkit-scrollbar{display:none}
+.chain .cphoto img{flex:none;width:100%;height:230px;object-fit:cover;scroll-snap-align:start;display:block}
+.chain .cphoto .pv,.chain .cphoto .nx{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:#3b2a1a;font-size:20px;line-height:1;cursor:pointer;font-family:inherit}
+.chain .cphoto .pv{left:8px}.chain .cphoto .nx{right:8px}
+.chain .cphoto .pv:hover,.chain .cphoto .nx:hover{background:#fff}
+.chain .cphoto .dots{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:5px}
+.chain .cphoto .dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55)}
+.chain .cphoto .dots i.on{background:#fff}
 .mhead{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin-bottom:10px}
 .mhead i{width:12px;height:12px;border-radius:4px;display:inline-block}
 .mhead span{color:var(--muted);font-size:.9rem}
@@ -247,9 +256,11 @@ details.sub>summary{color:var(--brown)}
 .days .day:nth-child(3) .dnum{background:var(--d3)}
 .days .day:nth-child(4) .dnum{background:var(--d4)}
 .day .date{background:var(--c-sky);color:var(--blue);font-weight:700;border-radius:999px;padding:1px 9px;font-size:11.5px}
-.day .routeline{font-size:14px;color:var(--ink)}
+.day .routeline{font-size:16.5px;color:var(--ink);font-weight:700;line-height:1.5}
 .day .routeline b{color:var(--brown)}
 .day .meta .stay{color:var(--pink)}
+.day .meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
+.day .meta b{color:var(--pink);font-weight:700;margin-right:2px}
 .day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
 .chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
 .chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
@@ -325,7 +336,7 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 <details class="sec" id="sec-days" open>
 <summary>行程</summary>
 <div class="secbody">
-<p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日分段；分段文字點一下可直接改。</p>
+<div class="mapbar" style="margin:2px 0 10px;align-items:center"><a class="mapbtn" href="plan.html">⛶ 完整行程</a><span class="hint" style="margin:0">點任一天的卡片可看當日分段；分段文字點一下可直接改。</span></div>
 <div class="days" id="days"></div>
 </div>
 </details>
@@ -520,7 +531,7 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 </details>
 
 <footer>
-  <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons：<a href="https://commons.wikimedia.org/wiki/File:Osaka_Kaiyukan01s3872.jpg" target="_blank" rel="noopener">海遊館</a>（663highland・CC BY 2.5）、<a href="https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG" target="_blank" rel="noopener">勝尾寺</a>（EllieRH・CC BY-SA 4.0）、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg" target="_blank" rel="noopener">天保山</a>（TimBray・CC BY-SA 4.0）、<a href="https://commons.wikimedia.org/wiki/File:Wakayama_Castle_2011_Kuruwa.jpg" target="_blank" rel="noopener">和歌山城</a>（Wak89・CC BY-SA 3.0）、<a href="https://commons.wikimedia.org/wiki/File:Tenshu_of_Osaka_Castle_3.jpg" target="_blank" rel="noopener">大阪城</a>（そらみみ・CC BY-SA 3.0）、<a href="https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg" target="_blank" rel="noopener">太陽之塔</a>（IIIdGK・CC BY 4.0）</div>
+  <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons（拍照角度參考，各張作者與授權見連結）：<a href="https://commons.wikimedia.org/wiki/File:Acuario_de_Osaka_-_Edificio.jpg" target="_blank" rel="noopener">海遊館1</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201-2.jpg" target="_blank" rel="noopener">海遊館2</a>、<a href="https://commons.wikimedia.org/wiki/File:Aquarium_@_Tempozan_@_Osaka_(13382179803).jpg" target="_blank" rel="noopener">海遊館3</a>、<a href="https://commons.wikimedia.org/wiki/File:Kaiyukan.JPG" target="_blank" rel="noopener">海遊館4</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201.jpg" target="_blank" rel="noopener">海遊館5</a>、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg" target="_blank" rel="noopener">天保山1</a>、<a href="https://commons.wikimedia.org/wiki/File:1_Chome-1_Kaigand%C5%8Dri,_Minato-ku,_%C5%8Csaka-shi,_%C5%8Csaka-fu_552-0022,_Japan_-_panoramio_-_jetsun_(12).jpg" target="_blank" rel="noopener">天保山2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Seven-Seas-Mariner01n3200.jpg" target="_blank" rel="noopener">天保山3</a>、<a href="https://commons.wikimedia.org/wiki/File:Grand_ferris_wheel_of_Tempozan_Harbor_Village_3.jpg" target="_blank" rel="noopener">天保山4</a>、<a href="https://commons.wikimedia.org/wiki/File:Ferris_Wheel_(223575457).jpeg" target="_blank" rel="noopener">天保山5</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_Nishinomaru_Garden_April_2005.JPG" target="_blank" rel="noopener">大阪城1</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_(5239985304).jpg" target="_blank" rel="noopener">大阪城2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_Park,_Japan_(8368519077).jpg" target="_blank" rel="noopener">大阪城3</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_and_walls.jpg" target="_blank" rel="noopener">大阪城4</a>、<a href="https://commons.wikimedia.org/wiki/File:OsakaCastleM0783.jpg" target="_blank" rel="noopener">大阪城5</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9144.jpg" target="_blank" rel="noopener">和歌山城1</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9115.jpg" target="_blank" rel="noopener">和歌山城2</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9155.jpg" target="_blank" rel="noopener">和歌山城3</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9192.jpg" target="_blank" rel="noopener">和歌山城4</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9151.jpg" target="_blank" rel="noopener">和歌山城5</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_07.jpg" target="_blank" rel="noopener">勝尾寺1</a>、<a href="https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG" target="_blank" rel="noopener">勝尾寺2</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_main_gate.jpg" target="_blank" rel="noopener">勝尾寺3</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo_ji_temple_Benzaiten_Shrine_Osaka_prefecture_by_Don_Ramey_Logan.jpg" target="_blank" rel="noopener">勝尾寺4</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_on_roof.jpg" target="_blank" rel="noopener">勝尾寺5</a>、<a href="https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg" target="_blank" rel="noopener">太陽之塔1</a>、<a href="https://commons.wikimedia.org/wiki/File:%E6%A2%85%E4%B8%B9%E6%9C%AC%E8%88%97_(2813134756).jpg" target="_blank" rel="noopener">太陽之塔2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Expo%2770_Korean_Pavilion.jpg" target="_blank" rel="noopener">太陽之塔3</a>、<a href="https://commons.wikimedia.org/wiki/File:EXPO_%2770_PAVILION_bekkan_3.jpg" target="_blank" rel="noopener">太陽之塔4</a></div>
   資料來源：樂桃訂單 QAJ7AN（2026/10/18）、大阪マラソン官網。賽事資訊依官方大会要項（2026/10 查），中途關門點與補給站以跑者手冊為準。
 </footer>
 </div>
@@ -578,7 +589,7 @@ function chainHTML(chain, dayKey){
       const mapUrl=o.m?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(o.m)
         :(mv.length===2?'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(mv[0]+' 大阪')+'&destination='+encodeURIComponent(mv[1]+' 大阪')+'&travelmode=transit':'');
       return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span><span class="cicons">${mapUrl?`<a class="lnk map" href="${esc(mapUrl)}" target="_blank" rel="noopener" title="Google Map">📍</a>`:''}${o.u?`<a class="lnk" href="${esc(o.u)}" target="_blank" rel="noopener" title="開啟官網">↗</a>`:''}</span></div>`
-        +(o.p?`<div class="cphoto"><img src="${esc(o.p)}" alt=""></div>`:'');
+        +(o.p&&o.p.length?`<div class="cphoto"><div class="track">${o.p.map(src=>`<img src="${esc(src)}" alt="">`).join('')}</div>${o.p.length>1?'<button type="button" class="pv">‹</button><button type="button" class="nx">›</button><div class="dots"></div>':''}</div>`:'');
     }
     const def=[item.n, item.t].filter(Boolean).join('・');
     const k='leg.'+dayKey+'.'+(li++);
@@ -604,6 +615,7 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
       ${v.meta?`<div class="mmeta">${v.meta}</div>`:''}
       <div class="mlegs"><b>分段資訊</b>${chainHTML(v.chain, v.d)}</div>`;
     bindEditable(mbg);
+    window.bindCarousels&&window.bindCarousels(mbg);
     mbg.style.display='flex';
     document.body.classList.add('modal-open');
     mbg.querySelector('.modal').scrollTop=0;

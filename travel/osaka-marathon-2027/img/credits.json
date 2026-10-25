@@ -1,38 +1,176 @@
 [
   {
-    "key": "kaiyukan",
-    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Kaiyukan01s3872.jpg",
-    "artist": "663highland",
+    "key": "kaiyukan_1",
+    "file": "https://commons.wikimedia.org/wiki/File:Acuario_de_Osaka_-_Edificio.jpg",
+    "artist": "SpiceMan",
     "lic": "CC BY 2.5"
   },
   {
-    "key": "katsuoji",
-    "file": "https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG",
-    "artist": "EllieRH",
+    "key": "kaiyukan_2",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201-2.jpg",
+    "artist": "そらみみ",
     "lic": "CC BY-SA 4.0"
   },
   {
-    "key": "tempozan",
+    "key": "kaiyukan_3",
+    "file": "https://commons.wikimedia.org/wiki/File:Aquarium_@_Tempozan_@_Osaka_(13382179803).jpg",
+    "artist": "Guilhem Vellut from Annecy, France",
+    "lic": "CC BY 2.0"
+  },
+  {
+    "key": "kaiyukan_4",
+    "file": "https://commons.wikimedia.org/wiki/File:Kaiyukan.JPG",
+    "artist": "Teddy Yoshida (Harajuku at English Wikipedia)",
+    "lic": "Public domain"
+  },
+  {
+    "key": "kaiyukan_5",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201.jpg",
+    "artist": "そらみみ",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "tempozan_1",
     "file": "https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg",
     "artist": "TimBray",
     "lic": "CC BY-SA 4.0"
   },
   {
-    "key": "wakayama",
-    "file": "https://commons.wikimedia.org/wiki/File:Wakayama_Castle_2011_Kuruwa.jpg",
-    "artist": "Wak89",
+    "key": "tempozan_2",
+    "file": "https://commons.wikimedia.org/wiki/File:1_Chome-1_Kaigand%C5%8Dri,_Minato-ku,_%C5%8Csaka-shi,_%C5%8Csaka-fu_552-0022,_Japan_-_panoramio_-_jetsun_(12).jpg",
+    "artist": "jetsun",
     "lic": "CC BY-SA 3.0"
   },
   {
-    "key": "osakajo",
-    "file": "https://commons.wikimedia.org/wiki/File:Tenshu_of_Osaka_Castle_3.jpg",
+    "key": "tempozan_3",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Seven-Seas-Mariner01n3200.jpg",
+    "artist": "663highland",
+    "lic": "CC BY 2.5"
+  },
+  {
+    "key": "tempozan_4",
+    "file": "https://commons.wikimedia.org/wiki/File:Grand_ferris_wheel_of_Tempozan_Harbor_Village_3.jpg",
     "artist": "そらみみ",
-    "lic": "CC BY-SA 3.0"
+    "lic": "CC BY-SA 4.0"
   },
   {
-    "key": "taiyo",
+    "key": "tempozan_5",
+    "file": "https://commons.wikimedia.org/wiki/File:Ferris_Wheel_(223575457).jpeg",
+    "artist": "Foooomio",
+    "lic": "CC BY 3.0"
+  },
+  {
+    "key": "osakajo_1",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Castle_Nishinomaru_Garden_April_2005.JPG",
+    "artist": "",
+    "lic": "Public domain"
+  },
+  {
+    "key": "osakajo_2",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Castle_(5239985304).jpg",
+    "artist": "KimonBerlin",
+    "lic": "CC BY-SA 2.0"
+  },
+  {
+    "key": "osakajo_3",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Castle_Park,_Japan_(8368519077).jpg",
+    "artist": "Luke Ma from Taipei, Taiwan ROC",
+    "lic": "CC BY 2.0"
+  },
+  {
+    "key": "osakajo_4",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Castle_and_walls.jpg",
+    "artist": "Ian G Shingler",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "osakajo_5",
+    "file": "https://commons.wikimedia.org/wiki/File:OsakaCastleM0783.jpg",
+    "artist": "No machine-readable author provided. Fg2 assumed (based on copyright claims).",
+    "lic": "Public domain"
+  },
+  {
+    "key": "wakayama_1",
+    "file": "https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9144.jpg",
+    "artist": "Hyppolyte de Saint-Rambert",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "wakayama_2",
+    "file": "https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9115.jpg",
+    "artist": "Hyppolyte de Saint-Rambert",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "wakayama_3",
+    "file": "https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9155.jpg",
+    "artist": "Hyppolyte de Saint-Rambert",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "wakayama_4",
+    "file": "https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9192.jpg",
+    "artist": "Hyppolyte de Saint-Rambert",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "wakayama_5",
+    "file": "https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9151.jpg",
+    "artist": "Hyppolyte de Saint-Rambert",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "katsuoji_1",
+    "file": "https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_07.jpg",
+    "artist": "Chris Gladis",
+    "lic": "CC BY 2.0"
+  },
+  {
+    "key": "katsuoji_2",
+    "file": "https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG",
+    "artist": "EllieRH",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "katsuoji_3",
+    "file": "https://commons.wikimedia.org/wiki/File:Katsuo-ji_main_gate.jpg",
+    "artist": "Chris Gladis",
+    "lic": "CC BY 2.0"
+  },
+  {
+    "key": "katsuoji_4",
+    "file": "https://commons.wikimedia.org/wiki/File:Katsuo_ji_temple_Benzaiten_Shrine_Osaka_prefecture_by_Don_Ramey_Logan.jpg",
+    "artist": "Don Ramey Logan",
+    "lic": "CC BY 4.0"
+  },
+  {
+    "key": "katsuoji_5",
+    "file": "https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_on_roof.jpg",
+    "artist": "Chris Gladis",
+    "lic": "CC BY 2.0"
+  },
+  {
+    "key": "taiyo_1",
     "file": "https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg",
     "artist": "IIIdGK",
     "lic": "CC BY 4.0"
+  },
+  {
+    "key": "taiyo_2",
+    "file": "https://commons.wikimedia.org/wiki/File:%E6%A2%85%E4%B8%B9%E6%9C%AC%E8%88%97_(2813134756).jpg",
+    "artist": "yoppy",
+    "lic": "CC BY 2.0"
+  },
+  {
+    "key": "taiyo_3",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Expo%2770_Korean_Pavilion.jpg",
+    "artist": "takato marui",
+    "lic": "CC BY-SA 2.0"
+  },
+  {
+    "key": "taiyo_4",
+    "file": "https://commons.wikimedia.org/wiki/File:EXPO_%2770_PAVILION_bekkan_3.jpg",
+    "artist": "Vetalapancavimsatika",
+    "lic": "CC BY-SA 4.0"
   }
 ]

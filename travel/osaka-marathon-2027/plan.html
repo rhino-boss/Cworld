@@ -39,7 +39,18 @@ h1{color:var(--brown);font-size:1.6rem;font-weight:700;margin:6px 0 2px}
 .chain .lnk.map{background:#ffe3ec;border-color:#f6b7cd;font-size:12px}
 .chain .lnk.map:hover{background:#e8457c}
 .chain .cphoto{margin:6px 0 2px 14px}
-.chain .cphoto img{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12)}
+.chain .cphoto{position:relative;border-radius:12px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12);background:#000}
+.chain .cphoto .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chain .cphoto .track::-webkit-scrollbar{display:none}
+.chain .cphoto img{flex:none;width:100%;height:280px;object-fit:cover;scroll-snap-align:start;display:block}
+.chain .cphoto .pv,.chain .cphoto .nx{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:#3b2a1a;font-size:22px;line-height:1;cursor:pointer;font-family:inherit}
+.chain .cphoto .pv{left:8px}.chain .cphoto .nx{right:8px}
+.chain .cphoto .pv:hover,.chain .cphoto .nx:hover{background:#fff}
+.chain .cphoto .dots{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:5px}
+.chain .cphoto .dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55)}
+.chain .cphoto .dots i.on{background:#fff}
+.meta b{color:var(--pink);font-weight:700;margin-right:2px}
+@media (max-width:640px){.chain .cphoto img{height:220px}}
 .chain .cleg{display:flex;gap:10px;padding:5px 0 5px 14px}
 .chain .cbar{flex:none;width:3px;background:var(--b-sky);border-radius:3px;margin:-6px 0}
 .chain .ctext{font-size:12.5px;color:var(--muted);font-weight:700;line-height:1.6}
@@ -57,7 +68,7 @@ footer a{color:var(--blue)}
 </nav>
 <div class="wrap">
   <h1>大阪馬拉松 2027・完整行程</h1>
-  <p class="sub">2/26（五）– 3/1（一）・📍 開 Google Map・↗ 開官網</p>
+  <p class="sub">2/26（五）– 3/1（一）・📍 Google Map・↗ 官網・照片可左右滑（拍照角度參考）</p>
   <div class="jump" id="jump"></div>
   <div id="days"></div>
   <footer>行程資料與行程頁共用（days.js）；備註在行程頁改過的文字這裡會一起顯示。</footer>
@@ -78,7 +89,7 @@ function chainHTML(chain, dayKey){
       return '<div class="cnode"><span class="ctime">'+item[0]+'</span><span class="cname">'+item[1]+'</span><span class="cicons">'+
         (mapUrl?'<a class="lnk map" href="'+esc(mapUrl)+'" target="_blank" rel="noopener" title="Google Map">📍</a>':'')+
         (o.u?'<a class="lnk" href="'+esc(o.u)+'" target="_blank" rel="noopener" title="開啟官網">↗</a>':'')+'</span></div>'+
-        (o.p?'<div class="cphoto"><img src="'+esc(o.p)+'" alt=""></div>':'');
+        (o.p&&o.p.length?'<div class="cphoto"><div class="track">'+o.p.map(src=>'<img src="'+esc(src)+'" alt="">').join('')+'</div>'+(o.p.length>1?'<button type="button" class="pv">‹</button><button type="button" class="nx">›</button><div class="dots"></div>':'')+'</div>':'');
     }
     const def=[item.n,item.t].filter(Boolean).join('・');
     const k='leg.'+dayKey+'.'+(li++);
@@ -93,6 +104,7 @@ document.getElementById('days').innerHTML=DAYS.map(v=>
     '<div class="route">'+v.route+'</div>'+(v.meta?'<div class="meta">'+v.meta+'</div>':'')+
     chainHTML(v.chain,v.d)+
   '</section>').join('');
+window.bindCarousels&&window.bindCarousels(document);
 if(location.hash){ const el=document.querySelector(location.hash); el&&el.scrollIntoView(); }
 })();
 </script>
