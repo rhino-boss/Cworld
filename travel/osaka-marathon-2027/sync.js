@@ -210,23 +210,14 @@
       b.addEventListener('click', fn);
       return b;
     };
-    const bPull = mk('sync-pull', '↓ 更新', '從雲端抓最新資料蓋掉這台裝置',
-      async () => {
-        if (isDirty() && !confirm(
-          '這台裝置有還沒上傳的變更。\n\n' +
-          '按「確定」＝抓雲端資料下來，這些變更會不見\n' +
-          '按「取消」＝先按「↑ 上傳」把變更存上去'
-        )) { status('已取消更新', ''); return; }
-        await busy(() => pull({ manual: true }));
-      });
     const bPush = mk('sync-push', '↑ 上傳', '把這台裝置的資料存回雲端',
       async () => { await busy(() => push({ manual: true })); });
     const bCfg = mk('sync-token', '⚙', '設定 GitHub Token',
       () => window.OsakaSync.setToken());
 
     async function busy(fn) {
-      bPull.disabled = bPush.disabled = true;
-      try { await fn(); } finally { bPull.disabled = bPush.disabled = false; refreshDirty(); }
+      bPush.disabled = true;
+      try { await fn(); } finally { bPush.disabled = false; refreshDirty(); }
     }
 
     // 有未上傳的變更就別讓它默默關掉
@@ -235,7 +226,6 @@
     });
 
     bar.appendChild(st);
-    bar.appendChild(bPull);
     bar.appendChild(bPush);
     bar.appendChild(bCfg);
     document.body.appendChild(bar);

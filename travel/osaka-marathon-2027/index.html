@@ -129,6 +129,12 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:2000;align-items:center;justify-content:center;padding:18px}
 .modal{background:#fff;border-radius:16px;max-width:600px;width:100%;max-height:84vh;overflow:auto;padding:22px 24px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.25)}
 .modal .x{position:absolute;top:10px;right:12px;border:none;background:none;font-size:18px;cursor:pointer;color:#999}
+body.modal-open{overflow:hidden}
+.modal-bg{overscroll-behavior:contain}
+.chain .cnode .lnk{margin-left:auto;flex:none;text-decoration:none;font-size:13px;font-weight:800;color:#2f7fc6;background:#e4f1fb;border:1.5px solid #aacfea;border-radius:999px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center}
+.chain .cnode .lnk:hover{background:#2f7fc6;color:#fff}
+.chain .cphoto{margin:6px 0 2px 14px}
+.chain .cphoto img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12)}
 .mhead{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin-bottom:10px}
 .mhead i{width:12px;height:12px;border-radius:4px;display:inline-block}
 .mhead span{color:var(--muted);font-size:.9rem}
@@ -511,6 +517,7 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 </details>
 
 <footer>
+  <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons：<a href="https://commons.wikimedia.org/wiki/File:EXPO%2770%E3%83%91%E3%83%93%E3%83%AA%E3%82%AA%E3%83%B3_%E4%B8%87%E5%8D%9A%E8%A8%98%E5%BF%B5%E5%85%AC%E5%9C%92_%E5%A4%A7%E9%98%AA_Osaka_(55261195655).jpg" target="_blank" rel="noopener">太陽之塔</a>（nagi usano・CC BY 4.0）、<a href="https://commons.wikimedia.org/wiki/File:Gate_of_Intex_Osaka.jpg" target="_blank" rel="noopener">INTEX 大阪</a>（Sakai Yayoi・CC0）、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Giant_Ferris_Wheel_upwards_view.jpg" target="_blank" rel="noopener">天保山摩天輪</a>（Jason Zhang・CC BY-SA 3.0）</div>
   資料來源：樂桃訂單 QAJ7AN（2026/10/18）、大阪マラソン官網。賽事資訊依官方大会要項（2026/10 查），中途關門點與補給站以跑者手冊為準。
 </footer>
 </div>
@@ -539,7 +546,7 @@ function bindEditable(root){
     el.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
     el.addEventListener('blur',()=>{
       el.contentEditable='false';
-      const v=el.textContent.trim();
+      const v=el.innerText.replace(/\n+/g,'；').replace(/；+/g,'；').replace(/^；|；$/g,'').trim();
       if(v && v!==el.dataset.ekDefault){ EDITS[el.dataset.ek]=v; } else { delete EDITS[el.dataset.ek]; }
       saveEdits();
     });
@@ -549,18 +556,57 @@ window.bindEditable = bindEditable;
 
 /* ── 每日行程 ── */
 const DAYS=[
-  {d:'D1', date:'2/26 五', c:1, route:'<b>桃園 TPE 09:40 ✈ 關西 KIX 13:10</b> → 南海電鐵進市區 → <b>EXPO 領號碼布</b> → 飯店 Check-in（17:00 後）',
-   meta:'<span class="stay">宿 大阪</span>・MM24・關西第2航廈',
-   chain:[['09:40','桃園機場 T1'],{t:'2h30',n:'樂桃 MM24'},['13:10','關西機場 T2'],{t:'約 50 分',n:'南海電鐵（空港急行／Rapi:t）到難波'},['14:30','EXPO 領號碼布（INTEX 大阪 6 號館）'],{t:'',n:'行李先寄機場或飯店；Metro 中央線→コスモスクエア→New Tram 中ふ頭；五 11:00–19:00'},['17:30','飯店 Check-in（Excellence Osaka Castle Park，17:00 後）'],{t:'',n:'JR 鴫野站旁'}]},
-  {d:'D2', date:'2/27 六', c:2, route:'輕鬆日：<b>勘查起點／終點</b>・慢跑 3–5 km 醒腿・補給採買・早睡',
-   meta:'<span class="stay">宿 大阪</span>・賽前一天',
-   chain:[['09:00','早餐後慢跑 3–5 km'],{t:'',n:'大阪城公園一圈，順便看終點動線'},['12:00','午餐'],{t:'',n:'碳水為主，不要吃生食'},['14:00','起點勘查＋寄物處位置'],{t:'',n:'大阪府廳前'},['17:00','便利商店買隔天早餐、補給'],['21:00','整理裝備、別號碼布、早睡']]},
-  {d:'D3', date:'2/28 日', c:3, route:'<b>🏁 大阪馬拉松 42.195 km</b>・09:15 起跑・關門 7 小時・賽後泡澡、大餐',
-   meta:'<span class="stay">宿 大阪</span>・比賽日',
-   chain:[['05:30','起床・早餐（賽前 3 小時）'],['07:30','抵達起點（谷町四丁目／天滿橋站）、寄物'],{t:'',n:'寄物截止看參加案內；戴安全手環才能進起跑區'},['09:15','第1波起跑（第2、3波依序）'],{t:'42.195 km',n:'目標：—'},['14:30','完賽・領完賽物資（終點 大阪城公園內）'],['16:00','回飯店泡澡'],['18:30','慶功：燒肉／大阪燒']]},
-  {d:'D4', date:'3/1 一', c:4, route:'早上自由活動（可選奈良半日：近鐵難波→奈良 35 分）→ 南海電鐵到關西機場 → <b>關西 KIX 15:25 ✈ 桃園 TPE 17:55</b>',
-   meta:'MM027・關西第2航廈・起飛前 120～50 分鐘報到',
-   chain:[['10:00','飯店 Check-out（10:00 前）、寄行李'],{t:'',n:'難波買伴手禮'},['12:30','難波出發'],{t:'約 50 分',n:'南海電鐵到關西機場'},['13:25','關西機場 T2 報到'],{t:'2h30',n:'樂桃 MM027'},['17:55','桃園機場 T1']]},
+  {d:'D1', date:'2/26 五', c:1, route:'✈ 飛大阪 → <b>EXPO 領物</b> → <b>海遊館</b> → 飯店',
+   meta:'<span class="stay">宿 Excellence Osaka Castle Park</span>',
+   chain:[
+     ['09:40–13:10','桃園機場 T1 → 關西機場 T2',{u:'https://www.flypeach.com/'}],{n:'交通：樂桃 MM24；訂單 QAJ7AN；起飛前 120～50 分報到'},
+     ['13:40–15:00','關西機場 → コスモスクエア'],{n:'交通：南海電鐵 → Metro 御堂筋線 → 中央線；行李放コスモスクエア站置物櫃'},
+     ['15:00–16:00','INTEX 大阪 6 號館・EXPO 領號碼布',{u:'https://www.osaka-marathon.com/2027/expo/',p:'img/intex.jpg'}],{n:'本人＋護照；五 11:00–19:00'},
+     ['16:00–16:15','コスモスクエア → 大阪港'],{n:'交通：Metro 中央線 1 站'},
+     ['16:15–19:30','海遊館（含夜間展示）',{u:'https://www.kaiyukan.com/',p:'img/kaiyukan.jpg'}],{n:'門票 ¥2,700（線上預購免排隊）；最後入館 19:00、閉館 20:00；17:00 後燈光轉暗進入夜間模式'},
+     ['19:30–20:30','晚餐：天保山商場',{p:'img/tempozan.jpg'}],
+     ['20:30–21:00','大阪港 → 鴫野'],{n:'交通：Metro 中央線 → 森ノ宮 轉 JR'},
+     ['21:00–21:20','Excellence Osaka Castle Park Check-in',{u:'https://www.booking.com/'}],{n:'17:00 後才能入住；JR 鴫野站旁'},
+     ['21:30–22:00','輕鬆跑 3 km（鴫野 → 大阪城公園外圍折返）'],{n:'6:00 配速；只是活動筋骨、順便認路'}
+   ]},
+  {d:'D2', date:'2/27 六', c:2, route:'晨跑 <b>大阪城</b> → <b>萬博記念公園・太陽之塔</b> → <b>勝尾寺（達摩）</b>',
+   meta:'<span class="stay">宿 Excellence Osaka Castle Park</span>',
+   chain:[
+     ['07:00–07:45','大阪城公園一圈 5 km',{u:'https://osakacastlepark.jp/',p:'img/osakajo.jpg'}],{n:'6:00 配速；順便看終點與大阪城公園站動線'},
+     ['07:45–08:45','早餐、盥洗'],
+     ['09:00–10:00','鴫野 → 万博記念公園'],{n:'交通：JR → 御堂筋線（北大阪急行）→ 千里中央 轉 單軌電車'},
+     ['10:00–12:00','萬博記念公園・太陽之塔',{u:'https://www.expo70-park.jp/',p:'img/taiyo.jpg'}],{n:'入園 ¥260＋太陽之塔內部 ¥720（內部要預約）'},
+     ['12:00–13:00','午餐'],{n:'碳水為主，不吃生食'},
+     ['13:00–13:30','千里中央 → 勝尾寺'],{n:'交通：阪急巴士；班次少，先查時刻'},
+     ['13:30–15:30','勝尾寺（達摩寺）',{u:'https://katsuo-ji-temple.or.jp/',p:'img/katsuoji.jpg'}],{n:'拜觀料 ¥500；山上有階梯'},
+     ['15:30–16:30','勝尾寺 → 鴫野'],{n:'交通：阪急巴士 → 千里中央 → 御堂筋線 → JR'},
+     ['16:30–17:30','買隔天早餐、補給'],{n:'便利商店'},
+     ['18:00–19:30','晚餐'],
+     ['21:00','整理裝備、別號碼布、早睡']
+   ]},
+  {d:'D3', date:'2/28 日', c:3, route:'🏁 <b>大阪馬拉松</b> → 泡澡 → 慶功',
+   meta:'<span class="stay">宿 Excellence Osaka Castle Park</span>',
+   chain:[
+     ['05:30–06:30','起床・早餐'],{n:'賽前 3 小時'},
+     ['07:00–07:30','鴫野 → 谷町四丁目'],{n:'交通：JR → Metro'},
+     ['07:30–09:15','起點（大阪府廳前）寄物、進起跑區'],{n:'戴安全手環才能進起跑區'},
+     ['09:15','大阪馬拉松 起跑（第 1 波）',{u:'https://www.osaka-marathon.com/'}],{n:'關門 7 小時（16:15）'},
+     ['--:--','完賽・領物資（大阪城公園內）',{p:'img/osakajo.jpg'}],
+     ['--:--','大阪城公園 → 鴫野'],{n:'交通：JR 1 站 或 步行'},
+     ['--:--','回飯店泡澡、休息'],
+     ['18:30','慶功晚餐：']
+   ]},
+  {d:'D4', date:'3/1 一', c:4, route:'<b>和歌山城</b>・和歌山拉麵 → ✈ 回台灣',
+   meta:'',
+   chain:[
+     ['09:30–09:50','Check-out'],{n:'10:00 前退房；行李隨身'},
+     ['09:50–11:15','鴫野 → 和歌山'],{n:'交通：JR → 天王寺 轉 紀州路快速'},
+     ['11:15–12:20','和歌山城',{u:'https://wakayamajo.jp/',p:'img/wakayama.jpg'}],{n:'天守閣 ¥410；和歌山站搭巴士 10 分或步行 20 分'},
+     ['12:20–13:10','午餐：和歌山拉麵'],
+     ['13:10–14:00','和歌山 → 關西機場'],{n:'交通：JR → 日根野 轉 關空快速'},
+     ['14:00–14:35','關西機場 T2 報到'],{n:'最晚 14:35（起飛前 50 分）'},
+     ['15:25–17:55','關西機場 T2 → 桃園機場 T1',{u:'https://www.flypeach.com/'}],{n:'交通：樂桃 MM027；座位 7F；餐：千房大阪燒'}
+   ]},
 ];
 const daysBox=document.getElementById('days');
 daysBox.innerHTML=DAYS.map(v=>`
@@ -572,15 +618,21 @@ daysBox.innerHTML=DAYS.map(v=>`
 function chainHTML(chain, dayKey){
   let li=0;
   return '<div class="chain">'+chain.map(item=>{
-    if(Array.isArray(item))
-      return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span></div>`;
+    if(Array.isArray(item)){
+      const o=item[2]||{};
+      // 節點：時間、名稱、（有連結就放 ↗ icon）、（有照片就放一張最常拍的點）
+      return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span>${o.u?`<a class="lnk" href="${esc(o.u)}" target="_blank" rel="noopener" title="開啟官網">↗</a>`:''}</div>`
+        +(o.p?`<div class="cphoto"><img src="${esc(o.p)}" alt="" loading="lazy"></div>`:'');
+    }
     const def=[item.n, item.t].filter(Boolean).join('・');
     const k='leg.'+dayKey+'.'+(li++);
-    return `<div class="cleg"><span class="cbar"></span><span class="ctext" data-ek="${k}" data-ek-default="${esc(def)}">${esc(EDITS[k]||def)}</span></div>`;
+    // 備註用「；」分段，顯示時一段一行
+    const txt=esc(EDITS[k]||def).split(/；/).map(x=>x.trim()).filter(Boolean).join('<br>');
+    return `<div class="cleg"><span class="cbar"></span><span class="ctext" data-ek="${k}" data-ek-default="${esc(def)}">${txt}</span></div>`;
   }).join('')+'</div>';
 }
 const mbg=document.getElementById('mbg');
-const closeM=()=>mbg.style.display='none';
+const closeM=()=>{ mbg.style.display='none'; document.body.classList.remove('modal-open'); };
 document.getElementById('mx').addEventListener('click',closeM);
 document.querySelectorAll('a.rlink[href="#course"]').forEach(a=>a.addEventListener('click',e=>{
   e.preventDefault(); const d=document.getElementById('course'); d.open=true; d.closest('details.sec').open=true;
@@ -597,6 +649,8 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
       <div class="mlegs"><b>分段資訊</b>${chainHTML(v.chain, v.d)}</div>`;
     bindEditable(mbg);
     mbg.style.display='flex';
+    document.body.classList.add('modal-open');
+    mbg.querySelector('.modal').scrollTop=0;
   });
 });
 
