@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>必買 · 大阪馬拉松 2027</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<style>
+:root{--sky:#dff1fb;--sky2:#f4fbff;--brown:#5a3a1a;--pink:#e8457c;--blue:#2f7fc6;--c-sky:#e4f1fb;--b-sky:#aacfea;--c-pink:#ffe3ec;--b-pink:#f6b7cd;--c-lav:#ece4f8;--b-lav:#c9b6e8;
+  --ink:#3b2a1a;--muted:#7a6a5a;--faint:#a39484;--line:#e3ecf3}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:'Microsoft JhengHei','PingFang TC','Noto Sans TC',sans-serif;line-height:1.6;
+  background:linear-gradient(180deg,#cfe9fa 0,var(--sky) 30%,var(--sky2) 100%);background-attachment:fixed}
+b{font-weight:700}
+.cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc);padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:5}
+.cnav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem}
+.cnav a:hover{color:#fff}
+.cnav .sep{color:rgba(255,255,255,.4);font-size:.85rem}
+.cnav .current{color:#fff;font-weight:700;font-size:.85rem}
+.wrap{max-width:820px;margin:0 auto;padding:24px 16px 60px}
+h1{color:var(--brown);font-size:1.6rem;font-weight:700;margin:6px 0 2px}
+.sub{color:var(--muted);margin:0 0 16px;font-size:14px}
+h2{font-size:1.05rem;color:var(--brown);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--pink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.item{background:#fff;border:3px solid var(--b-lav);border-radius:18px;overflow:hidden;box-shadow:0 6px 0 rgba(90,58,26,.05),0 8px 20px rgba(47,127,198,.10);display:flex;flex-direction:column}
+.item .ph{position:relative;background:#f6f3ee;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+.item .ph img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+.item .ph .none{color:var(--faint);font-size:12px;text-align:center;padding:12px}
+.item .qty{position:absolute;top:10px;left:10px;background:var(--pink);color:#fff;font-weight:700;font-size:12px;border-radius:999px;padding:2px 10px}
+.item .body{padding:10px 12px 12px}
+.item .name{font-weight:700;font-size:14.5px;color:var(--brown)}
+.item .note{font-size:12.5px;color:var(--muted);margin-top:3px}
+.item .where{font-size:12px;margin-top:6px;color:var(--blue);font-weight:700}
+.item.food{border-color:var(--b-pink)}
+.item.food .qty{background:#5aa86e}
+footer{margin-top:24px;font-size:12px;color:var(--muted);border-top:2px dashed var(--b-sky);padding-top:10px}
+@media (max-width:640px){.cnav{padding:0 14px}.wrap{padding:16px 12px 50px}.grid{grid-template-columns:repeat(2,1fr);gap:10px}}
+</style>
+</head>
+<body>
+<nav class="cnav">
+  <a href="../../index.html">Cworld</a><span class="sep">/</span>
+  <a href="../index.html">旅遊</a><span class="sep">/</span>
+  <a href="./">大阪馬拉松</a><span class="sep">/</span>
+  <span class="current">必買</span>
+</nav>
+<div class="wrap">
+  <h1>必買</h1>
+  <p class="sub">藥妝在難波／心齋橋的松本清、大國藥妝都買得到；mont-bell 在 Grand Front 大阪（梅田）或難波 Parks 有門市。</p>
+
+  <h2>藥妝・保養</h2>
+  <div class="grid" id="cosme"></div>
+
+  <h2>mont-bell</h2>
+  <div class="grid" id="montbell"></div>
+
+  <h2>伴手禮</h2>
+  <div class="grid" id="food"></div>
+
+  <footer>照片為你給我的參考圖；想換圖就把新檔放進 <code>img/shop/</code>，檔名照卡片上的代號。</footer>
+</div>
+<script>
+// 必買清單（照片放 img/shop/<key>.jpg；沒有照片的卡會顯示代號提示）
+const ITEMS=[
+  {g:'cosme', key:'bb',       name:'BB 霜',          qty:'×1',   note:'INTEGRATE Pro Quality BB（紅管）', where:'松本清／大國藥妝'},
+  {g:'cosme', key:'powder',   name:'粉餅',           qty:'×1',   note:'IHADA 薬用フェイスプロテクトパウダー SPF40・PA++++', where:'松本清／大國藥妝'},
+  {g:'cosme', key:'patch1',   name:'痘痘貼',         qty:'×4 組', note:"Today's Cosme CICA＋ Zero Spot Patch（綠色包裝）", where:'藥妝店'},
+  {g:'cosme', key:'patch2',   name:'痘痘貼',         qty:'',     note:'KOSE CLEAR TURN ごめんね素肌 キニシナイ 46 枚（黃色包裝，也可以）', where:'藥妝店'},
+  {g:'cosme', key:'muji',     name:'無印良品 溫和去角質洗面乳', qty:'×2', note:'マイルドスクラブ洗顔フォーム 200g', where:'無印良品（難波／梅田）'},
+  {g:'montbell', key:'mb-tee',   name:'mont-bell T 恤',  qty:'×1', note:'帳篷營地圖案那件', where:'mont-bell 門市'},
+  {g:'montbell', key:'mb-chop',  name:'mont-bell 筷子',  qty:'',   note:'野外筷（野箸）', where:'mont-bell 門市'},
+  {g:'montbell', key:'mb-ltd',   name:'mont-bell 限定 T', qty:'',  note:'大阪／關西限定款，到店再看', where:'mont-bell 門市'},
+  {g:'food', key:'551',      name:'551 蓬萊 豚饅',  qty:'',  note:'回程在關西機場或難波本店買，保冷帶上機', where:'難波／關西機場'},
+  {g:'food', key:'rikuro',   name:'りくろーおじさん 起司蛋糕', qty:'', note:'難波本店剛出爐的最好', where:'難波'},
+  {g:'food', key:'kokyu',    name:'呼吸チョコ',     qty:'',  note:'北新地名物，機場也有', where:'機場／百貨'},
+  {g:'food', key:'finisher', name:'大阪馬拉松 完賽 T／紀念品', qty:'', note:'EXPO 會場或完賽後', where:'EXPO／終點'},
+];
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+for(const g of ['cosme','montbell','food']){
+  document.getElementById(g).innerHTML=ITEMS.filter(i=>i.g===g).map(i=>
+    '<div class="item '+g+'"><div class="ph">'+
+      '<img src="img/shop/'+i.key+'.jpg" alt="" onerror="this.remove()">'+
+      '<div class="none">尚無照片<br><small>img/shop/'+i.key+'.jpg</small></div>'+
+      (i.qty?'<span class="qty">'+esc(i.qty)+'</span>':'')+
+    '</div><div class="body"><div class="name">'+esc(i.name)+'</div>'+
+      (i.note?'<div class="note">'+esc(i.note)+'</div>':'')+
+      (i.where?'<div class="where">📍 '+esc(i.where)+'</div>':'')+
+    '</div></div>').join('');
+}
+// 圖載成功就把「尚無照片」蓋掉
+document.querySelectorAll('.item .ph img').forEach(img=>{ img.addEventListener('load',()=>{ const n=img.parentNode.querySelector('.none'); n&&n.remove(); }); if(img.complete&&img.naturalWidth>0){ const n=img.parentNode.querySelector('.none'); n&&n.remove(); } });
+</script>
+</body>
+</html>
