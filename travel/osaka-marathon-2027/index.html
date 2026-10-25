@@ -311,9 +311,12 @@ footer{border-top:2px dashed var(--b-sky);color:var(--muted)}
 footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align:center;letter-spacing:.4em;margin-bottom:8px;font-size:14px}
 .banner{margin:14px 0 2px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.75);border:2px solid #fff;
   text-align:center;font-size:18px;letter-spacing:.35em;box-shadow:0 2px 8px rgba(47,127,198,.12)}
-summary .fullpg{display:inline-flex;align-items:center;justify-content:center;margin-left:10px;width:24px;height:24px;border-radius:999px;font-size:13px;line-height:1;text-decoration:none;color:#2f7fc6;background:#e4f1fb;border:1.5px solid #aacfea;vertical-align:middle}
-summary .fullpg:hover{background:#2f7fc6;color:#fff}
-details.sub>summary .fullpg{width:22px;height:22px;font-size:12px}
+/* 標題旁的「開完整頁」icon：和文字同一行置中，一律同一顆 */
+summary .fullpg{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;width:26px;height:26px;border-radius:8px;text-decoration:none;color:#2f7fc6;background:#fff;border:1.5px solid #aacfea;vertical-align:-6px;box-shadow:0 1px 0 rgba(47,127,198,.15);transition:background .15s,color .15s}
+summary .fullpg svg{display:block}
+summary .fullpg:hover{background:#2f7fc6;color:#fff;border-color:#2f7fc6}
+details.sub>summary .fullpg{width:24px;height:24px;vertical-align:-5px}
+details.sub>summary .fullpg svg{width:12px;height:12px}
 .mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
 .mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
 .mapbtn:hover{background:#1d5a93}
@@ -340,7 +343,7 @@ details.sub>summary .fullpg{width:22px;height:22px;font-size:12px}
 </header>
 
 <details class="sec" id="sec-days" open>
-<summary>行程<a class="fullpg" href="plan.html" title="完整行程">⛶</a></summary>
+<summary>行程<a class="fullpg" href="plan.html" title="完整行程"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="secbody">
 <p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日分段；分段文字點一下可直接改。</p>
 <div class="days" id="days"></div>
@@ -428,7 +431,7 @@ details.sub>summary .fullpg{width:22px;height:22px;font-size:12px}
 </details>
 
 <details class="sub" id="course" open>
-<summary>跑步路線<a class="fullpg" href="map.html" title="放大看路線圖">⛶</a></summary>
+<summary>跑步路線<a class="fullpg" href="map.html" title="放大看路線圖"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="subbody">
 <a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener"><img class="cmap" src="course_map.jpg" alt="大阪マラソン2027 コース図" loading="lazy"></a>
 <img class="cmap" src="course_elev.jpg" alt="コース高低図" loading="lazy">
@@ -505,17 +508,17 @@ details.sub>summary .fullpg{width:22px;height:22px;font-size:12px}
 <div class="secbody">
 
 <details class="sub">
-<summary>必買<a class="fullpg" href="shop.html" title="必買完整頁">⛶</a></summary>
+<summary>必買<a class="fullpg" href="shop.html" title="必買完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="subbody"><ul class="ck" id="souvenirlist"></ul></div>
 </details>
 
 <details class="sub">
-<summary>玩什麼<a class="fullpg" href="play.html" title="玩什麼完整頁">⛶</a></summary>
+<summary>玩什麼<a class="fullpg" href="play.html" title="玩什麼完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="subbody"><ul class="ck" id="playlist"></ul></div>
 </details>
 
 <details class="sub">
-<summary>吃什麼<a class="fullpg" href="eat.html" title="吃什麼完整頁">⛶</a></summary>
+<summary>吃什麼<a class="fullpg" href="eat.html" title="吃什麼完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="subbody"><ul class="ck" id="eatlist"></ul></div>
 </details>
 
