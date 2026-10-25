@@ -311,12 +311,11 @@ footer{border-top:2px dashed var(--b-sky);color:var(--muted)}
 footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align:center;letter-spacing:.4em;margin-bottom:8px;font-size:14px}
 .banner{margin:14px 0 2px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.75);border:2px solid #fff;
   text-align:center;font-size:18px;letter-spacing:.35em;box-shadow:0 2px 8px rgba(47,127,198,.12)}
-/* 標題旁的「開完整頁」icon：和文字同一行置中，一律同一顆 */
-summary .fullpg{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;width:26px;height:26px;border-radius:8px;text-decoration:none;color:#2f7fc6;background:#fff;border:1.5px solid #aacfea;vertical-align:-6px;box-shadow:0 1px 0 rgba(47,127,198,.15);transition:background .15s,color .15s}
-summary .fullpg svg{display:block}
-summary .fullpg:hover{background:#2f7fc6;color:#fff;border-color:#2f7fc6}
-details.sub>summary .fullpg{width:24px;height:24px;vertical-align:-5px}
-details.sub>summary .fullpg svg{width:12px;height:12px}
+/* 標題旁的「開完整頁」icon：不帶外框，和標題文字垂直置中 */
+summary .fullpg{display:inline-flex;align-items:center;margin-left:8px;color:#2f7fc6;text-decoration:none;vertical-align:middle;position:relative;top:-2px;opacity:.85;transition:opacity .15s,transform .15s}
+summary .fullpg svg{display:block;width:16px;height:16px}
+summary .fullpg:hover{opacity:1;transform:scale(1.15)}
+details.sub>summary .fullpg svg{width:14px;height:14px}
 .mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
 .mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
 .mapbtn:hover{background:#1d5a93}
