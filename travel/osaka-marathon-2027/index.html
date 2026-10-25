@@ -309,7 +309,6 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
   <a href="../index.html">旅遊</a>
   <span class="sep">/</span>
   <span class="current">大阪馬拉松</span>
-  <button class="modebtn" id="modebtn" type="button">檢視模式</button>
 </nav>
 
 <div class="wrap">
@@ -322,7 +321,7 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 <details class="sec" id="sec-days" open>
 <summary>行程</summary>
 <div class="secbody">
-<p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日分段；編輯模式下分段文字可直接改。</p>
+<p class="hint" style="margin:2px 0 10px">點任一天的卡片可看當日分段；分段文字點一下可直接改。</p>
 <div class="days" id="days"></div>
 </div>
 </details>
@@ -654,19 +653,7 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
   });
 });
 
-/* 檢視模式 ↔ 編輯模式 */
-(function(){
-  const K=PREFIX+'mode';
-  const btn=document.getElementById('modebtn');
-  let edit = localStorage.getItem(K)==='edit';
-  function apply(){
-    document.body.classList.toggle('viewmode', !edit);
-    btn.textContent = edit ? '編輯模式' : '檢視模式';
-    btn.title = edit ? '點一下切回檢視模式' : '點一下切換成編輯模式';
-  }
-  btn.addEventListener('click',()=>{ edit=!edit; localStorage.setItem(K, edit?'edit':'view'); apply(); });
-  apply();
-})();
+/* 固定為可編輯（已移除檢視／編輯切換） */
 
 /* 記住每個區塊的展開／收合狀態 */
 (function(){
@@ -857,6 +844,5 @@ editList(document.getElementById('eatlist'), 'eat', [
 ]);
 })();
 </script>
-<script src="sync.js"></script>
 </body>
 </html>
