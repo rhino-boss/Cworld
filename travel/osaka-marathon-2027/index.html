@@ -621,7 +621,7 @@ function chainHTML(chain, dayKey){
       const o=item[2]||{};
       // 節點：時間、名稱、（有連結就放 ↗ icon）、（有照片就放一張最常拍的點）
       return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span>${o.u?`<a class="lnk" href="${esc(o.u)}" target="_blank" rel="noopener" title="開啟官網">↗</a>`:''}</div>`
-        +(o.p?`<div class="cphoto"><img src="${esc(o.p)}" alt="" loading="lazy"></div>`:'');
+        +(o.p?`<div class="cphoto"><img src="${esc(o.p)}" alt=""></div>`:'');
     }
     const def=[item.n, item.t].filter(Boolean).join('・');
     const k='leg.'+dayKey+'.'+(li++);
