@@ -54,8 +54,6 @@ footer{margin-top:24px;font-size:12px;color:var(--muted);border-top:2px dashed v
   <h2>mont-bell</h2>
   <div class="grid" id="montbell"></div>
 
-  <h2>伴手禮</h2>
-  <div class="grid" id="food"></div>
 
   <footer>照片為你給我的參考圖；想換圖就把新檔放進 <code>img/shop/</code>，檔名照卡片上的代號。</footer>
 </div>
@@ -70,13 +68,9 @@ const ITEMS=[
   {g:'montbell', key:'mb-tee',   name:'mont-bell T 恤',  qty:'×1', note:'帳篷營地圖案那件', where:'mont-bell 門市'},
   {g:'montbell', key:'mb-chop',  name:'mont-bell 筷子',  qty:'',   note:'野外筷（野箸）', where:'mont-bell 門市'},
   {g:'montbell', key:'mb-ltd',   name:'mont-bell 限定 T', qty:'',  note:'大阪／關西限定款，到店再看', where:'mont-bell 門市'},
-  {g:'food', key:'551',      name:'551 蓬萊 豚饅',  qty:'',  note:'回程在關西機場或難波本店買，保冷帶上機', where:'難波／關西機場'},
-  {g:'food', key:'rikuro',   name:'りくろーおじさん 起司蛋糕', qty:'', note:'難波本店剛出爐的最好', where:'難波'},
-  {g:'food', key:'kokyu',    name:'呼吸チョコ',     qty:'',  note:'北新地名物，機場也有', where:'機場／百貨'},
-  {g:'food', key:'finisher', name:'大阪馬拉松 完賽 T／紀念品', qty:'', note:'EXPO 會場或完賽後', where:'EXPO／終點'},
 ];
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-for(const g of ['cosme','montbell','food']){
+for(const g of ['cosme','montbell']){
   document.getElementById(g).innerHTML=ITEMS.filter(i=>i.g===g).map(i=>
     '<div class="item '+g+'"><div class="ph">'+
       '<img src="img/shop/'+i.key+'.jpg" alt="" onerror="this.remove()">'+

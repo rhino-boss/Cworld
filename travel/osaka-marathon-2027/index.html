@@ -425,9 +425,8 @@ details.sub>summary .fullpg{width:22px;height:22px;font-size:12px}
 </details>
 
 <details class="sub" id="course" open>
-<summary>跑步路線</summary>
+<summary>跑步路線<a class="fullpg" href="map.html" title="放大看路線圖">⛶</a></summary>
 <div class="subbody">
-<div class="mapbar" style="margin:4px 0 8px"><a class="mapbtn" href="map.html">⛶ 放大看路線圖</a></div>
 <a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener"><img class="cmap" src="course_map.jpg" alt="大阪マラソン2027 コース図" loading="lazy"></a>
 <img class="cmap" src="course_elev.jpg" alt="コース高低図" loading="lazy">
 <p class="hint" style="margin-top:4px">圖片來自大會官網「コース紹介」；高低圖全程 0–30 m，只有 32–34 km 上町台地一段爬到約 20 m。</p>
@@ -513,7 +512,7 @@ details.sub>summary .fullpg{width:22px;height:22px;font-size:12px}
 </details>
 
 <details class="sub">
-<summary>吃什麼</summary>
+<summary>吃什麼<a class="fullpg" href="eat.html" title="吃什麼完整頁">⛶</a></summary>
 <div class="subbody"><ul class="ck" id="eatlist"></ul></div>
 </details>
 
@@ -696,7 +695,7 @@ const PACK_LISTS = [
  // 沈的清單（2026/10 版）
  {key:'all', name:'攜帶物品清單', wide:1, items:[
    ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信'],
-   ['cloth','羽絨（阿羲）'],['cloth','風雨衣（皮卡球）'],['cloth','保暖：手套、毛帽'],['cloth','鴨舌帽'],
+   ['cloth','羽絨（阿羲）'],['cloth','風雨衣（皮卡丘）'],['cloth','保暖：手套、毛帽'],['cloth','鴨舌帽'],
    ['cloth','衣：立山、劍岳'],['cloth','褲：on、迪卡農繭型褲'],['cloth','襪：M、D'],['cloth','Y拖'],
    ['run','補給：能量膠 ×4、鹽錠'],
    ['other','行動電源'],['other','轉接頭'],['other','盥洗：刮鬍刀、牙刷、牙膏'],
@@ -712,7 +711,7 @@ const packRenders=[];
 function renderAllPacks(){ packRenders.forEach(f=>f()); }
 function gcCats(){
   const used=new Set();
-  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack2-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
+  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack3-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
   const before=CUSTOM_CATS.length;
   CUSTOM_CATS=CUSTOM_CATS.filter(c=>used.has(c[0]));
   if(CUSTOM_CATS.length!==before){ saveCats(); syncCatStyles(); return true; }
@@ -765,7 +764,7 @@ function packList(el, key, seed){
   render();
 }
 syncCatStyles();
-PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack2-'+l.key, l.items));
+PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
 
 /* 住宿、賽事資訊的文字覆寫 */
 bindEditable(document.getElementById('sec-stay'));
@@ -793,7 +792,7 @@ editList(document.getElementById('todolist'), 'todo3', [
  {t:'太陽之塔內部參觀預約'},
  {t:'查 千里中央 → 勝尾寺 阪急巴士時刻'},
 ]);
-editList(document.getElementById('souvenirlist'), 'souv3', [
+editList(document.getElementById('souvenirlist'), 'souv4', [
  {t:'BB 霜 ×1', n:'INTEGRATE Pro Quality BB（紅管）'},
  {t:'粉餅 ×1', n:'IHADA 薬用フェイスプロテクトパウダー SPF40'},
  {t:'痘痘貼 ×4 組', n:"Today's Cosme CICA Zero Spot Patch／KOSE CLEAR TURN キニシナイ"},
@@ -801,16 +800,18 @@ editList(document.getElementById('souvenirlist'), 'souv3', [
  {t:'mont-bell T 恤', n:'帳篷營地圖案那件'},
  {t:'mont-bell 筷子'},
  {t:'mont-bell 限定 T'},
- {t:'551 蓬萊 豚饅'},
- {t:'りくろーおじさん 起司蛋糕'},
- {t:'呼吸チョコ（呼吸巧克力）'},
- {t:'大阪馬拉松 完賽 T／紀念品'},
 ]);
-editList(document.getElementById('playlist'), 'play', [
- {t:'大阪城公園（終點，D2 先去看）'},
- {t:'道頓堀・心齋橋'},
- {t:'黑門市場'},
- {t:'梅田藍天大廈 空中庭園'},
+editList(document.getElementById('playlist'), 'play2', [
+ {t:'海遊館（含夜間展示）', n:'D1'},
+ {t:'天保山 Market Place・摩天輪', n:'D1'},
+ {t:'大阪城公園（晨跑一圈，也是終點）', n:'D2'},
+ {t:'萬博記念公園・太陽之塔', n:'D2'},
+ {t:'勝尾寺（達摩寺）', n:'D2'},
+ {t:'京橋 居酒屋街', n:'D2'},
+ {t:'鶴橋 燒肉街', n:'D3'},
+ {t:'和歌山城', n:'D4'},
+ {t:'道頓堀・心齋橋（有空檔再去）'},
+ {t:'黑門市場（有空檔再去）'},
 ]);
 editList(document.getElementById('eatlist'), 'eat3', [
  {t:'壽司', n:'D1 天保山 Market Place 回轉壽司（店家待定）'},
