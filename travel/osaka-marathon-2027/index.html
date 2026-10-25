@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>大阪馬拉松 2027 · Cworld</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <style>
 :root{
@@ -16,7 +16,7 @@
   --d1:#3e63c4; --d2:#db7a1c; --d3:#c93c3c; --d4:#3f8f55;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif;line-height:1.6}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;line-height:1.6}
 .wrap{max-width:820px;margin:0 auto;padding:28px 16px 60px}
 header{margin-bottom:14px}
 h1{font-size:1.5rem;font-weight:700;margin:10px 0 4px;letter-spacing:-.3px}
@@ -38,7 +38,7 @@ body.viewmode .ck .txt{cursor:default}
 .days{display:flex;flex-direction:column;gap:8px}
 .day{display:grid;grid-template-columns:64px 1fr;gap:4px 14px;align-items:start;background:var(--card);border:1px solid var(--cardline);border-radius:8px;padding:10px 14px}
 .day .tag{display:flex;flex-direction:column;gap:2px;padding-top:2px}
-.day .dnum{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
+.day .dnum{font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
 .day .dnum i{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
 .day .date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .day .routeline{font-size:13.5px}
@@ -73,7 +73,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 .itin{width:100%;border-collapse:collapse;font-size:13.5px}
 .itin th{font-size:12px;color:var(--muted);font-weight:700}
 .itin td,.itin th{border-bottom:1px solid var(--cardline);padding:6px 8px;text-align:left;white-space:nowrap}
-.itin td:first-child{white-space:nowrap;font-weight:800}
+.itin td:first-child{white-space:nowrap;font-weight:700}
 .itin a.site{text-decoration:none;color:#2e6ea6;font-weight:700;margin-left:2px}
 .notes{margin:6px 0 4px 18px;padding:0;font-size:13.5px}
 .notes li{margin:6px 0}
@@ -106,7 +106,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 /* 攜帶物品：共同在上、兩人並排 */
 .packcols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .packshared{margin-top:10px}
-.packcol>summary,.packshared>summary{font-size:14px;font-weight:800;padding:8px 12px}
+.packcol>summary,.packshared>summary{font-size:14px;font-weight:700;padding:8px 12px}
 .packcol,.packshared{margin-bottom:0}
 .packcol .subbody,.packshared .subbody{padding:0 12px 8px}
 .packcol .ck,.packshared .ck{margin:0;overflow-x:auto;overflow-y:hidden}
@@ -131,13 +131,18 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 .modal .x{position:absolute;top:10px;right:12px;border:none;background:none;font-size:18px;cursor:pointer;color:#999}
 body.modal-open{overflow:hidden}
 .modal-bg{overscroll-behavior:contain}
-.chain .cnode .lnk{margin-left:auto;flex:none;text-decoration:none;font-size:13px;font-weight:800;color:#2f7fc6;background:#e4f1fb;border:1.5px solid #aacfea;border-radius:999px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center}
+.chain .cnode .cicons{margin-left:auto;flex:none;display:inline-flex;gap:6px}
+.chain .cnode .lnk{flex:none;text-decoration:none;font-size:13px;font-weight:700;color:#2f7fc6;background:#e4f1fb;border:1.5px solid #aacfea;border-radius:999px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center}
 .chain .cnode .lnk:hover{background:#2f7fc6;color:#fff}
+.chain .cnode .lnk.map{background:#ffe3ec;border-color:#f6b7cd;font-size:12px}
+.chain .cnode .lnk.map:hover{background:#e8457c}
 .chain .cphoto{margin:6px 0 2px 14px}
 .chain .cphoto img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12)}
 .mhead{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin-bottom:10px}
 .mhead i{width:12px;height:12px;border-radius:4px;display:inline-block}
 .mhead span{color:var(--muted);font-size:.9rem}
+.mhead .mfull{margin-left:auto;margin-right:28px;font-size:12px;font-weight:700;color:#2f7fc6;background:#e4f1fb;border:1.5px solid #aacfea;border-radius:999px;padding:3px 10px;text-decoration:none;white-space:nowrap}
+.mhead .mfull:hover{background:#2f7fc6;color:#fff}
 .mroute{font-size:13.5px;line-height:1.7;margin-bottom:8px}
 .mmeta{font-size:13.5px;color:var(--muted);margin-bottom:12px}
 .mmeta .stay{color:var(--stayicon);font-weight:700}
@@ -171,7 +176,7 @@ body.modal-open{overflow:hidden}
 .info tr:first-child th{padding-top:2px}
 .info td{padding:6px 8px;border-bottom:1px solid var(--cardline);vertical-align:top;line-height:1.55}
 .info td:first-child{width:92px;color:var(--muted);font-weight:700;white-space:nowrap}
-.info b{font-weight:800}
+.info b{font-weight:700}
 .info a.rlink{color:var(--blue,#2e6ea6);font-weight:700;text-decoration:none}
 .info a.rlink:hover{text-decoration:underline}
 .info a.rlink.ext{font-size:12px;margin-left:6px;color:var(--muted)}
@@ -181,7 +186,7 @@ body.modal-open{overflow:hidden}
 .km{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
 .km th{font-size:11.5px;color:var(--muted);font-weight:700;text-align:left;padding:4px 8px;border-bottom:1px solid var(--cardline)}
 .km td{padding:5px 8px;border-bottom:1px solid var(--cardline);vertical-align:top}
-.km td:first-child{white-space:nowrap;font-weight:800;font-variant-numeric:tabular-nums}
+.km td:first-child{white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums}
 .km tr.hill td{background:#fdf1dd}
 .km .tip{color:var(--muted);font-size:12px}
 
@@ -194,7 +199,7 @@ body.modal-open{overflow:hidden}
   --d1:#e8457c; --d2:#5aa86e; --d3:#8a5fd8; --d4:#2f7fc6;
 }
 body{
-  font-family:'M PLUS Rounded 1c','Helvetica Neue','PingFang TC','Microsoft JhengHei',sans-serif;font-weight:500;
+  font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-weight:500;
   color:var(--ink);
   background:
     radial-gradient(circle at 12% 8%,rgba(255,255,255,.95) 0 46px,transparent 47px),
@@ -206,19 +211,20 @@ body{
     linear-gradient(180deg,#cfe9fa 0,var(--sky) 30%,var(--sky2) 100%);
   background-attachment:fixed;
 }
-b,strong,h1,h2,summary,.day .dnum,.ctime{font-weight:800}
+b,strong,h1,h2,summary,.day .dnum,.ctime{font-weight:700}
+h1,.datepill{font-weight:900}
 h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .subtitle{color:var(--muted);font-weight:700}
 .datepill{
   display:inline-flex;align-items:center;gap:8px;margin:8px 0 6px;padding:8px 22px;border-radius:999px;
   background:#fff;border:3px solid #fff;box-shadow:0 4px 0 rgba(90,58,26,.08),0 6px 18px rgba(47,127,198,.18);
-  color:var(--brown);font-size:1.75rem;font-weight:800;letter-spacing:.5px;font-variant-numeric:tabular-nums
+  color:var(--brown);font-size:1.75rem;font-weight:700;letter-spacing:.5px;font-variant-numeric:tabular-nums
 }
-.datepill small{font-size:1rem;font-weight:800;margin:0 2px}
+.datepill small{font-size:1rem;font-weight:700;margin:0 2px}
 .datepill .dp-cloud{font-size:1.1rem;margin-right:2px}
 .datepill .dp-ico{font-size:1.4rem;margin-left:4px}
 .cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc)}
-.modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:800}
+.modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:700}
 .modebtn:hover{background:var(--yellow);color:var(--brown)}
 details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
 details.sec::before{display:none}
@@ -242,7 +248,7 @@ details.sub>summary{color:var(--brown)}
 .days .day:nth-child(2) .dnum{background:var(--d2)}
 .days .day:nth-child(3) .dnum{background:var(--d3)}
 .days .day:nth-child(4) .dnum{background:var(--d4)}
-.day .date{background:var(--c-sky);color:var(--blue);font-weight:800;border-radius:999px;padding:1px 9px;font-size:11.5px}
+.day .date{background:var(--c-sky);color:var(--blue);font-weight:700;border-radius:999px;padding:1px 9px;font-size:11.5px}
 .day .routeline{font-size:14px;color:var(--ink)}
 .day .routeline b{color:var(--brown)}
 .day .meta .stay{color:var(--pink)}
@@ -256,7 +262,7 @@ details.sub>summary{color:var(--brown)}
 .modal{border-radius:22px;border:3px solid var(--b-sky);font-family:inherit}
 .mhead i{border-radius:50%;width:16px;height:16px}
 .gfcard{background:#fff;border:2px solid var(--b-sky);border-radius:18px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
-.gf-ap b{color:var(--brown);font-weight:800}
+.gf-ap b{color:var(--brown);font-weight:700}
 .gf-conf b{color:var(--pink)}
 .gf-title{color:var(--brown)}
 .gf-meta{border-top-color:var(--line)}
@@ -268,13 +274,13 @@ details.sub>summary{color:var(--brown)}
 .info td:first-child{color:var(--muted)}
 .km tr.hill td{background:var(--c-yel)}
 .tblwrap{border-radius:14px}
-.paid{background:var(--c-yel);border:2px solid var(--b-yel);color:var(--brown);font-weight:800}
-.statsel{border-width:2px;font-weight:800}
+.paid{background:var(--c-yel);border:2px solid var(--b-yel);color:var(--brown);font-weight:700}
+.statsel{border-width:2px;font-weight:700}
 .statsel.s-paid{background:var(--c-yel);border-color:var(--b-yel);color:var(--brown)}
 .statsel.s-booked{background:var(--c-mint);border-color:var(--b-mint)}
 .statsel.s-todo{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
 .statsel.s-onsite{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
-.ck .catsel{border-width:2px;font-weight:800}
+.ck .catsel{border-width:2px;font-weight:700}
 .ck .catsel.c-must{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
 .ck .catsel.c-cloth{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
 .ck .catsel.c-run{background:var(--c-mint);border-color:var(--b-mint);color:#2f7a4c}
@@ -294,7 +300,7 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 .banner{margin:14px 0 2px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.75);border:2px solid #fff;
   text-align:center;font-size:18px;letter-spacing:.35em;box-shadow:0 2px 8px rgba(47,127,198,.12)}
 .mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
-.mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800}
+.mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
 .mapbtn:hover{background:#1d5a93}
 .mapbtn.ghost{background:#fff;color:#2f7fc6;border:2px solid #aacfea}
 .mapbtn.ghost:hover{background:#e4f1fb}
@@ -516,13 +522,14 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 </details>
 
 <footer>
-  <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons：<a href="https://commons.wikimedia.org/wiki/File:EXPO%2770%E3%83%91%E3%83%93%E3%83%AA%E3%82%AA%E3%83%B3_%E4%B8%87%E5%8D%9A%E8%A8%98%E5%BF%B5%E5%85%AC%E5%9C%92_%E5%A4%A7%E9%98%AA_Osaka_(55261195655).jpg" target="_blank" rel="noopener">太陽之塔</a>（nagi usano・CC BY 4.0）、<a href="https://commons.wikimedia.org/wiki/File:Gate_of_Intex_Osaka.jpg" target="_blank" rel="noopener">INTEX 大阪</a>（Sakai Yayoi・CC0）、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Giant_Ferris_Wheel_upwards_view.jpg" target="_blank" rel="noopener">天保山摩天輪</a>（Jason Zhang・CC BY-SA 3.0）</div>
+  <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons：<a href="https://commons.wikimedia.org/wiki/File:Osaka_Kaiyukan01s3872.jpg" target="_blank" rel="noopener">海遊館</a>（663highland・CC BY 2.5）、<a href="https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG" target="_blank" rel="noopener">勝尾寺</a>（EllieRH・CC BY-SA 4.0）、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg" target="_blank" rel="noopener">天保山</a>（TimBray・CC BY-SA 4.0）、<a href="https://commons.wikimedia.org/wiki/File:Wakayama_Castle_2011_Kuruwa.jpg" target="_blank" rel="noopener">和歌山城</a>（Wak89・CC BY-SA 3.0）、<a href="https://commons.wikimedia.org/wiki/File:Tenshu_of_Osaka_Castle_3.jpg" target="_blank" rel="noopener">大阪城</a>（そらみみ・CC BY-SA 3.0）、<a href="https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg" target="_blank" rel="noopener">太陽之塔</a>（IIIdGK・CC BY 4.0）</div>
   資料來源：樂桃訂單 QAJ7AN（2026/10/18）、大阪マラソン官網。賽事資訊依官方大会要項（2026/10 查），中途關門點與補給站以跑者手冊為準。
 </footer>
 </div>
 
 <div class="modal-bg" id="mbg"><div class="modal"><button class="x" id="mx" type="button">✕</button><div id="mbody"></div></div></div>
 
+<script src="days.js"></script>
 <script>
 (function(){
 const PREFIX='osaka27.';
@@ -554,59 +561,7 @@ function bindEditable(root){
 window.bindEditable = bindEditable;
 
 /* ── 每日行程 ── */
-const DAYS=[
-  {d:'D1', date:'2/26 五', c:1, route:'✈ 飛大阪 → <b>EXPO 領物</b> → <b>海遊館</b> → 飯店',
-   meta:'<span class="stay">宿 Excellence Osaka Castle Park</span>',
-   chain:[
-     ['09:40–13:10','桃園機場 T1 → 關西機場 T2',{u:'https://www.flypeach.com/'}],{n:'交通：樂桃 MM24；訂單 QAJ7AN；起飛前 120～50 分報到'},
-     ['13:40–15:00','關西機場 → コスモスクエア'],{n:'交通：南海電鐵 → Metro 御堂筋線 → 中央線；行李放コスモスクエア站置物櫃'},
-     ['15:00–16:00','INTEX 大阪 6 號館・EXPO 領號碼布',{u:'https://www.osaka-marathon.com/2027/expo/',p:'img/intex.jpg'}],{n:'本人＋護照；五 11:00–19:00'},
-     ['16:00–16:15','コスモスクエア → 大阪港'],{n:'交通：Metro 中央線 1 站'},
-     ['16:15–19:30','海遊館（含夜間展示）',{u:'https://www.kaiyukan.com/',p:'img/kaiyukan.jpg'}],{n:'門票 ¥2,700（線上預購免排隊）；最後入館 19:00、閉館 20:00；17:00 後燈光轉暗進入夜間模式'},
-     ['19:30–20:30','晚餐：天保山商場',{p:'img/tempozan.jpg'}],
-     ['20:30–21:00','大阪港 → 鴫野'],{n:'交通：Metro 中央線 → 森ノ宮 轉 JR'},
-     ['21:00–21:20','Excellence Osaka Castle Park Check-in',{u:'https://www.booking.com/'}],{n:'17:00 後才能入住；JR 鴫野站旁'},
-     ['21:30–22:00','輕鬆跑 3 km（鴫野 → 大阪城公園外圍折返）'],{n:'6:00 配速；只是活動筋骨、順便認路'}
-   ]},
-  {d:'D2', date:'2/27 六', c:2, route:'晨跑 <b>大阪城</b> → <b>萬博記念公園・太陽之塔</b> → <b>勝尾寺（達摩）</b>',
-   meta:'<span class="stay">宿 Excellence Osaka Castle Park</span>',
-   chain:[
-     ['07:00–07:45','大阪城公園一圈 5 km',{u:'https://osakacastlepark.jp/',p:'img/osakajo.jpg'}],{n:'6:00 配速；順便看終點與大阪城公園站動線'},
-     ['07:45–08:45','早餐、盥洗'],
-     ['09:00–10:00','鴫野 → 万博記念公園'],{n:'交通：JR → 御堂筋線（北大阪急行）→ 千里中央 轉 單軌電車'},
-     ['10:00–12:00','萬博記念公園・太陽之塔',{u:'https://www.expo70-park.jp/',p:'img/taiyo.jpg'}],{n:'入園 ¥260＋太陽之塔內部 ¥720（內部要預約）'},
-     ['12:00–13:00','午餐'],{n:'碳水為主，不吃生食'},
-     ['13:00–13:30','千里中央 → 勝尾寺'],{n:'交通：阪急巴士；班次少，先查時刻'},
-     ['13:30–15:30','勝尾寺（達摩寺）',{u:'https://katsuo-ji-temple.or.jp/',p:'img/katsuoji.jpg'}],{n:'拜觀料 ¥500；山上有階梯'},
-     ['15:30–16:30','勝尾寺 → 鴫野'],{n:'交通：阪急巴士 → 千里中央 → 御堂筋線 → JR'},
-     ['16:30–17:30','買隔天早餐、補給'],{n:'便利商店'},
-     ['18:00–19:30','晚餐'],
-     ['21:00','整理裝備、別號碼布、早睡']
-   ]},
-  {d:'D3', date:'2/28 日', c:3, route:'🏁 <b>大阪馬拉松</b> → 泡澡 → 慶功',
-   meta:'<span class="stay">宿 Excellence Osaka Castle Park</span>',
-   chain:[
-     ['05:30–06:30','起床・早餐'],{n:'賽前 3 小時'},
-     ['07:00–07:30','鴫野 → 谷町四丁目'],{n:'交通：JR → Metro'},
-     ['07:30–09:15','起點（大阪府廳前）寄物、進起跑區'],{n:'戴安全手環才能進起跑區'},
-     ['09:15','大阪馬拉松 起跑（第 1 波）',{u:'https://www.osaka-marathon.com/'}],{n:'關門 7 小時（16:15）'},
-     ['--:--','完賽・領物資（大阪城公園內）',{p:'img/osakajo.jpg'}],
-     ['--:--','大阪城公園 → 鴫野'],{n:'交通：JR 1 站 或 步行'},
-     ['--:--','回飯店泡澡、休息'],
-     ['18:30','慶功晚餐：']
-   ]},
-  {d:'D4', date:'3/1 一', c:4, route:'<b>和歌山城</b>・和歌山拉麵 → ✈ 回台灣',
-   meta:'',
-   chain:[
-     ['09:30–09:50','Check-out'],{n:'10:00 前退房；行李隨身'},
-     ['09:50–11:15','鴫野 → 和歌山'],{n:'交通：JR → 天王寺 轉 紀州路快速'},
-     ['11:15–12:20','和歌山城',{u:'https://wakayamajo.jp/',p:'img/wakayama.jpg'}],{n:'天守閣 ¥410；和歌山站搭巴士 10 分或步行 20 分'},
-     ['12:20–13:10','午餐：和歌山拉麵'],
-     ['13:10–14:00','和歌山 → 關西機場'],{n:'交通：JR → 日根野 轉 關空快速'},
-     ['14:00–14:35','關西機場 T2 報到'],{n:'最晚 14:35（起飛前 50 分）'},
-     ['15:25–17:55','關西機場 T2 → 桃園機場 T1',{u:'https://www.flypeach.com/'}],{n:'交通：樂桃 MM027；座位 7F；餐：千房大阪燒'}
-   ]},
-];
+const DAYS=window.DAYS;
 const daysBox=document.getElementById('days');
 daysBox.innerHTML=DAYS.map(v=>`
   <div class="day clickable">
@@ -620,7 +575,11 @@ function chainHTML(chain, dayKey){
     if(Array.isArray(item)){
       const o=item[2]||{};
       // 節點：時間、名稱、（有連結就放 ↗ icon）、（有照片就放一張最常拍的點）
-      return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span>${o.u?`<a class="lnk" href="${esc(o.u)}" target="_blank" rel="noopener" title="開啟官網">↗</a>`:''}</div>`
+      const mv=item[1].split('→').map(x=>x.trim()).filter(Boolean);
+      // 有「→」的是移動列：Google Map 直接給 A → B 的大眾運輸路線；其餘用地點名查
+      const mapUrl=o.m?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(o.m)
+        :(mv.length===2?'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(mv[0]+' 大阪')+'&destination='+encodeURIComponent(mv[1]+' 大阪')+'&travelmode=transit':'');
+      return `<div class="cnode"><span class="ctime">${item[0]}</span><span class="cname">${item[1]}</span><span class="cicons">${mapUrl?`<a class="lnk map" href="${esc(mapUrl)}" target="_blank" rel="noopener" title="Google Map">📍</a>`:''}${o.u?`<a class="lnk" href="${esc(o.u)}" target="_blank" rel="noopener" title="開啟官網">↗</a>`:''}</span></div>`
         +(o.p?`<div class="cphoto"><img src="${esc(o.p)}" alt=""></div>`:'');
     }
     const def=[item.n, item.t].filter(Boolean).join('・');
@@ -642,7 +601,7 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
   const v=DAYS[i];
   div.addEventListener('click',()=>{
     mbg.querySelector('#mbody').innerHTML=`
-      <div class="mhead"><i style="background:var(--d${v.c})"></i><b>${v.d}</b><span>${v.date}</span></div>
+      <div class="mhead"><i style="background:var(--d${v.c})"></i><b>${v.d}</b><span>${v.date}</span><a class="mfull" href="plan.html#${v.d}" title="開啟完整行程頁">⛶ 完整行程</a></div>
       <div class="mroute">${v.route}</div>
       ${v.meta?`<div class="mmeta">${v.meta}</div>`:''}
       <div class="mlegs"><b>分段資訊</b>${chainHTML(v.chain, v.d)}</div>`;
@@ -814,14 +773,12 @@ bindEditable(document.getElementById('sec-race'));
   });
 })();
 
-editList(document.getElementById('todolist'), 'todo', [
- {t:'Booking.com 填抵達時間（飯店 17:00 後入住）'},
- {t:'確認大會公布的起跑時間、EXPO 地點與時間'},
- {t:'申報成績／起跑分區'},
+editList(document.getElementById('todolist'), 'todo3', [
  {t:'買 eSIM'},
  {t:'換日幣'},
- {t:'南海電鐵／ICOCA 怎麼買'},
- {t:'賽前一週減量跑表'},
+ {t:'海遊館門票線上預購'},
+ {t:'太陽之塔內部參觀預約'},
+ {t:'查 千里中央 → 勝尾寺 阪急巴士時刻'},
 ]);
 editList(document.getElementById('souvenirlist'), 'souv', [
  {t:'551 蓬萊 豚饅'},
@@ -835,12 +792,13 @@ editList(document.getElementById('playlist'), 'play', [
  {t:'黑門市場'},
  {t:'梅田藍天大廈 空中庭園'},
 ]);
-editList(document.getElementById('eatlist'), 'eat', [
- {t:'賽前：烏龍麵／丼飯（碳水）'},
- {t:'賽後：燒肉'},
+editList(document.getElementById('eatlist'), 'eat3', [
+ {t:'壽司', n:'D1 天保山 Market Place 回轉壽司（店家待定）'},
+ {t:'拉麵', n:'D4 和歌山拉麵・井出商店（或 丸三）'},
+ {t:'居酒屋', n:'D2 京橋居酒屋街（飯店隔壁站）'},
+ {t:'燒肉', n:'D3 慶功・鶴橋燒肉街（JR 環狀線 10 分）'},
+ {t:'章魚燒', n:'D1 天保山 なにわ食いしんぼ横丁'},
  {t:'大阪燒（千房／美津の）'},
- {t:'章魚燒'},
- {t:'串炸（新世界）'},
 ]);
 })();
 </script>

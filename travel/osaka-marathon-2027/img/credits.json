@@ -1,23 +1,38 @@
 [
   {
-    "key": "taiyo",
-    "file": "https://commons.wikimedia.org/wiki/File:EXPO%2770%E3%83%91%E3%83%93%E3%83%AA%E3%82%AA%E3%83%B3_%E4%B8%87%E5%8D%9A%E8%A8%98%E5%BF%B5%E5%85%AC%E5%9C%92_%E5%A4%A7%E9%98%AA_Osaka_(55261195655).jpg",
-    "artist": "nagi usano",
-    "lic": "CC BY 4.0",
-    "bytes": 73324
+    "key": "kaiyukan",
+    "file": "https://commons.wikimedia.org/wiki/File:Osaka_Kaiyukan01s3872.jpg",
+    "artist": "663highland",
+    "lic": "CC BY 2.5"
   },
   {
-    "key": "intex",
-    "file": "https://commons.wikimedia.org/wiki/File:Gate_of_Intex_Osaka.jpg",
-    "artist": "Sakai Yayoi",
-    "lic": "CC0",
-    "bytes": 171207
+    "key": "katsuoji",
+    "file": "https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG",
+    "artist": "EllieRH",
+    "lic": "CC BY-SA 4.0"
   },
   {
     "key": "tempozan",
-    "file": "https://commons.wikimedia.org/wiki/File:Tempozan_Giant_Ferris_Wheel_upwards_view.jpg",
-    "artist": "Jason Zhang",
-    "lic": "CC BY-SA 3.0",
-    "bytes": 221940
+    "file": "https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg",
+    "artist": "TimBray",
+    "lic": "CC BY-SA 4.0"
+  },
+  {
+    "key": "wakayama",
+    "file": "https://commons.wikimedia.org/wiki/File:Wakayama_Castle_2011_Kuruwa.jpg",
+    "artist": "Wak89",
+    "lic": "CC BY-SA 3.0"
+  },
+  {
+    "key": "osakajo",
+    "file": "https://commons.wikimedia.org/wiki/File:Tenshu_of_Osaka_Castle_3.jpg",
+    "artist": "そらみみ",
+    "lic": "CC BY-SA 3.0"
+  },
+  {
+    "key": "taiyo",
+    "file": "https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg",
+    "artist": "IIIdGK",
+    "lic": "CC BY 4.0"
   }
 ]
