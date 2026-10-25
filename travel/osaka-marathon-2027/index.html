@@ -365,9 +365,9 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 <div class="tblwrap">
 <table class="itin">
 <tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>費用</th><th>備註</th><th>狀態</th></tr>
-<tr><td>D1</td><td>2/26</td><td>大阪</td><td><span class="ed" data-ek="stay.d1.name" data-ek-default="未訂">未訂</span></td><td><span class="ed" data-ek="stay.d1.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d1.note" data-ek-default="本町最平衡；谷町四丁目／天滿橋靠起點；森之宮靠終點；難波觀光方便但比賽日要早出門">本町最平衡；谷町四丁目／天滿橋靠起點；森之宮靠終點；難波觀光方便但比賽日要早出門</span></td><td><select class="statsel" data-k="d1"></select></td></tr>
-<tr><td>D2</td><td>2/27</td><td>大阪</td><td><span class="ed" data-ek="stay.d2.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d2.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d2.note" data-ek-default="賽前一晚早睡">賽前一晚早睡</span></td><td><select class="statsel" data-k="d2"></select></td></tr>
-<tr><td>D3</td><td>2/28</td><td>大阪</td><td><span class="ed" data-ek="stay.d3.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d3.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d3.note" data-ek-default="賽後要有浴缸最好">賽後要有浴缸最好</span></td><td><select class="statsel" data-k="d3"></select></td></tr>
+<tr><td>D1</td><td>2/26</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d1.name" data-ek-default="Excellence Osaka Castle Park">Excellence Osaka Castle Park</span> <a class="site" href="https://www.booking.com/" target="_blank" rel="noopener" title="Booking.com">↗</a></td><td><span class="ed" data-ek="stay.d1.fee" data-ek-default="Booking.com 信用卡自動扣款">Booking.com 信用卡自動扣款</span></td><td><span class="ed" data-ek="stay.d1.note" data-ek-default="入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）">入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）</span></td><td><select class="statsel" data-k="d1"></select></td></tr>
+<tr><td>D2</td><td>2/27</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d2.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d2.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d2.note" data-ek-default="賽前一晚早睡">賽前一晚早睡</span></td><td><select class="statsel" data-k="d2"></select></td></tr>
+<tr><td>D3</td><td>2/28</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d3.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d3.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d3.note" data-ek-default="3/1 退房 10:00 前">3/1 退房 10:00 前</span></td><td><select class="statsel" data-k="d3"></select></td></tr>
 </table>
 </div>
 <p class="hint">名稱、費用、備註在編輯模式下點一下就能改；狀態用下拉切換。</p>
@@ -549,9 +549,9 @@ window.bindEditable = bindEditable;
 
 /* ── 每日行程 ── */
 const DAYS=[
-  {d:'D1', date:'2/26 五', c:1, route:'<b>桃園 TPE 09:40 ✈ 關西 KIX 13:10</b> → 南海電鐵進市區 → 飯店 Check-in → <b>EXPO 領號碼布</b>',
+  {d:'D1', date:'2/26 五', c:1, route:'<b>桃園 TPE 09:40 ✈ 關西 KIX 13:10</b> → 南海電鐵進市區 → <b>EXPO 領號碼布</b> → 飯店 Check-in（17:00 後）',
    meta:'<span class="stay">宿 大阪</span>・MM24・關西第2航廈',
-   chain:[['09:40','桃園機場 T1'],{t:'2h30',n:'樂桃 MM24'},['13:10','關西機場 T2'],{t:'約 50 分',n:'南海電鐵（空港急行／Rapi:t）到難波'},['15:00','飯店 Check-in'],{t:'',n:'放行李後直接去領物'},['16:30','EXPO 領號碼布（INTEX 大阪 6 號館）'],{t:'',n:'Metro 中央線→コスモスクエア→New Tram 中ふ頭；五 11:00–19:00'}]},
+   chain:[['09:40','桃園機場 T1'],{t:'2h30',n:'樂桃 MM24'},['13:10','關西機場 T2'],{t:'約 50 分',n:'南海電鐵（空港急行／Rapi:t）到難波'},['14:30','EXPO 領號碼布（INTEX 大阪 6 號館）'],{t:'',n:'行李先寄機場或飯店；Metro 中央線→コスモスクエア→New Tram 中ふ頭；五 11:00–19:00'},['17:30','飯店 Check-in（Excellence Osaka Castle Park，17:00 後）'],{t:'',n:'JR 鴫野站旁'}]},
   {d:'D2', date:'2/27 六', c:2, route:'輕鬆日：<b>勘查起點／終點</b>・慢跑 3–5 km 醒腿・補給採買・早睡',
    meta:'<span class="stay">宿 大阪</span>・賽前一天',
    chain:[['09:00','早餐後慢跑 3–5 km'],{t:'',n:'大阪城公園一圈，順便看終點動線'},['12:00','午餐'],{t:'',n:'碳水為主，不要吃生食'},['14:00','起點勘查＋寄物處位置'],{t:'',n:'大阪府廳前'},['17:00','便利商店買隔天早餐、補給'],['21:00','整理裝備、別號碼布、早睡']]},
@@ -560,7 +560,7 @@ const DAYS=[
    chain:[['05:30','起床・早餐（賽前 3 小時）'],['07:30','抵達起點（谷町四丁目／天滿橋站）、寄物'],{t:'',n:'寄物截止看參加案內；戴安全手環才能進起跑區'},['09:15','第1波起跑（第2、3波依序）'],{t:'42.195 km',n:'目標：—'},['14:30','完賽・領完賽物資（終點 大阪城公園內）'],['16:00','回飯店泡澡'],['18:30','慶功：燒肉／大阪燒']]},
   {d:'D4', date:'3/1 一', c:4, route:'早上自由活動（可選奈良半日：近鐵難波→奈良 35 分）→ 南海電鐵到關西機場 → <b>關西 KIX 15:25 ✈ 桃園 TPE 17:55</b>',
    meta:'MM027・關西第2航廈・起飛前 120～50 分鐘報到',
-   chain:[['10:00','飯店 Check-out、寄行李'],{t:'',n:'難波買伴手禮'},['12:30','難波出發'],{t:'約 50 分',n:'南海電鐵到關西機場'},['13:25','關西機場 T2 報到'],{t:'2h30',n:'樂桃 MM027'},['17:55','桃園機場 T1']]},
+   chain:[['10:00','飯店 Check-out（10:00 前）、寄行李'],{t:'',n:'難波買伴手禮'},['12:30','難波出發'],{t:'約 50 分',n:'南海電鐵到關西機場'},['13:25','關西機場 T2 報到'],{t:'2h30',n:'樂桃 MM027'},['17:55','桃園機場 T1']]},
 ];
 const daysBox=document.getElementById('days');
 daysBox.innerHTML=DAYS.map(v=>`
@@ -761,7 +761,7 @@ bindEditable(document.getElementById('sec-race'));
 /* 住宿狀態：可自選並記住 */
 (function(){
   const OPTS=[['paid','已付'],['booked','已訂'],['onsite','現場付'],['todo','待訂'],['cancel','取消']];
-  const DEF={d1:'todo',d2:'todo',d3:'todo'};
+  const DEF={d1:'booked',d2:'booked',d3:'booked'};
   const K=PREFIX+'stay';
   let st={};
   try{ st=JSON.parse(localStorage.getItem(K))||{}; }catch(e){}
@@ -774,7 +774,7 @@ bindEditable(document.getElementById('sec-race'));
 })();
 
 editList(document.getElementById('todolist'), 'todo', [
- {t:'訂大阪住宿（三晚，靠起點）', n:'⚠ 要記得'},
+ {t:'Booking.com 填抵達時間（飯店 17:00 後入住）'},
  {t:'確認大會公布的起跑時間、EXPO 地點與時間'},
  {t:'申報成績／起跑分區'},
  {t:'買 eSIM'},
