@@ -4,8 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>大阪馬拉松 2027 · Cworld</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <style>
 :root{
@@ -16,7 +14,7 @@
   --d1:#3e63c4; --d2:#db7a1c; --d3:#c93c3c; --d4:#3f8f55;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;line-height:1.6}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Microsoft JhengHei','PingFang TC','Noto Sans TC',sans-serif;line-height:1.6}
 .wrap{max-width:820px;margin:0 auto;padding:28px 16px 60px}
 header{margin-bottom:14px}
 h1{font-size:1.5rem;font-weight:700;margin:10px 0 4px;letter-spacing:-.3px}
@@ -199,7 +197,7 @@ body.modal-open{overflow:hidden}
   --d1:#e8457c; --d2:#5aa86e; --d3:#8a5fd8; --d4:#2f7fc6;
 }
 body{
-  font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-weight:500;
+  font-family:'Microsoft JhengHei','PingFang TC','Noto Sans TC',sans-serif;font-weight:400;
   color:var(--ink);
   background:
     radial-gradient(circle at 12% 8%,rgba(255,255,255,.95) 0 46px,transparent 47px),
@@ -212,7 +210,7 @@ body{
   background-attachment:fixed;
 }
 b,strong,h1,h2,summary,.day .dnum,.ctime{font-weight:700}
-h1,.datepill{font-weight:900}
+h1,.datepill{font-weight:700}
 h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .subtitle{color:var(--muted);font-weight:700}
 .datepill{
@@ -375,13 +373,13 @@ footer::before{content:'☁️ ✨ ⚡ 🚃 ✨ ☁️';display:block;text-align
 <div class="secbody">
 <div class="tblwrap">
 <table class="itin">
-<tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>費用</th><th>備註</th><th>狀態</th></tr>
-<tr><td>D1</td><td>2/26</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d1.name" data-ek-default="Excellence Osaka Castle Park">Excellence Osaka Castle Park</span> <a class="site" href="https://www.booking.com/" target="_blank" rel="noopener" title="Booking.com">↗</a></td><td><span class="ed" data-ek="stay.d1.fee" data-ek-default="Booking.com 信用卡自動扣款">Booking.com 信用卡自動扣款</span></td><td><span class="ed" data-ek="stay.d1.note" data-ek-default="入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）">入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）</span></td><td><select class="statsel" data-k="d1"></select></td></tr>
-<tr><td>D2</td><td>2/27</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d2.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d2.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d2.note" data-ek-default="賽前一晚早睡">賽前一晚早睡</span></td><td><select class="statsel" data-k="d2"></select></td></tr>
-<tr><td>D3</td><td>2/28</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d3.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d3.fee" data-ek-default="—">—</span></td><td><span class="ed" data-ek="stay.d3.note" data-ek-default="3/1 退房 10:00 前">3/1 退房 10:00 前</span></td><td><select class="statsel" data-k="d3"></select></td></tr>
+<tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>備註</th><th>狀態</th></tr>
+<tr><td>D1</td><td>2/26</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d1.name" data-ek-default="Excellence Osaka Castle Park">Excellence Osaka Castle Park</span> <a class="site" href="https://www.booking.com/" target="_blank" rel="noopener" title="Booking.com">↗</a></td><td><span class="ed" data-ek="stay.d1.note" data-ek-default="入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）">入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）</span></td><td><select class="statsel" data-k="d1"></select></td></tr>
+<tr><td>D2</td><td>2/27</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d2.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d2.note" data-ek-default="賽前一晚早睡">賽前一晚早睡</span></td><td><select class="statsel" data-k="d2"></select></td></tr>
+<tr><td>D3</td><td>2/28</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d3.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d3.note" data-ek-default="3/1 退房 10:00 前">3/1 退房 10:00 前</span></td><td><select class="statsel" data-k="d3"></select></td></tr>
 </table>
 </div>
-<p class="hint">名稱、費用、備註在編輯模式下點一下就能改；狀態用下拉切換。</p>
+<p class="hint">名稱、備註點一下就能改；狀態用下拉切換。</p>
 </div>
 </details>
 
@@ -761,7 +759,7 @@ bindEditable(document.getElementById('sec-race'));
 /* 住宿狀態：可自選並記住 */
 (function(){
   const OPTS=[['paid','已付'],['booked','已訂'],['onsite','現場付'],['todo','待訂'],['cancel','取消']];
-  const DEF={d1:'booked',d2:'booked',d3:'booked'};
+  const DEF={d1:'paid',d2:'paid',d3:'paid'};
   const K=PREFIX+'stay';
   let st={};
   try{ st=JSON.parse(localStorage.getItem(K))||{}; }catch(e){}
