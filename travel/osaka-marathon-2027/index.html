@@ -690,13 +690,13 @@ function syncCatStyles(){
     return `.ck .catsel.c-${c[0]}{background:${p[0]};border-color:${p[1]};color:${p[2]}}`; }).join('');
 }
 const PACK_LISTS = [
- // 這次只有沈一個人，單一清單
+ // 沈的清單（2026/10 版）
  {key:'all', name:'攜帶物品清單', wide:1, items:[
-   ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信（列印＋截圖）'],['must','eSIM'],
-   ['run','跑鞋'],['run','比賽衣褲'],['run','壓力襪／小腿套'],['run','GPS 錶＋充電線'],['run','號碼布別針（備用）'],
-   ['run','能量膠 ×4'],['run','鹽錠'],['run','凡士林／防磨膏'],['run','可丟棄保暖層（起跑前）'],
-   ['cloth','羽絨'],['cloth','長袖＋外套'],['cloth','帽子 手套'],['cloth','換洗衣物 ×3'],['cloth','拖鞋'],
-   ['other','行動電源'],['other','轉接頭'],['other','刮鬍刀'],['other','牙刷 牙膏'],['other','肌內效貼布'],
+   ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信'],
+   ['cloth','羽絨（阿羲）'],['cloth','風雨衣（皮卡球）'],['cloth','保暖：手套、毛帽'],['cloth','鴨舌帽'],
+   ['cloth','衣：立山、劍岳'],['cloth','褲：on、迪卡農繭型褲'],['cloth','襪：M、D'],['cloth','Y拖'],
+   ['run','補給：能量膠 ×4、鹽錠'],
+   ['other','行動電源'],['other','轉接頭'],['other','盥洗：刮鬍刀、牙刷、牙膏'],
  ]},
 ];
 const packBox=document.getElementById('packlist');
@@ -709,7 +709,7 @@ const packRenders=[];
 function renderAllPacks(){ packRenders.forEach(f=>f()); }
 function gcCats(){
   const used=new Set();
-  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
+  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack2-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
   const before=CUSTOM_CATS.length;
   CUSTOM_CATS=CUSTOM_CATS.filter(c=>used.has(c[0]));
   if(CUSTOM_CATS.length!==before){ saveCats(); syncCatStyles(); return true; }
@@ -762,7 +762,7 @@ function packList(el, key, seed){
   render();
 }
 syncCatStyles();
-PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack-'+l.key, l.items));
+PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack2-'+l.key, l.items));
 
 /* 住宿、賽事資訊的文字覆寫 */
 bindEditable(document.getElementById('sec-stay'));
