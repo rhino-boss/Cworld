@@ -77,7 +77,7 @@ details.alt .altbody{padding:0 14px 12px}
   <footer>行程資料與行程頁共用（days.js）；備註在行程頁改過的文字這裡會一起顯示。</footer>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="days.js"></script>
+<script src="days.js?v=3"></script>
 <script>
 (function(){
 const EDITS=(()=>{ try{ return JSON.parse(localStorage.getItem('osaka27.edits'))||{}; }catch(e){ return {}; } })();
@@ -130,7 +130,7 @@ window.bindCarousels&&window.bindCarousels(document);
   function render(){
     layers.forEach((g,i)=>{ if(mode==='all'||i===cur) g.addTo(map); else map.removeLayer(g); });
     const pts=mode==='all'?days.flatMap(x=>x.pts):days[cur].pts;
-    if(pts.length) map.fitBounds(bounds(pts),{padding:[28,28],maxZoom:mode==='all'?10:14});
+    if(pts.length) map.fitBounds(bounds(pts),{padding:[28,28],maxZoom:mode==='all'?10:14}); else map.setView([34.69,135.50],11);
     document.querySelectorAll('.ov .dc').forEach((c,i)=>c.classList.toggle('on',mode==='day'&&i===cur));
     document.querySelectorAll('.ov .tg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===mode));
   }

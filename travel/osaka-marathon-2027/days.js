@@ -6,11 +6,12 @@ window.DAYS=[
    meta:'<b>EXPO 領物</b> 五 11:00–19:00，本人＋護照　<b>飯店</b> 17:00 後才能入住',
    chain:[
      ['09:40–13:10','桃園機場 T1 → 關西機場 T2',{pl:'關西機場',ll:[34.4347,135.2441],u:'https://www.flypeach.com/'}],{n:'交通：樂桃 MM24；訂單 QAJ7AN；起飛前 120～50 分報到'},
+     ['13:10–13:40','午餐：機場或車站隨便買'],{n:'關西機場 T2 便利商店／南海車站買個飯糰，車上吃'},
      ['13:40–15:00','關西機場 → コスモスクエア'],{n:'交通：南海電鐵 → Metro 御堂筋線 → 中央線；行李放コスモスクエア站置物櫃'},
      ['15:00–16:00','INTEX 大阪 6 號館・EXPO 領號碼布',{pl:'INTEX 大阪',ll:[34.6368,135.4215],u:'https://www.osaka-marathon.com/2027/expo/',m:'インテックス大阪'}],{n:'本人＋護照；五 11:00–19:00'},
      ['16:00–16:15','コスモスクエア → 大阪港'],{n:'交通：Metro 中央線 1 站'},
      ['16:15–19:30','海遊館（含夜間展示）',{pl:'海遊館',ll:[34.6545,135.4289],u:'https://www.kaiyukan.com/',m:'海遊館',p:['img/kaiyukan_1.jpg','img/kaiyukan_2.jpg','img/kaiyukan_3.jpg','img/kaiyukan_4.jpg','img/kaiyukan_5.jpg']}],{n:'門票 ¥2,700（線上預購免排隊）；最後入館 19:00、閉館 20:00；17:00 後燈光轉暗進入夜間模式'},
-     ['19:30–20:30','晚餐：天保山・章魚燒＋壽司',{pl:'天保山',ll:[34.6560,135.4302],m:'天保山マーケットプレース',p:['img/tempozan_1.jpg','img/tempozan_2.jpg','img/tempozan_3.jpg','img/tempozan_4.jpg','img/tempozan_5.jpg']}],{n:'章魚燒：なにわ食いしんぼ横丁（天保山 Market Place 2F）；壽司：Market Place 內回轉壽司（店家待定）'},
+     ['19:30–20:30','晚餐：天保山 Market Place 亂找',{pl:'天保山',ll:[34.6560,135.4302],m:'天保山マーケットプレース',p:['img/tempozan_1.jpg','img/tempozan_2.jpg','img/tempozan_3.jpg','img/tempozan_4.jpg','img/tempozan_5.jpg']}],{n:'不預設店，2F なにわ食いしんぼ横丁 走一圈看什麼順眼就吃；想吃章魚燒、壽司這裡都有'},
      ['20:30–21:00','大阪港 → 鴫野'],{n:'交通：Metro 中央線 → 森ノ宮 轉 JR'},
      ['21:00–21:20','Excellence Osaka Castle Park Check-in',{pl:'飯店（鴫野）',ll:[34.6966,135.5478],u:'https://www.booking.com/',m:'Excellence Osaka Castle Park'}],{n:'17:00 後才能入住；JR 鴫野站旁'},
      ['21:30–22:00','輕鬆跑 3 km（鴫野 → 大阪城公園外圍折返）',{pl:'大阪城公園外圍',ll:[34.6920,135.5400]}],{n:'6:00 配速；只是活動筋骨、順便認路'}
