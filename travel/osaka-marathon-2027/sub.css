@@ -67,12 +67,12 @@ footer a{color:var(--blue)}
 
 /* 標籤列：總覽／行程／馬拉松篇／旅行篇（下拉） */
 .tabbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:6px;padding:8px 12px;overflow:visible;background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
-.tabbar a{flex:none;display:inline-flex;align-items:center;height:30px;line-height:1;box-sizing:border-box;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:0 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
+.tabbar a{flex:none;display:inline-block;height:30px;line-height:27px;box-sizing:border-box;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:0 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s;vertical-align:top}
 .tabbar a:hover{background:#fff}
 .tabbar a.on,.tabbar .dd.on>.ddt{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
 .tabbar .dd{position:relative;flex:none;display:inline-flex;align-items:center}
-.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px}
+.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px;line-height:27px}
 .tabbar .ddm{display:none;position:absolute;left:0;top:calc(100% + 6px);min-width:120px;background:#fff;border:2px solid var(--b-sky);border-radius:12px;padding:6px;box-shadow:0 8px 20px rgba(47,127,198,.18);flex-direction:column;gap:2px}
 .tabbar .dd.open .ddm{display:flex}
-.tabbar .ddm a{border-radius:8px;padding:7px 12px}
+.tabbar .ddm a{display:block;height:auto;line-height:1.5;border-radius:8px;padding:7px 12px}
 .tabbar .ddm a:hover{background:var(--c-sky)}
