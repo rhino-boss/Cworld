@@ -241,6 +241,10 @@ h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .tabbar a{flex:none;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:4px 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
 .tabbar a:hover{background:#fff}
 .tabbar a.on{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
+.tabbar .div{flex:none;width:1.5px;height:18px;background:var(--b-sky);margin:0 4px;align-self:center}
+.tabbar a.pg{color:var(--blue);background:#fff;border-color:var(--b-sky)}
+.tabbar a.pg::after{content:'⤢';font-size:11px;margin-left:4px;opacity:.7}
+.tabbar a.pg:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 details.sec{scroll-margin-top:58px}
 html{scroll-behavior:smooth}
 .modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:700}
@@ -344,6 +348,8 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </nav>
 <div class="tabbar" id="tabbar">
   <a href="#sec-days">行程</a><a href="#sec-flight">航班</a><a href="#sec-stay">住宿</a><a href="#sec-race">馬拉松</a><a href="#sec-travel">旅行</a><a href="#sec-pack">攜帶</a><a href="#sec-todo">待確認</a>
+  <span class="div"></span>
+  <a class="pg" href="plan.html">詳細行程</a><a class="pg" href="play.html">玩什麼</a><a class="pg" href="eat.html">吃什麼</a><a class="pg" href="shop.html">必買</a><a class="pg" href="notebook.html">手帳版</a>
 </div>
 
 <div class="wrap">
@@ -643,7 +649,7 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
 
 /* 固定為可編輯（已移除檢視／編輯切換） */
 (function(){
-  const tabs=[...document.querySelectorAll('#tabbar a')];
+  const tabs=[...document.querySelectorAll('#tabbar a:not(.pg)')];
   const secs=tabs.map(a=>document.querySelector(a.getAttribute('href')));
   // 平滑捲動：先展開區塊、等版面重排一幀，再用 scrollTo 動畫捲到標籤列下方
   function smoothTo(el){ requestAnimationFrame(()=>{ const top=el.getBoundingClientRect().top+window.scrollY-document.getElementById('tabbar').offsetHeight-6; window.scrollTo({top,behavior:'smooth'}); }); }
