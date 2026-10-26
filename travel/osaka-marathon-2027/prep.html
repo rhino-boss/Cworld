@@ -19,6 +19,9 @@ details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:point
 .secbody{padding:2px 12px 12px}
 .subbody{padding:2px 12px 12px}
 .hint{font-size:12px;color:var(--faint);margin:8px 0 0}
+.sec>h2{font-size:1.15rem;color:var(--brown);margin:0;padding:14px 20px 10px;font-weight:700}
+.listbox{padding:8px 12px}
+.listbox .ck{margin:0}
 .ck{list-style:none;margin:4px 0;padding:0;font-size:13.5px}
 .ck li{margin:4px 0;line-height:1.7;display:flex;gap:8px;align-items:center}
 .ck input[type=checkbox]{margin-top:0;flex:none;accent-color:#2f9e44}
@@ -97,18 +100,18 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
   <div class="hicon">🎒</div>
   <h1>準備</h1>
   <p class="sub">出發前把清單一項項勾掉；比賽裝備（跑鞋、襪子、衣褲）都用練跑穿慣的，不要帶新品直接上場。</p>
-<details class="sec" id="sec-pack" open>
-<summary>攜帶物品</summary>
+<div class="sec" id="sec-pack">
+<h2>攜帶物品</h2>
 <div class="secbody">
 <div id="packlist"></div>
 <p class="hint">每個項目前面的標籤可以切換分類；選「＋ 新增分類」可自訂。</p>
 </div>
-</details>
+</div>
 
-<details class="sec" id="sec-todo" open>
-<summary>待確認項目</summary>
-<div class="secbody"><ul class="ck" id="todolist"></ul></div>
-</details>
+<div class="sec" id="sec-todo">
+<h2>待確認項目</h2>
+<div class="secbody"><div class="card listbox"><ul class="ck" id="todolist"></ul></div></div>
+</div>
 </div>
 <script>
 (function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
@@ -177,11 +180,7 @@ const PACK_LISTS = [
  ]},
 ];
 const packBox=document.getElementById('packlist');
-packBox.innerHTML =
-  PACK_LISTS.filter(l=>l.wide).map(l=>
-    `<details class="sub packshared" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')
-  + `<div class="packcols">${PACK_LISTS.filter(l=>!l.wide).map(l=>
-      `<details class="sub packcol" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')}</div>`;
+packBox.innerHTML = PACK_LISTS.map(l=>`<div class="card listbox"><ul class="ck pk" data-list="${l.key}"></ul></div>`).join('');
 const packRenders=[];
 function renderAllPacks(){ packRenders.forEach(f=>f()); }
 function gcCats(){
