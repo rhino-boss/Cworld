@@ -242,6 +242,7 @@ h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .tabbar a:hover{background:#fff}
 .tabbar a.on{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
 details.sec{scroll-margin-top:58px}
+html{scroll-behavior:smooth}
 .modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:700}
 .modebtn:hover{background:var(--yellow);color:var(--brown)}
 details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
@@ -645,7 +646,9 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
 (function(){
   const tabs=[...document.querySelectorAll('#tabbar a')];
   const secs=tabs.map(a=>document.querySelector(a.getAttribute('href')));
-  tabs.forEach((a,i)=>a.addEventListener('click',e=>{ e.preventDefault(); const d=secs[i]; if(!d) return; d.open=true; d.scrollIntoView({behavior:'smooth',block:'start'}); history.replaceState(null,'',a.getAttribute('href')); }));
+  // 平滑捲動：先展開區塊、等版面重排一幀，再用 scrollTo 動畫捲到標籤列下方
+  function smoothTo(el){ requestAnimationFrame(()=>{ const top=el.getBoundingClientRect().top+window.scrollY-document.getElementById('tabbar').offsetHeight-6; window.scrollTo({top,behavior:'smooth'}); }); }
+  tabs.forEach((a,i)=>a.addEventListener('click',e=>{ e.preventDefault(); const d=secs[i]; if(!d) return; d.open=true; smoothTo(d); history.replaceState(null,'',a.getAttribute('href')); }));
   function mark(){ let k=0; secs.forEach((d,i)=>{ if(d&&d.getBoundingClientRect().top<120) k=i; }); tabs.forEach((a,i)=>a.classList.toggle('on',i===k)); }
   addEventListener('scroll',mark,{passive:true}); mark();
 })();
