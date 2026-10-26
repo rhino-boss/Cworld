@@ -18,16 +18,15 @@ html{scroll-behavior:smooth}
 .ov .tg button{border:0;background:#fff;font:inherit;font-weight:700;font-size:12.5px;padding:5px 12px;cursor:pointer;color:var(--blue)}
 .ov .tg button.on{background:var(--blue);color:#fff}
 #ovmap{height:360px;border-radius:14px;border:2px solid #fff;background:#e8ede4;z-index:0;box-shadow:0 2px 10px rgba(90,58,26,.12)}
-.ov .days{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:4px;scrollbar-width:none}
+.ov .days{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding:3px 3px 6px;scrollbar-width:none}
 .ov .days::-webkit-scrollbar{display:none}
-.ov .dc{flex:none;min-width:150px;background:#fff;border:2px solid #fff;border-radius:14px;padding:8px 12px;cursor:pointer;box-shadow:0 2px 8px rgba(90,58,26,.08);transition:transform .15s}
-.ov .dc:hover{transform:translateY(-2px)}
-.ov .dc.on{border-color:var(--blue)}
-.ov .dc.all{background:var(--c-sky)}
+.ov .dc{flex:none;width:200px;height:84px;display:flex;flex-direction:column;justify-content:center;background:#fff;border:2px solid #fff;border-radius:14px;padding:8px 12px;cursor:pointer;box-shadow:0 2px 8px rgba(90,58,26,.08);transition:box-shadow .15s,border-color .15s}
+.ov .dc:hover{box-shadow:0 0 0 2px var(--b-sky),0 2px 8px rgba(90,58,26,.08)}
+.ov .dc.on{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue) inset,0 2px 8px rgba(90,58,26,.08)}
 .ov .dc .h{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px}
 .ov .dc .h i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .ov .dc .h small{color:var(--muted);font-weight:700;font-size:11px}
-.ov .dc .pl{font-size:12px;color:var(--ink);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.ov .dc .pl{font-size:12px;color:var(--ink);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ov .dc .km{font-size:11px;color:var(--muted);margin-top:2px}
 .ov .dc .km b{color:var(--blue);font-size:13px}
 .ovmk{background:none;border:none}
@@ -66,7 +65,6 @@ details.alt .altbody{padding:0 14px 12px}
 <div class="wrap">
   <div class="hicon">🏃</div>
   <h1>完整行程</h1>
-  <p class="sub">2/26（五）– 3/1（一）・📍 Google Map・↗ 官網・照片可左右滑（拍照角度參考）</p>
   <div class="sec ov">
     <div class="bar"><b>🗺️ 路線總覽</b><span class="hint" style="font-size:12px;color:var(--muted)">點日期卡只看那天；路線沿道路拉（近似電車／巴士走向）</span></div>
     <div id="ovmap"></div>
@@ -141,8 +139,7 @@ window.bindCarousels&&window.bindCarousels(document);
   document.getElementById('ovdays').innerHTML='<div class="dc all on" data-i="all"><div class="h"><i style="background:#3b2a1a"></i>全部 <small>4 天</small></div><div class="pl">看全程、顯示每一天</div><div class="km"><b>'+total+'</b> km 移動</div></div>'+
     days.map((dy,i)=>'<div class="dc" data-i="'+i+'"><div class="h"><i style="background:'+COL[dy.c]+'"></i>'+dy.d+' <small>'+dy.date+'</small></div><div class="pl">'+dy.pts.map(p=>p.name).join('・')+'</div><div class="km"><b>'+Math.round(dy.dist)+'</b> km 移動</div></div>').join('');
   document.querySelectorAll('.ov .dc').forEach(c=>c.addEventListener('click',()=>{ if(c.dataset.i==='all'){mode='all';} else {cur=+c.dataset.i;mode='day';} render();
-    // 點日期卡後平滑捲到下面的行程
-    requestAnimationFrame(()=>{ const el=document.getElementById('days'); const top=el.getBoundingClientRect().top+window.scrollY-64; window.scrollTo({top,behavior:'smooth'}); }); }));
+  }));
   render();
   window.addEventListener('load',()=>{map.invalidateSize();render();});
 })();
