@@ -7,18 +7,22 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <link rel="stylesheet" href="sub.css?v=4">
 <style>
-
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.item{display:flex;flex-direction:column}
-.item .ph{position:relative;background:#fff;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
-.item .ph img{width:100%;height:100%;object-fit:cover;display:block;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.item{display:flex;flex-direction:column;overflow:hidden}
+.item .ph{position:relative;background:#fff;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #f3eee4}
+.item .ph img{width:100%;height:100%;object-fit:contain;display:block;background:#fff;padding:10px;box-sizing:border-box}
 .item .ph .none{color:var(--faint);font-size:12px;text-align:center;padding:12px}
-.item .qty{position:absolute;top:8px;left:8px;background:var(--pink);color:#fff;font-weight:700;font-size:12px;border-radius:999px;padding:2px 10px}
-.item .body{padding:10px 12px 12px}
-.item .name{font-weight:700;font-size:14.5px;color:var(--brown)}
-.item .note{font-size:12.5px;color:var(--muted);margin-top:3px}
-.item .where{font-size:12px;margin-top:6px;color:var(--blue);font-weight:700}
-@media (max-width:640px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}}
+.item .qty{position:absolute;top:10px;left:10px;background:var(--pink);color:#fff;font-weight:700;font-size:12px;border-radius:999px;padding:2px 10px;box-shadow:0 2px 6px rgba(232,69,124,.3)}
+.item .body{padding:12px 14px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.item .name{font-weight:700;font-size:15px;color:var(--brown);line-height:1.3}
+.item .note{font-size:12.5px;color:var(--muted);line-height:1.5}
+.item .buy{margin:4px 0 0;padding:8px 0 0;list-style:none;border-top:1px dashed #efe5d4;display:flex;flex-direction:column;gap:5px}
+.item .buy li{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;line-height:1.45;color:var(--brown)}
+.item .buy .dc{flex:none;font-size:10.5px;font-weight:700;color:#fff;border-radius:999px;padding:1px 7px;margin-top:2px;background:var(--muted)}
+.item .buy .dc.d1{background:var(--d1)}.item .buy .dc.d2{background:var(--d2)}.item .buy .dc.d3{background:var(--d3)}.item .buy .dc.d4{background:var(--d4)}
+.item .buy b{font-weight:700}
+.item .buy small{display:block;color:var(--muted);font-size:11.5px}
+@media (max-width:640px){.grid{grid-template-columns:1fr 1fr;gap:10px}.item .body{padding:10px 11px}}
 </style>
 </head>
 <body>
@@ -41,38 +45,56 @@
 <div class="wrap">
   <div class="hicon">🛍️</div>
   <h1>必買</h1>
-  <p class="sub">藥妝在難波／心齋橋的松本清、大國藥妝都買得到；mont-bell 行程上會經過 EXPOCITY店（D2）、大丸心齋橋店、天王寺MIO店（D4）。</p>
+  <p class="sub">每樣東西下面列的是行程上最順路的 1–3 個購買點：藥妝集中在 D2／D3 晚上的心齋橋筋，mont-bell 以大丸心齋橋店為主，EXPOCITY 與天王寺 MIO 當備案。</p>
 
   <div class="sec lav"><h2>藥妝・保養</h2><div class="grid" id="cosme"></div></div>
   <div class="sec mint"><h2>mont-bell</h2><div class="grid" id="montbell"></div></div>
   <div class="sec yel"><h2>補給</h2><div class="grid" id="supply"></div></div>
 
 
-  <footer>照片為你給我的參考圖；想換圖就把新檔放進 <code>img/shop/</code>，檔名照卡片上的代號。</footer>
+  <footer>照片為參考圖；想換圖就把新檔放進 <code>img/shop/</code>，檔名照卡片上的代號。</footer>
 </div>
 <script>
-// 必買清單（照片放 img/shop/<key>.jpg；沒有照片的卡會顯示代號提示）
+// 必買清單（照片放 img/shop/<key>.jpg）。buy：行程上最可能去買的地點，依優先順序 1–3 個
+const SHINSAIBASHI={d:'D2', s:'心齋橋筋商店街 松本清／大國藥妝', t:'逛完寶可夢中心、吃晚餐前後，整條街好幾家，比價挑最便宜'};
+const SHINSAIBASHI3={d:'D3', s:'心齋橋筋商店街（慶功晚餐前後）', t:'D2 沒買齊的補這天'};
+const KIX={d:'D4', s:'關西機場 T2 免稅店', t:'品項少，只當最後補救'};
 const ITEMS=[
-  {g:'cosme', key:'bb',       name:'BB 霜',          qty:'×1',   note:'INTEGRATE Pro Quality BB（紅管）', where:'松本清／大國藥妝'},
-  {g:'cosme', key:'powder',   name:'粉餅',           qty:'×1',   note:'IHADA 薬用フェイスプロテクトパウダー SPF40・PA++++', where:'松本清／大國藥妝'},
-  {g:'cosme', key:'patch1',   name:'痘痘貼',         qty:'×4 組', note:"Today's Cosme CICA＋ Zero Spot Patch（綠色包裝）", where:'藥妝店'},
-  {g:'cosme', key:'patch2',   name:'痘痘貼',         qty:'',     note:'KOSE CLEAR TURN ごめんね素肌 キニシナイ 46 枚（黃色包裝，也可以）', where:'藥妝店'},
-  {g:'cosme', key:'muji',     name:'無印良品 溫和去角質洗面乳', qty:'×2', note:'マイルドスクラブ洗顔フォーム 200g', where:'無印良品（難波／梅田）'},
-  {g:'montbell', key:'mb-tee',   name:'mont-bell T 恤',  qty:'×1', note:'帳篷營地圖案那件', where:'mont-bell EXPOCITY店（D2）／大丸心齋橋店／天王寺MIO店（D4）'},
-  {g:'montbell', key:'mb-chop',  name:'mont-bell 筷子',  qty:'',   note:'野外筷（野箸）', where:'mont-bell EXPOCITY店（D2）／大丸心齋橋店／天王寺MIO店（D4）'},
-  {g:'supply', key:'amino', name:'aminoVITAL 全馬組合包', qty:'×8 盒', note:'Perfect Energy 5000／2500・GOLD・PRO 組合，買就送 aminoShot ×2；效期 GOLD 2027.01.09、PRO／PE 2026.12.18', where:'MW 商城（IG mwshoptw）— 台灣訂'},
-  {g:'montbell', key:'mb-ltd',   name:'mont-bell 限定 T', qty:'',  note:'大阪／關西限定款，到店再看', where:'mont-bell EXPOCITY店（D2）／大丸心齋橋店／天王寺MIO店（D4）'},
+  {g:'cosme', key:'bb',     name:'BB 霜',   qty:'×1', note:'INTEGRATE Pro Quality BB（紅管）',
+   buy:[SHINSAIBASHI, SHINSAIBASHI3, KIX]},
+  {g:'cosme', key:'powder', name:'粉餅',    qty:'×1', note:'IHADA 薬用フェイスプロテクトパウダー SPF40・PA++++',
+   buy:[SHINSAIBASHI, SHINSAIBASHI3, KIX]},
+  {g:'cosme', key:'patch1', name:'痘痘貼',  qty:'×4 組', note:"Today's Cosme CICA＋ Zero Spot Patch（綠色包裝）",
+   buy:[SHINSAIBASHI, SHINSAIBASHI3]},
+  {g:'cosme', key:'patch2', name:'痘痘貼（備案）', qty:'', note:'KOSE CLEAR TURN ごめんね素肌 キニシナイ 46 枚（黃色包裝）',
+   buy:[SHINSAIBASHI, SHINSAIBASHI3]},
+  {g:'cosme', key:'muji',   name:'無印良品 溫和去角質洗面乳', qty:'×2', note:'マイルドスクラブ洗顔フォーム 200g',
+   buy:[{d:'D2', s:'無印良品 心齋橋 PARCO（本館 B1–1F）', t:'大丸心齋橋店斜對面，逛完寶可夢中心走 3 分'},
+        {d:'D3', s:'無印良品 心齋橋 PARCO', t:'D2 沒買到就慶功晚餐前補'}]},
+  {g:'montbell', key:'mb-tee',  name:'mont-bell T 恤', qty:'×1', note:'帳篷營地圖案那件',
+   buy:[{d:'D2', s:'mont-bell 大丸心齋橋店（南館 6F）', t:'跟寶可夢中心同一棟，16:00–17:00 順便'},
+        {d:'D2', s:'mont-bell EXPOCITY 店', t:'萬博記念公園隔壁，10:00 開門；太陽之塔看完有空再進去'},
+        {d:'D4', s:'mont-bell 天王寺 MIO 店', t:'去和歌山在天王寺轉車，前兩家沒買到再來'}]},
+  {g:'montbell', key:'mb-chop', name:'mont-bell 筷子', qty:'', note:'野外筷（野箸）',
+   buy:[{d:'D2', s:'mont-bell 大丸心齋橋店（南館 6F）', t:'小東西，跟 T 恤一起結'},
+        {d:'D2', s:'mont-bell EXPOCITY 店', t:'備案'}]},
+  {g:'montbell', key:'mb-ltd',  name:'mont-bell 限定 T', qty:'', note:'大阪／關西限定款，到店再看',
+   buy:[{d:'D2', s:'mont-bell 大丸心齋橋店（南館 6F）', t:'限定款各店不一樣，兩家都看'},
+        {d:'D2', s:'mont-bell EXPOCITY 店', t:''}]},
+  {g:'supply', key:'amino', name:'aminoVITAL 全馬組合包', qty:'×8 盒', note:'Perfect Energy 5000／2500・GOLD・PRO 組合，買就送 aminoShot ×2；效期 GOLD 2027.01.09、PRO／PE 2026.12.18',
+   buy:[{d:'', s:'MW 商城（IG mwshoptw）', t:'出發前在台灣訂好，比賽前就要吃熟'},
+        {d:'D2', s:'心齋橋筋 松本清／大國藥妝', t:'日本藥妝店也有 aminoVITAL 單包，臨時缺再補'}]},
 ];
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const buyHTML=b=>b&&b.length?'<ul class="buy">'+b.map(x=>'<li><span class="dc '+(x.d?x.d.toLowerCase():'')+'">'+(x.d||'台灣')+'</span><span><b>'+esc(x.s)+'</b>'+(x.t?'<small>'+esc(x.t)+'</small>':'')+'</span></li>').join('')+'</ul>':'';
 for(const g of ['cosme','montbell','supply']){
   document.getElementById(g).innerHTML=ITEMS.filter(i=>i.g===g).map(i=>
     '<div class="card item '+g+'"><div class="ph">'+
       '<img src="img/shop/'+i.key+'.jpg?v=2" alt="" onerror="this.remove()">'+
-      '<div class="none">尚無照片<br><small>img/shop/'+i.key+'.jpg?v=2</small></div>'+
+      '<div class="none">尚無照片<br><small>img/shop/'+i.key+'.jpg</small></div>'+
       (i.qty?'<span class="qty">'+esc(i.qty)+'</span>':'')+
     '</div><div class="body"><div class="name">'+esc(i.name)+'</div>'+
-      (i.note?'<div class="note">'+esc(i.note)+'</div>':'')+
-      (i.where?'<div class="where">📍 '+esc(i.where)+'</div>':'')+
+      (i.note?'<div class="note">'+esc(i.note)+'</div>':'')+buyHTML(i.buy)+
     '</div></div>').join('');
 }
 // 圖載成功就把「尚無照片」蓋掉
