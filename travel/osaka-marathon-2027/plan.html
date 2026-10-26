@@ -117,7 +117,7 @@ window.bindCarousels&&window.bindCarousels(document);
   const COL={1:'#e8457c',2:'#5aa86e',3:'#8a5fd8',4:'#2f7fc6'};
   // 每天的點：有 ll 的節點，名稱只留地點（去掉「晚餐：」「起點（…）」這類前綴）
   const place=n=>n.replace(/^(晚餐|午餐|早餐|慶功晚餐)：/,'').replace(/（[^）]*）/g,'').replace(/・.*$/,'').replace(/s*→.*$/,'').replace(/ Check-in$/,'').trim();
-  const days=DAYS.map(v=>{const pts=[];v.chain.forEach(it=>{if(Array.isArray(it)&&it[2]&&it[2].ll){const nm=place(it[1]);if(!pts.length||pts[pts.length-1].name!==nm)pts.push({name:nm,ll:it[2].ll});}});
+  const days=DAYS.map(v=>{const pts=[];v.chain.forEach(it=>{if(Array.isArray(it)&&it[2]&&it[2].ll){const nm=it[2].pl||place(it[1]);if(!pts.length||pts[pts.length-1].name!==nm)pts.push({name:nm,ll:it[2].ll});}});
     let dist=0;for(let i=1;i<pts.length;i++)dist+=km(pts[i-1].ll,pts[i].ll);return{d:v.d,date:v.date,c:v.c,pts,dist};});
   const map=L.map('ovmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
