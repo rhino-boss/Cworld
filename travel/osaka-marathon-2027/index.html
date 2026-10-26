@@ -257,39 +257,26 @@ summary::before{color:var(--pink)}
 details.sub{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
 details.sub>summary{color:var(--brown)}
 .secbody{padding:2px 12px 12px}
-.day{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:0;grid-template-columns:76px 1fr 128px;gap:0;overflow:hidden;box-shadow:0 2px 10px rgba(90,58,26,.08);align-items:stretch}
-.day .tag{align-items:center;justify-content:center;gap:6px;padding:14px 0;background:var(--c-sky)}
-.days .day:nth-child(1) .tag{background:var(--c-pink)}
-.days .day:nth-child(2) .tag{background:var(--c-mint)}
-.days .day:nth-child(3) .tag{background:var(--c-lav)}
-.days .day:nth-child(4) .tag{background:var(--c-sky)}
-.day .dnum{width:44px;height:44px;border-radius:50%;color:#fff;font-size:15px;justify-content:center;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.day{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:12px 14px 12px 18px;grid-template-columns:72px 1fr 112px;gap:0 14px;align-items:center;box-shadow:0 2px 10px rgba(90,58,26,.08);position:relative;overflow:hidden}
+.day::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--dk,var(--d1))}
+.days .day:nth-child(1){--dk:var(--d1)}
+.days .day:nth-child(2){--dk:var(--d2)}
+.days .day:nth-child(3){--dk:var(--d3)}
+.days .day:nth-child(4){--dk:var(--d4)}
+.day .tag{align-items:center;gap:6px}
+.day .dnum{width:44px;height:44px;border-radius:50%;color:#fff;font-size:15px;justify-content:center;box-shadow:0 3px 0 rgba(0,0,0,.08);background:var(--dk)}
 .day .dnum i{display:none}
-.days .day:nth-child(1) .dnum{background:var(--d1)}
-.days .day:nth-child(2) .dnum{background:var(--d2)}
-.days .day:nth-child(3) .dnum{background:var(--d3)}
-.days .day:nth-child(4) .dnum{background:var(--d4)}
-.day .date{background:#fff;color:var(--brown);font-weight:700;border-radius:999px;padding:1px 9px;font-size:11.5px}
-.day .body{padding:12px 14px 12px 16px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px}
-.day .stops{display:flex;flex-wrap:wrap;align-items:center;gap:6px 0;font-size:14px;font-weight:700;color:var(--ink)}
-.day .stop{padding:3px 10px;border-radius:999px;background:#f6f1e8;color:var(--muted);font-weight:700;white-space:nowrap}
-.day .stop.key{background:var(--dc,var(--c-sky));color:var(--brown)}
-.days .day:nth-child(1){--dc:var(--c-pink);--dk:var(--d1)}
-.days .day:nth-child(2){--dc:var(--c-mint);--dk:var(--d2)}
-.days .day:nth-child(3){--dc:var(--c-lav);--dk:var(--d3)}
-.days .day:nth-child(4){--dc:var(--c-sky);--dk:var(--d4)}
-.day .arrow{width:18px;text-align:center;color:#cbbfae;font-size:12px;flex:none}
-.day .stop.flag{background:transparent;padding:3px 2px}
-.day .meta{margin:0;display:flex;flex-wrap:wrap;gap:6px;font-size:12.5px;line-height:1.5}
-.day .meta .mi{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;margin:0;padding:3px 10px 3px 8px;border-radius:999px;background:#fbf8f2;border:1px solid rgba(90,58,26,.14);color:var(--muted)}
-.day .meta .mi b{color:var(--dk,var(--pink));font-weight:700;margin:0}
-.day .meta .mi b::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--dk,var(--pink));margin-right:5px;vertical-align:1px}
-.day .cover{position:relative;background:#e8ede4;overflow:hidden}
-.day .cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
-.day.clickable:hover .cover img{transform:scale(1.05)}
-.day .cover::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 0,rgba(255,255,255,0) 28%)}
+.day .date{background:var(--c-sky);color:var(--blue);font-weight:700;border-radius:999px;padding:1px 9px;font-size:11.5px}
+.day .body{min-width:0}
+.day .routeline{font-size:15px;color:var(--ink);font-weight:700;line-height:1.5}
+.day .routeline b{color:var(--brown)}
+.day .meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
+.day .meta b{color:var(--pink);font-weight:700;margin-right:2px}
+.day .meta .mi{display:inline-block;white-space:nowrap;margin-right:10px}
+.day .cover{width:112px;height:80px;border-radius:12px;overflow:hidden;background:#e8ede4}
+.day .cover img{width:100%;height:100%;object-fit:cover;display:block}
 .day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
-@media (max-width:640px){.day{grid-template-columns:64px 1fr}.day .cover{display:none}.day .body{padding:10px 12px}}
+@media (max-width:640px){.day{grid-template-columns:64px 1fr;padding:10px 12px 10px 16px}.day .cover{display:none}}
 .chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
 .chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
 .chain .ctime::before{content:'🕒';font-size:11px;margin-right:4px}
@@ -538,7 +525,7 @@ function stopsHTML(route){
 daysBox.innerHTML=DAYS.map(v=>`
   <div class="day clickable">
     <div class="tag"><div class="dnum"><i style="background:var(--d${v.c})"></i>${v.d}</div><div class="date">${v.date}</div></div>
-    <div class="body"><div class="stops">${stopsHTML(v.route)}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join('')}</div>`:''}</div>
+    <div class="body"><div class="routeline">${v.route}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join(' ')}</div>`:''}</div>
     <div class="cover">${COVER[v.d]?`<img src="${COVER[v.d]}" alt="" loading="lazy">`:''}</div>
   </div>`).join('');
 
