@@ -6,7 +6,7 @@
 <title>完整行程 · 大阪馬拉松 2027</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="sub.css?v=4">
+<link rel="stylesheet" href="sub.css?v=5">
 <style>
 html{scroll-behavior:smooth}
 
@@ -17,12 +17,12 @@ html{scroll-behavior:smooth}
 .ov .tg{display:inline-flex;border:2px solid var(--b-sky);border-radius:999px;overflow:hidden;background:#fff}
 .ov .tg button{border:0;background:#fff;font:inherit;font-weight:700;font-size:12.5px;padding:5px 12px;cursor:pointer;color:var(--blue)}
 .ov .tg button.on{background:var(--blue);color:#fff}
-#ovmap{height:360px;border-radius:14px;border:2px solid #fff;background:#e8ede4;z-index:0;box-shadow:0 2px 10px rgba(90,58,26,.12)}
+#ovmap{height:360px;border-radius:14px;border:none;background:#e8ede4;z-index:0;box-shadow:0 2px 10px rgba(90,58,26,.12)}
 .ov .days{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding:3px 3px 6px;scrollbar-width:none}
 .ov .days::-webkit-scrollbar{display:none}
 .ov .dc{flex:none;width:200px;height:84px;display:flex;flex-direction:column;justify-content:center;background:#fff;border:2px solid #fff;border-radius:14px;padding:8px 12px;cursor:pointer;box-shadow:0 2px 8px rgba(90,58,26,.08);transition:box-shadow .15s,border-color .15s}
 .ov .dc:hover{box-shadow:0 0 0 2px var(--b-sky),0 2px 8px rgba(90,58,26,.08)}
-.ov .dc.on{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue) inset,0 2px 8px rgba(90,58,26,.08)}
+.ov .dc.on{border-color:var(--blue);box-shadow:0 2px 8px rgba(90,58,26,.08)}
 .ov .dc .h{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px}
 .ov .dc .h i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .ov .dc .h small{color:var(--muted);font-weight:700;font-size:11px}
@@ -46,7 +46,7 @@ html{scroll-behavior:smooth}
 .chain .ctime::before{content:'🕒';font-size:11px;margin-right:4px}
 .chain .cname{font-size:13.5px;color:var(--brown)}
 .chain .cicons{margin-left:auto;flex:none;display:inline-flex;gap:6px}
-.chain .cphoto{margin:6px 0 2px 14px;border-radius:12px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 10px rgba(90,58,26,.12)}
+.chain .cphoto{margin:6px 0 2px 14px;border-radius:12px;overflow:hidden;border:none;box-shadow:0 2px 10px rgba(90,58,26,.12)}
 .chain .cleg{display:flex;gap:10px;padding:5px 0 5px 14px}
 .chain .cbar{flex:none;width:3px;background:var(--b-sky);border-radius:3px;margin:-6px 0}
 .chain .ctext{font-size:12.5px;color:var(--muted);font-weight:700;line-height:1.6}
