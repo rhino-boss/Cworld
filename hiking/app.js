@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════
-// 爬山2 · 完百計畫 — 單頁 App（hash 路由）
+// 爬山 · 完百計畫 — 單頁網頁（hash 路由）
 //   #trips  #trip/ID  #routes[/small|/mine]  #route/CODE
-//   #map/big  #map/small[/名稱]  #builder  #done  #coef
+//   #map/big  #map/small[/名稱]  #builder  #done  #coef  #gear
 // ═══════════════════════════════════════════════
 
 // ── 儲存 ──
@@ -19,8 +19,8 @@ const st = {
 };
 const save = k => LS.set(k, st[k]);
 
-// ── 完登紀錄：跟原本「爬山」頁共用同一份資料 ──
-//   百岳：hikeRecords（原本爬山頁的登山紀錄，sync.js 會同步到雲端）
+// ── 完登紀錄 ──
+//   百岳：hikeRecords（登山紀錄，sync.js 會同步到雲端 records.json）
 //   小百岳：peaksSmallDone（原本小百岳地圖的勾選清單）
 const readJson = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch { return d; } };
 const hikeRecords = () => readJson('hikeRecords', []);
@@ -35,7 +35,7 @@ function markDone(names) {
   const records = hikeRecords(), today = new Date().toISOString().slice(0, 10);
   add.forEach((n, i) => records.unshift({
     id: Date.now() + i, name: n, date: today, category: '百岳', peaks: [n],
-    days: '', location: '', weight: '', distance: '', gain: '', note: '由爬山2 標記完登', photos: [], emoji: '🏔',
+    days: '', location: '', weight: '', distance: '', gain: '', note: '由完百計畫標記完登', photos: [], emoji: '🏔',
   }));
   localStorage.setItem('hikeRecords', JSON.stringify(records));
   warnNoToken();
@@ -52,18 +52,18 @@ function unmarkDone(name) {
 請到原本「爬山 → 紀錄列表」編輯。`);
     return false;
   }
-  if (!confirm(`取消「${name}」的完登？會刪除 ${hits.length} 筆登山紀錄（原本爬山頁也會同步刪除）。`)) return false;
+  if (!confirm(`取消「${name}」的完登？會刪除 ${hits.length} 筆登山紀錄（雲端紀錄也會同步刪除）。`)) return false;
   localStorage.setItem('hikeRecords', JSON.stringify(records.filter(r => !hits.includes(r))));
   warnNoToken();
   return true;
 }
 // sync.js 每次開頁都會用雲端 records.json 蓋掉本機，沒有 Token 的修改在換頁後會消失
 function warnNoToken() {
-  if (window.HikeSync && !HikeSync.hasToken()) setTimeout(() => toast('⚠ 未設定雲端 Token，這筆完登換頁後會被雲端資料蓋掉，請先到「爬山」頁按「☁ 同步設定」貼上 Token'), 50);
+  if (window.HikeSync && !HikeSync.hasToken()) setTimeout(() => toast('⚠ 未設定雲端 Token，這筆完登換頁後會被雲端資料蓋掉，請按頁尾「雲端同步設定」貼上 Token'), 50);
 }
 const toggleDone = n => st.done.includes(n) ? unmarkDone(n) : markDone([n]).length > 0;
 
-// 舊版爬山2 存在 h2.done / h2.doneSmall 的資料，併入共用紀錄後移除
+// 舊版存在 h2.done / h2.doneSmall 的資料，併入共用紀錄後移除
 // 要等 sync.js 把雲端紀錄讀回來之後再併，否則會被雲端資料蓋掉
 function migrate() {
   const oldBig = LS.get('done', null), oldSmall = LS.get('doneSmall', null);
@@ -114,6 +114,7 @@ function showHelp() {
   ・<b>行程</b>：用你的上河係數、休息比例、每日掉速，自動算出每個點的抵達時間，超過天黑會變紅。<br>
   ・<b>上河係數</b>：實際行進時間 ÷ 上河步程。1.0 = 跟上河地圖一樣快，0.8 = 快兩成。<br>
   ・<b>完百</b>：勾選完登的山，用照片 GPS 自動補登。<br>
+  ・<b>裝備</b>：裝備清單，點一下切換已擁有，會算總重量。<br>
   ・<b>我的係數</b>：用過去的紀錄算出自己的係數，套用到新行程。<br><br>
   資料都存在這台裝置的瀏覽器裡。路線步程為示範資料，出發前請再查證。</p>`);
 }
@@ -173,13 +174,13 @@ let mapObj = null;
 function render() {
   const h = location.hash.slice(1) || 'trips';
   const [a, b, c] = h.split('/').map(decodeURIComponent);
-  const tab = { trips: 'trips', trip: 'trips', routes: 'routes', route: 'routes', map: 'routes', builder: 'routes', done: 'done', coef: 'coef' }[a] || 'trips';
+  const tab = { trips: 'trips', trip: 'trips', routes: 'routes', route: 'routes', map: 'routes', builder: 'routes', gear: 'gear', done: 'done', coef: 'coef' }[a] || 'trips';
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
   if (mapObj) { mapObj.remove(); mapObj = null; }
   ({
     trips: renderTrips, trip: () => renderTrip(b), routes: () => renderRoutes(b || 'big'),
     route: () => renderRoute(b), map: () => renderMap(b, c), builder: renderBuilder,
-    done: renderDone, coef: renderCoef,
+    gear: renderGear, done: renderDone, coef: renderCoef,
   }[a] || renderTrips)();
   window.scrollTo(0, 0);
 }
@@ -607,7 +608,7 @@ function gpxToRoute(text, fallback) {
   return { code: nextCode(), name: name || fallback || '匯入路線', desc: 'GPX 匯入（步程為估算）', tags: [], peaks, days };
 }
 
-// ── 地圖（樣式沿用「爬山」頁：OSM 底圖＋▲山名標籤，依縮放顯示）──
+// ── 地圖（OSM 底圖＋▲山名標籤，依縮放顯示）──
 function renderMap(kind, focus) {
   const big = kind !== 'small';
   const data = big ? PEAKS.map(p => ({ name: p.name, alt: p.alt, lat: p.lat, lng: p.lng, sub: `第 ${p.rank} 名`, sort: p.rank }))
@@ -618,7 +619,7 @@ function renderMap(kind, focus) {
   view().innerHTML = `
     <a class="crumb" href="${big ? '#routes' : '#routes/small'}">‹ 路線</a>
     <div class="page-head"><div><h1 class="page">${big ? '高山百岳總覽' : '台灣小百岳總覽'}</h1>
-      <p>點山頭可以標記完登；${big ? '放大地圖會顯示更多山頭。' : '勾選會同步到「爬山」頁的小百岳地圖。'}</p></div>
+      <p>點山頭可以標記完登；${big ? '放大地圖會顯示更多山頭。' : '勾選的山會記在這台裝置。'}</p></div>
       <div class="kpis" style="margin:0"><div><small>已完登</small><b id="k-done">${doneList().length} / ${data.length}</b></div>
         <div><small>有內建路線</small><b>${inRoutes} 座</b></div></div></div>
     <div class="layout map-layout">
@@ -694,7 +695,7 @@ function renderMap(kind, focus) {
 function renderDone() {
   const n = st.done.length;
   view().innerHTML = `<div class="page-head"><div><div class="hicon">🏅</div><h1 class="page">我的完百計畫</h1>
-      <p>完登紀錄跟「爬山」頁共用：那邊新增的紀錄會出現在這裡，這裡登頂或補登的山也會同步過去。</p></div></div>
+      <p>完登紀錄會同步到雲端；在這裡登頂、補登或從地圖勾選的山都會記在一起。</p></div></div>
     <div class="layout"><aside class="side"><div class="card pad">
       <div class="small muted">已完登</div>
       <div class="big-num">${n} <small>/ 100 座</small></div>
@@ -805,6 +806,75 @@ async function summitCamera(file) {
   render();
 }
 
+// ── 裝備（沿用原本裝備清單的資料：localStorage gearList）──
+const GEAR_CATS = ['服裝與保暖', '背包與收納', '安全與導航', '飲食與炊具', '睡眠', '急救', '其他'];
+const DEFAULT_GEAR = [
+  ['排汗衫', '服裝與保暖', 200], ['刷毛中層', '服裝與保暖', 350], ['羽絨外套', '服裝與保暖', 400], ['防水硬殼外套', '服裝與保暖', 600],
+  ['防水褲', '服裝與保暖', 350], ['保暖帽', '服裝與保暖', 80], ['手套', '服裝與保暖', 120], ['登山襪 ×3', '服裝與保暖', 200],
+  ['登山背包 50L', '背包與收納', 1500], ['背包雨套', '背包與收納', 180], ['防水袋', '背包與收納', 80], ['登山杖（一對）', '背包與收納', 500],
+  ['頭燈', '安全與導航', 150], ['備用電池', '安全與導航', 80], ['哨子', '安全與導航', 20], ['地圖 / 離線地圖', '安全與導航', 0],
+  ['指南針', '安全與導航', 30], ['行動電源', '安全與導航', 220],
+  ['爐頭', '飲食與炊具', 100], ['瓦斯罐', '飲食與炊具', 380], ['鍋具組', '飲食與炊具', 300], ['餐具', '飲食與炊具', 80],
+  ['水壺 1L', '飲食與炊具', 180], ['濾水器', '飲食與炊具', 100],
+  ['睡袋（－5°C）', '睡眠', 900], ['睡墊', '睡眠', 500], ['帳篷', '睡眠', 1800],
+  ['急救包', '急救', 200], ['止痛藥', '急救', 50], ['高山反應藥', '急救', 30],
+].map(([name, cat, weight], i) => ({ id: i + 1, name, cat, weight, owned: false, note: '' }));
+const gearLoad = () => readJson('gearList', null) || DEFAULT_GEAR.map(g => ({ ...g }));
+const gearSave = list => { try { localStorage.setItem('gearList', JSON.stringify(list)); } catch {} };
+
+function renderGear() {
+  const list = gearLoad();
+  const owned = list.filter(g => g.owned);
+  const weight = owned.reduce((a, g) => a + (+g.weight || 0), 0);
+  const cats = [...new Set([...GEAR_CATS, ...list.map(g => g.cat)])].filter(c => list.some(g => g.cat === c));
+  view().innerHTML = `<div class="page-head"><div><div class="hicon">🎒</div><h1 class="page">裝備</h1>
+      <p>點一下切換「已擁有」，總重量只算已擁有的裝備。</p></div>
+      <button class="btn dark" id="g-add">＋ 新增裝備</button></div>
+    <div class="gear-sum">
+      <div class="card"><b>${list.length}</b><small>件裝備</small></div>
+      <div class="card"><b>${owned.length}</b><small>已擁有</small></div>
+      <div class="card"><b>${weight.toLocaleString()}</b><small>總重量 (g)</small></div>
+      <div class="card"><b>${list.length - owned.length}</b><small>待購入</small></div>
+    </div>
+    <div class="gear-grid">${cats.map((c, ci) => {
+      const items = list.filter(g => g.cat === c);
+      return `<div class="card sec" style="--accent:${['#d4a8a8', '#a8b8d4', '#a8d4b8', '#d4cba8', '#c9b6d9', '#f0a8a8', '#a8c4d8'][ci % 7]}">
+        <div class="sec-title row">🎒 ${esc(c)}<span class="xs muted" style="margin-left:auto;font-weight:400">${items.filter(g => g.owned).length}/${items.length}</span></div>
+        <div class="gear-items">${items.map(g => `<div class="gear-item ${g.owned ? 'owned' : ''}" data-id="${g.id}">
+          <span class="gear-check">${g.owned ? '✓' : ''}</span>
+          <span class="grow">${esc(g.name)}${g.note ? ` <span class="xs muted">(${esc(g.note)})</span>` : ''}</span>
+          ${g.weight ? `<span class="gear-w">${g.weight}g</span>` : ''}
+          <button class="gear-del" data-del="${g.id}" title="刪除">✕</button></div>`).join('')}
+          <button class="gear-add" data-cat="${esc(c)}">＋ 新增裝備至此分類</button></div></div>`;
+    }).join('')}</div>`;
+  const save = l => { gearSave(l); renderGear(); };
+  view().querySelectorAll('.gear-item').forEach(el => el.onclick = () => {
+    const l = gearLoad(), g = l.find(x => x.id == el.dataset.id); if (g) { g.owned = !g.owned; save(l); }
+  });
+  view().querySelectorAll('[data-del]').forEach(b => b.onclick = e => {
+    e.stopPropagation(); if (!confirm('確定刪除此裝備？')) return;
+    save(gearLoad().filter(x => x.id != b.dataset.del));
+  });
+  const add = cat => {
+    const m = modal(`<b>＋ 新增裝備</b>
+      <div class="field" style="margin-top:12px"><label>裝備名稱</label><input id="gn" placeholder="例：防水外套"></div>
+      <div class="field"><label>分類</label><select id="gc">${GEAR_CATS.map(c => `<option ${c === cat ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      <div class="field"><label>重量 (g)</label><input id="gw" type="number" min="0" placeholder="350"></div>
+      <div class="field"><label>已擁有</label><select id="go"><option value="1">是</option><option value="0">否</option></select></div>
+      <div class="field"><label>備註</label><input id="gnote" placeholder="品牌、型號、購買連結…"></div>
+      <button class="btn dark block" id="gsave">新增</button>`);
+    m.querySelector('#gsave').onclick = () => {
+      const name = m.querySelector('#gn').value.trim(); if (!name) { toast('請輸入裝備名稱'); return; }
+      const l = gearLoad();
+      l.push({ id: Math.max(0, ...l.map(g => g.id)) + 1, name, cat: m.querySelector('#gc').value,
+        weight: parseInt(m.querySelector('#gw').value) || 0, owned: m.querySelector('#go').value === '1', note: m.querySelector('#gnote').value.trim() });
+      m.remove(); save(l);
+    };
+  };
+  $('#g-add').onclick = () => add(GEAR_CATS[0]);
+  view().querySelectorAll('[data-cat]').forEach(b => b.onclick = () => add(b.dataset.cat));
+}
+
 // ── 我的係數 ──
 function recCoef(r) {
   const sh = r.days.reduce((a, d) => a + d.sh, 0), act = r.days.reduce((a, d) => a + d.actual * 60, 0), rest = r.days.reduce((a, d) => a + (d.rest || 0), 0);
@@ -892,6 +962,6 @@ function renderCoef() {
 }
 
 render();
-const refresh = () => { if (!document.querySelector('.dark-sheet, .modal') && !/^#(trip|builder|coef)/.test(location.hash)) render(); };
+const refresh = () => { if (!document.querySelector('.dark-sheet, .modal') && !/^#(trip|builder|coef|gear)/.test(location.hash)) render(); };
 if (window.HikeSync) HikeSync.onReady(() => { migrate(); refresh(); }); else migrate();
 window.addEventListener('storage', e => { if (e.key === 'hikeRecords' || e.key === 'peaksSmallDone') refresh(); });
