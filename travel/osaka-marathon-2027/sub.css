@@ -64,3 +64,15 @@ h1{color:var(--brown);font-size:1.7rem;font-weight:700;margin:10px 0 4px;letter-
 footer{margin-top:20px;font-size:12px;color:var(--muted);border-top:2px dashed var(--b-sky);padding-top:10px}
 footer a{color:var(--blue)}
 @media (max-width:640px){.cnav{padding:0 14px}.wrap{padding:18px 12px 50px}.sec{padding:10px 10px 8px}.cphoto img{height:220px}}
+
+/* 標籤列：總覽／行程／馬拉松篇／旅行篇（下拉） */
+.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:6px;padding:8px 12px;overflow:visible;background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
+.tabbar a{flex:none;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:4px 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
+.tabbar a:hover{background:#fff}
+.tabbar a.on,.tabbar .dd.on>.ddt{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
+.tabbar .dd{position:relative;flex:none}
+.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px}
+.tabbar .ddm{display:none;position:absolute;left:0;top:calc(100% + 6px);min-width:120px;background:#fff;border:2px solid var(--b-sky);border-radius:12px;padding:6px;box-shadow:0 8px 20px rgba(47,127,198,.18);flex-direction:column;gap:2px}
+.tabbar .dd.open .ddm{display:flex}
+.tabbar .ddm a{border-radius:8px;padding:7px 12px}
+.tabbar .ddm a:hover{background:var(--c-sky)}

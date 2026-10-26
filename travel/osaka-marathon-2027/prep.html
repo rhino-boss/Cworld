@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>準備 · 大阪馬拉松 2027</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="sub.css">
+<style>
+:root{--stayicon:#d97316;--cardline:#efe6d6;--staybg:rgba(230,140,40,.20);--stayborder:rgba(200,110,20,.45)}
+details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);margin:0 0 16px;box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
+#sec-pack{background:var(--c-pink);border-color:var(--b-pink)}
+details.sec>summary{color:var(--brown);font-size:1.15rem;font-weight:700;padding:14px 20px 10px;cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▸';display:inline-block;margin-right:8px;color:var(--pink);transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details.sub{margin:0 0 12px;border:2px solid rgba(255,255,255,.9);border-radius:16px;background:#fff;box-shadow:0 2px 8px rgba(90,58,26,.06)}
+details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:pointer;color:var(--brown);list-style:none}
+.secbody{padding:2px 12px 12px}
+.subbody{padding:2px 12px 12px}
+.hint{font-size:12px;color:var(--faint);margin:8px 0 0}
+.ck{list-style:none;margin:4px 0;padding:0;font-size:13.5px}
+.ck li{margin:4px 0;line-height:1.7;display:flex;gap:8px;align-items:center}
+.ck input[type=checkbox]{margin-top:0;flex:none;accent-color:#2f9e44}
+.ck .note{color:var(--stayicon);font-weight:700;font-style:normal}
+.ck .txt{flex:1;cursor:text;border-radius:4px;padding:0 2px}
+.ck .txt.done{color:var(--muted);text-decoration:line-through}
+.ck .txt[contenteditable="true"]{outline:2px solid #a8d4b8;background:#fff}
+.ck .del{border:none;background:none;color:#c9c9c2;cursor:pointer;font-size:12px;padding:2px 4px;flex:none}
+.ck .del:hover{color:#c0392b}
+.ck .addrow{margin-top:8px}
+.ck .addin{flex:1;border:1px dashed var(--cardline);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;background:var(--paper)}
+.ck .addbtn{border:none;background:#2f9e44;color:#fff;border-radius:8px;padding:2px 12px;font-size:15px;cursor:pointer;flex:none}
+.ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center}
+.ck .catsel:hover{filter:brightness(.95)}
+.ck .catsel.c-must{background:#fde8e6;border-color:#e5a9a2;color:#8f2c20}
+.ck .catsel.c-cloth{background:#e6effb;border-color:#a9c2e5;color:#204a8f}
+.ck .catsel.c-run{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
+.ck .catsel.c-other{background:#f0efe9;border-color:#cfcdc2;color:#5f5c50}
+.packcols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.packshared{margin-top:10px}
+.packcol>summary,.packshared>summary{font-size:14px;font-weight:700;padding:8px 12px}
+.packcol,.packshared{margin-bottom:0}
+.packcol .subbody,.packshared .subbody{padding:0 12px 8px}
+.packcol .ck,.packshared .ck{margin:0;overflow-x:auto;overflow-y:hidden}
+.packcol .ck li,.packshared .ck li{margin:2px 0;width:max-content;min-width:100%;flex-wrap:nowrap}
+.packcol .ck .txt,.packshared .ck .txt{white-space:nowrap}
+.packcol .ck::-webkit-scrollbar,.packshared .ck::-webkit-scrollbar{height:6px}
+.packcol .ck::-webkit-scrollbar-thumb,.packshared .ck::-webkit-scrollbar-thumb{background:#dcdcd6;border-radius:99px}
+.ed{border-radius:4px;padding:0 2px}
+body:not(.viewmode) .ed,body:not(.viewmode) .cleg .ctext{cursor:text}
+body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:#f2f1ea;outline:1px dashed var(--cardline)}
+.ck .catsel{border-width:2px;font-weight:700}
+.ck .catsel.c-must{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
+.ck .catsel.c-cloth{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
+.ck .catsel.c-run{background:var(--c-mint);border-color:var(--b-mint);color:#2f7a4c}
+.ck .catsel.c-other{background:var(--c-yel);border-color:var(--b-yel);color:var(--brown)}
+.ck input[type=checkbox]{accent-color:var(--pink);width:16px;height:16px}
+.ck .addbtn{background:var(--pink);border-radius:999px}
+.ck .addin{border:2px dashed var(--b-sky);border-radius:999px;background:#fff}
+.ck .txt[contenteditable="true"]{outline:2px solid var(--b-sky)}
+.ed{border-radius:999px}
+body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:var(--c-yel);outline:1px dashed var(--b-yel)}
+@media (max-width:720px){ .packcols{grid-template-columns:1fr} }
+
+/* 標籤列：總覽／行程／馬拉松篇／旅行篇（下拉） */
+.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:6px;padding:8px 12px;overflow:visible;background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
+.tabbar a{flex:none;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:4px 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
+.tabbar a:hover{background:#fff}
+.tabbar a.on,.tabbar .dd.on>.ddt{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
+.tabbar .dd{position:relative;flex:none}
+.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px}
+.tabbar .ddm{display:none;position:absolute;left:0;top:calc(100% + 6px);min-width:120px;background:#fff;border:2px solid var(--b-sky);border-radius:12px;padding:6px;box-shadow:0 8px 20px rgba(47,127,198,.18);flex-direction:column;gap:2px}
+.tabbar .dd.open .ddm{display:flex}
+.tabbar .ddm a{border-radius:8px;padding:7px 12px}
+.tabbar .ddm a:hover{background:var(--c-sky)}
+
+</style>
+</head>
+<body>
+<nav class="cnav">
+  <a href="../../index.html">Cworld</a><span class="sep">/</span>
+  <a href="../index.html">旅遊</a><span class="sep">/</span>
+  <a href="./">大阪馬拉松</a><span class="sep">/</span>
+  <span class="current">準備</span>
+</nav>
+<div class="tabbar" id="tabbar">
+  <a href="./">總覽</a>
+  <a href="plan.html">行程</a>
+  <a href="race.html">馬拉松篇</a>
+  <a href="prep.html" class="on">準備</a>
+  <span class="dd"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
+    <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
+  </span>
+</div>
+<div class="wrap">
+  <div class="hicon">🎒</div>
+  <h1>準備</h1>
+<details class="sec" id="sec-pack" open>
+<summary>攜帶物品</summary>
+<div class="secbody">
+<div id="packlist"></div>
+<p class="hint">每個項目前面的標籤可以切換分類；選「＋ 新增分類」可自訂。</p>
+</div>
+</details>
+
+<details class="sec" id="sec-todo" open>
+<summary>待確認項目</summary>
+<div class="secbody"><ul class="ck" id="todolist"></ul></div>
+</details>
+</div>
+<script>
+(function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
+  t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
+</script>
+<script>
+(function(){
+const PREFIX='osaka27.';
+/* ── 可編輯清單 ── */
+const esc2=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function editList(el, key, seed){
+  const K=PREFIX+'items.'+key;
+  let items;
+  try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
+  if(!Array.isArray(items)) items=seed.map(it=>({t:it.t, n:it.n||'', done:!!it.done}));
+  function render(){
+    localStorage.setItem(K, JSON.stringify(items));
+    el.innerHTML = items.map((it,i)=>`
+      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
+      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span>
+      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
+      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
+    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
+    el.querySelectorAll('.txt').forEach(sp=>{
+      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.textContent=items[+sp.dataset.i].t; sp.contentEditable='true'; sp.focus(); });
+      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
+      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
+    });
+    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
+    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,n:'',done:false}); render(); };
+    ab.addEventListener('click',add);
+    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
+  }
+  render();
+}
+
+/* ── 攜帶物品：單一清單；分類標籤可切換 ── */
+const PACK_CATS_HEAD = [['must','必帶'],['cloth','服裝'],['run','比賽']];
+const PACK_CATS_TAIL = [['other','其他']];
+const CAT_PALETTE = [
+  ['#f0e9f7','#c3aad9','#5b3a80'],['#e2f2f2','#9fcccc','#1f6060'],
+  ['#fdf1dd','#e0c48a','#86611a'],['#fbe9f0','#e2a8bf','#8f2c56'],
+  ['#e9edf2','#b4c0cd','#3d4d5e']
+];
+const CATS_KEY=PREFIX+'packcats';
+let CUSTOM_CATS=(()=>{ try{ const v=JSON.parse(localStorage.getItem(CATS_KEY)); return Array.isArray(v)?v:[]; }catch(e){ return []; } })();
+const PACK_CATS=()=>PACK_CATS_HEAD.concat(CUSTOM_CATS,PACK_CATS_TAIL);
+function saveCats(){ localStorage.setItem(CATS_KEY,JSON.stringify(CUSTOM_CATS)); }
+function syncCatStyles(){
+  let st=document.getElementById('catstyles');
+  if(!st){ st=document.createElement('style'); st.id='catstyles'; document.head.appendChild(st); }
+  st.textContent=CUSTOM_CATS.map((c,i)=>{ const p=CAT_PALETTE[i%CAT_PALETTE.length];
+    return `.ck .catsel.c-${c[0]}{background:${p[0]};border-color:${p[1]};color:${p[2]}}`; }).join('');
+}
+const PACK_LISTS = [
+ // 沈的清單（2026/10 版）
+ {key:'all', name:'攜帶物品清單', wide:1, items:[
+   ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信'],
+   ['cloth','羽絨（阿羲）'],['cloth','風雨衣（皮卡丘）'],['cloth','保暖：手套、毛帽'],['cloth','鴨舌帽'],
+   ['cloth','衣：立山、劍岳'],['cloth','褲：on、迪卡農繭型褲'],['cloth','襪：M、D'],['cloth','Y拖'],
+   ['run','補給：能量膠 ×4、鹽錠'],
+   ['other','行動電源'],['other','轉接頭'],['other','盥洗：刮鬍刀、牙刷、牙膏'],
+ ]},
+];
+const packBox=document.getElementById('packlist');
+packBox.innerHTML =
+  PACK_LISTS.filter(l=>l.wide).map(l=>
+    `<details class="sub packshared" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')
+  + `<div class="packcols">${PACK_LISTS.filter(l=>!l.wide).map(l=>
+      `<details class="sub packcol" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')}</div>`;
+const packRenders=[];
+function renderAllPacks(){ packRenders.forEach(f=>f()); }
+function gcCats(){
+  const used=new Set();
+  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack3-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
+  const before=CUSTOM_CATS.length;
+  CUSTOM_CATS=CUSTOM_CATS.filter(c=>used.has(c[0]));
+  if(CUSTOM_CATS.length!==before){ saveCats(); syncCatStyles(); return true; }
+  return false;
+}
+function packList(el, key, seed){
+  const K=PREFIX+'items.'+key;
+  let items;
+  try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
+  if(!Array.isArray(items)) items=seed.map(([c,t])=>({t,c,done:false}));
+  const order=c=>{ const i=PACK_CATS().findIndex(x=>x[0]===c); return i<0?PACK_CATS().length:i; };
+  function render(){
+    const cats=PACK_CATS(), ids=cats.map(c=>c[0]);
+    items.forEach(it=>{ if(!ids.includes(it.c)) it.c='other'; });
+    items.sort((a,b)=>order(a.c)-order(b.c));
+    localStorage.setItem(K, JSON.stringify(items));
+    el.innerHTML = items.map((it,i)=>`
+      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
+      <select class="catsel c-${it.c}" data-i="${i}">${cats.map(([c,l])=>`<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}<option value="__new">＋ 新增分類…</option></select>
+      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}</span>
+      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
+      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
+    el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{
+      if(se.value==='__new'){
+        const name=(prompt('新分類名稱：')||'').trim();
+        if(!name){ render(); return; }
+        const id='u'+Date.now().toString(36);
+        CUSTOM_CATS.push([id,name]); saveCats(); syncCatStyles();
+        items[+se.dataset.i].c=id;
+        localStorage.setItem(K, JSON.stringify(items));
+        renderAllPacks(); return;
+      }
+      items[+se.dataset.i].c=se.value;
+      localStorage.setItem(K, JSON.stringify(items));
+      if(gcCats()) renderAllPacks(); else render();
+    }));
+    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
+    el.querySelectorAll('.txt').forEach(sp=>{
+      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
+      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
+      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
+    });
+    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
+    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,c:'other',done:false}); render(); };
+    ab.addEventListener('click',add);
+    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
+  }
+  packRenders.push(render);
+  render();
+}
+syncCatStyles();
+PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
+
+editList(document.getElementById('todolist'), 'todo3', [
+ {t:'買 eSIM'},
+ {t:'換日幣'},
+ {t:'海遊館門票線上預購'},
+ {t:'太陽之塔內部參觀預約'},
+ {t:'查 千里中央 → 勝尾寺 阪急巴士時刻'},
+]);
+
+})();
+</script>
+</body>
+</html>

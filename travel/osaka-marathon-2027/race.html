@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>馬拉松篇 · 大阪馬拉松 2027</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="sub.css">
+<style>
+details.sub{margin:0 0 12px;border:2px solid rgba(255,255,255,.9);border-radius:16px;background:#fff;box-shadow:0 2px 8px rgba(90,58,26,.06)}
+details.sub>summary{font-size:15px;font-weight:700;padding:10px 12px;cursor:pointer;color:var(--brown);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▸';display:inline-block;margin-right:8px;color:var(--pink);transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+.subbody{padding:2px 12px 12px}
+.hint{font-size:12px;color:var(--faint);margin:8px 0 0}
+.info{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0;background:#fff;border-radius:14px;overflow:hidden}
+.info th{text-align:left;font-size:12px;letter-spacing:.08em;color:var(--pink);padding:12px 8px 4px;border-bottom:2px solid var(--c-pink)}
+.info tr:first-child th{padding-top:2px}
+.info td{padding:6px 8px;border-bottom:1px solid #f3eee4;vertical-align:top;line-height:1.55}
+.info td:first-child{width:92px;color:var(--muted);font-weight:700;white-space:nowrap}
+.info a.rlink{color:var(--blue);font-weight:700;text-decoration:none}
+.info a.rlink:hover{text-decoration:underline}
+.info a.rlink.ext{font-size:12px;margin-left:6px;color:var(--muted)}
+.cmap{display:block;width:100%;height:auto;border:3px solid #fff;border-radius:16px;background:#fff;box-shadow:0 2px 10px rgba(90,58,26,.08)}
+.cmap+.cmap{margin-top:8px}
+.km{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;background:#fff;border-radius:14px;overflow:hidden}
+.km th{font-size:11.5px;color:var(--pink);font-weight:700;text-align:left;padding:4px 8px;border-bottom:1px solid #f3eee4}
+.km td{padding:5px 8px;border-bottom:1px solid #f3eee4;vertical-align:top}
+.km td:first-child{white-space:nowrap;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+.km tr.hill td{background:var(--c-yel)}
+.km .tip{color:var(--muted);font-size:12px}
+.notes,.srcs{margin:6px 0 4px 18px;padding:0;font-size:13.5px}
+.notes li,.srcs li{margin:6px 0;line-height:1.7}
+.notes li::marker,.srcs li::marker{color:var(--pink)}
+.srcs a{color:var(--blue);font-weight:700;text-decoration:none}
+.srcs a:hover{text-decoration:underline}
+.mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.mapbtn:hover{background:#1d5a93}
+
+/* 標籤列：總覽／行程／馬拉松篇／旅行篇（下拉） */
+.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:6px;padding:8px 12px;overflow:visible;background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
+.tabbar a{flex:none;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:4px 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
+.tabbar a:hover{background:#fff}
+.tabbar a.on,.tabbar .dd.on>.ddt{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
+.tabbar .dd{position:relative;flex:none}
+.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px}
+.tabbar .ddm{display:none;position:absolute;left:0;top:calc(100% + 6px);min-width:120px;background:#fff;border:2px solid var(--b-sky);border-radius:12px;padding:6px;box-shadow:0 8px 20px rgba(47,127,198,.18);flex-direction:column;gap:2px}
+.tabbar .dd.open .ddm{display:flex}
+.tabbar .ddm a{border-radius:8px;padding:7px 12px}
+.tabbar .ddm a:hover{background:var(--c-sky)}
+
+</style>
+</head>
+<body>
+<nav class="cnav">
+  <a href="../../index.html">Cworld</a><span class="sep">/</span>
+  <a href="../index.html">旅遊</a><span class="sep">/</span>
+  <a href="./">大阪馬拉松</a><span class="sep">/</span>
+  <span class="current">馬拉松篇</span>
+</nav>
+<div class="tabbar" id="tabbar">
+  <a href="./">總覽</a>
+  <a href="plan.html">行程</a>
+  <a href="race.html" class="on">馬拉松篇</a>
+  <a href="prep.html">準備</a>
+  <span class="dd"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
+    <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
+  </span>
+</div>
+<div class="wrap">
+  <div class="hicon">🏁</div>
+  <h1>馬拉松篇</h1>
+  <div class="sec mint">
+
+<details class="sub" open>
+<summary>賽事資訊</summary>
+<div class="subbody">
+<table class="info">
+<tr><th colspan="2">比賽</th></tr>
+<tr><td>日期</td><td><b>2027/2/28（日）</b></td></tr>
+<tr><td>起跑</td><td><b>09:15</b> 第 1 波，第 2、3 波依序出發（區塊依申報成績）</td></tr>
+<tr><td>路線</td><td><a class="rlink" href="#course">大阪府廳前 → 大阪城公園內・42.195 km</a> <a class="rlink ext" href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener">官方コース紹介 ↗</a></td></tr>
+<tr><td>關門</td><td>7 小時（16:15）・中途關門點等跑者手冊</td></tr>
+<tr><th colspan="2">領號碼布（EXPO）</th></tr>
+<tr><td>地點</td><td>INTEX 大阪 6 號館（Metro 中央線 コスモスクエア → New Tram 中ふ頭）</td></tr>
+<tr><td>時間</td><td>2/26（五）11:00–19:00・2/27（六）10:00–18:00</td></tr>
+<tr><td>規定</td><td>本人＋護照，不可代領；比賽當天不受理</td></tr>
+<tr><th colspan="2">報名</th></tr>
+<tr><td>定員</td><td>全馬 31,970 人（總 34,000）</td></tr>
+<tr><td>海外費用</td><td>US$145 ＋ 慈善 2 口 $10 ＋ 手續費 11% ≈ <b>$172</b></td></tr>
+<tr><td>抽籤</td><td>7/28–8/28 登記・9/28 公布結果</td></tr>
+</table>
+<p class="hint">依官方「大会要項」（2026/10 查）。</p>
+</div>
+</details>
+
+<details class="sub" id="course" open>
+<summary>跑步路線</summary>
+<div class="subbody">
+<div class="mapbar" style="margin:4px 0 8px"><a class="mapbtn" href="map.html">⛶ 放大看路線圖</a></div>
+<a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener"><img class="cmap" src="course_map.jpg" alt="大阪マラソン2027 コース図" loading="lazy"></a>
+<img class="cmap" src="course_elev.jpg" alt="コース高低図" loading="lazy">
+<p class="hint" style="margin-top:4px">圖片來自大會官網「コース紹介」；高低圖全程 0–30 m，只有 32–34 km 上町台地一段爬到約 20 m。</p>
+<table class="km">
+<tr><th>km</th><th>位置</th><th>怎麼跑</th></tr>
+<tr><td>0</td><td>大阪府廳前 START → 北上天神橋筋</td><td class="tip">人多，不要為了超車頻繁變速；前幾公里慢幾秒不用追</td></tr>
+<tr><td>5</td><td>扇町公園／天神橋 6 折返</td><td class="tip">折返後南下，經 東天滿・天神橋</td></tr>
+<tr><td>7–8</td><td>中之島：大阪市中央公會堂 → 渡辺橋南詰 → 肥後橋 → 淀屋橋</td><td class="tip">720 馬拉松在こども本の森中之島前結束，人會突然少</td></tr>
+<tr><td>10</td><td>御堂筋 南下（新橋附近）</td><td class="tip">大阪最寬的大道，氣氛好容易超速，照配速</td></tr>
+<tr><td>15</td><td>本田 1 → 伯楽橋西詰 → みなと通 西行</td><td class="tip">開始補給：膠、水、電解質照計畫</td></tr>
+<tr><td>17</td><td>市岡元町 3 折返（京セラドーム附近）</td><td class="tip">折返後往大正橋</td></tr>
+<tr><td>20</td><td>大正橋 → 幸町 1 → 難波</td><td class="tip">半馬點在難波附近，看一下時間</td></tr>
+<tr><td>22–27</td><td>なにわ筋 南下（塩草 2・中開）→ 25 km → 柳通 折返</td><td class="tip">長直線，單調，用步頻撐住</td></tr>
+<tr><td>29–30</td><td>回北 → 千日前通 東行 → 松屋町筋（30 km）→ 下寺町</td><td class="tip">30 km 後進入起伏段，準備收輸出</td></tr>
+<tr class="hill"><td>31–34</td><td>谷町 9 → 上本町 6 → 上町筋 南下 → 五條宮前西 → 四天王寺旁 → 勝山 4</td><td class="tip">⛰ 全程唯一的坡（上町台地，到約 20 m）：縮步幅、維持步頻，下坡不要追時間</td></tr>
+<tr><td>35</td><td>勝山通 東行（35 km）→ 大池橋</td><td class="tip">坡過了，重新穩定配速</td></tr>
+<tr><td>36–39</td><td>今里筋 北上：今里 → 緑橋</td><td class="tip">最後長直線，風通常從北邊來</td></tr>
+<tr><td>40</td><td>鴫野東 2 折向西 → 城見 1 西</td><td class="tip">大阪城前還有地下道、轉折與短坡，路面轉平再衝</td></tr>
+<tr><td>42.195</td><td>大阪城公園內 FINISH</td><td class="tip">完賽證不郵寄，官網自行下載；紀念品忘了領 3/12 前可聯絡補寄</td></tr>
+</table>
+<p class="hint">位置依官方コース図判讀，各公里標的精確位置、給水所與關門點以 2 月初寄出的參加案內（跑者手冊）為準。</p>
+</div>
+</details>
+
+<details class="sub" open>
+<summary>比賽日重要資訊</summary>
+<div class="subbody">
+<ul class="notes">
+  <li><b>起跑</b> 09:15 第 1 波，第 2、3 波依序出發；區塊由申報 PB／預估時間決定。<b>提早於指定波次起跑＝取消資格</b>。</li>
+  <li><b>安全手環</b>（領物時給）沒戴不能進起跑區；號碼布正面別好，晶片別拆。</li>
+  <li><b>寄物</b>：會場有寄物與更衣空間，<b>沒有淋浴</b>；袋子尺寸與寄物時間寫在 2 月初的參加案內。大件行李大會不運送，放飯店或用便利商店宅配。</li>
+  <li><b>起終點</b>都在大阪城公園一帶：起點大阪府廳前（Metro 谷町四丁目／天滿橋）、終點大阪城公園內（JR 大阪城公園／森ノ宮）。比賽日<b>交通管制 12 月初公布</b>。</li>
+  <li><b>關門</b>：全程 7 小時（16:15）；中途關門點等跑者手冊。</li>
+  <li><b>天候</b>：雨天照跑；暴風雨等可能中止，<b>當天清晨 5:00 左右</b>官網／官方社群公布。</li>
+  <li><b>完賽後</b>：完賽證不郵寄，官網下載；紀念品忘了領可在 2027/3/12 前聯絡客服到付寄送。</li>
+  <li><b>禁止</b>：A 區塊與田徑聯盟登記者禁止變裝；會有藥檢；申報成績造假取消資格。</li>
+</ul>
+</div>
+</details>
+
+<details class="sub">
+<summary>注意事項</summary>
+<div class="subbody">
+<ul class="notes">
+  <li>領物<b>必須本人</b>帶附照片證件（護照）＋參賽確認信，不接受代領；比賽當天不受理。</li>
+  <li>EXPO 在 INTEX 大阪（灣區）：Metro 中央線到コスモスクエア，轉 New Tram 到中ふ頭，來回保留半天；D1 到大阪直接去，最晚 2/27 18:00 前。</li>
+  <li>起跑區依申報成績分區（成績須為 2024/8/1 以後的認可賽事）；提早 60 分鐘以上到場，寄物有截止時間，寄物袋放乾上衣、外套、長褲、襪子防失溫。</li>
+  <li>路線不是純速度賽道：0–10K 人多別頻繁變速；25–35K（文樂劇場、通天閣、四天王寺）有起伏，上坡縮步幅維持步頻；35K 後大阪城前還有地下道與短坡，路面轉平再衝。</li>
+  <li>2 月底天氣落差大（2025 飄雪、2026 偏暖）：保暖與透氣兩套都帶，看賽前預報決定；起跑前要有可丟棄保暖層。</li>
+  <li>10–25K 就照計畫補膠、水、電解質，不要等口渴。A 區塊禁止變裝。</li>
+  <li>賽後隔天就搭機，補給、鹽錠用完或託運；環球影城不要排賽前。</li>
+</ul>
+</div>
+</details>
+
+<details class="sub">
+<summary>參考連結</summary>
+<div class="subbody">
+<ul class="srcs">
+  <li><a href="https://www.osaka-marathon.com/" target="_blank" rel="noopener">大阪マラソン 官方網站</a>・<a href="https://www.osaka-marathon.com/2027/info/gist" target="_blank" rel="noopener">大会要項</a>・<a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener">コース紹介</a>・<a href="https://www.osaka-marathon.com/2027/runner/safety" target="_blank" rel="noopener">安全に完走するために</a></li>
+  <li><a href="https://running.biji.co/index.php?q=news&act=info&id=114367" target="_blank" rel="noopener">運動筆記｜2027 大阪馬拉松賽事攻略與城市跑旅指南</a>（別人的參賽心得：住宿區域、賽道分段、賽後奈良）</li>
+  <li><a href="https://www.kansai-airport.or.jp/" target="_blank" rel="noopener">關西國際機場</a>（第2航廈＝樂桃專用）</li>
+  <li><a href="https://www.jma.go.jp/bosai/forecast/#area_type=offices&area_code=270000" target="_blank" rel="noopener">大阪 天氣預報（氣象廳）</a></li>
+</ul>
+</div>
+</details>
+
+
+  </div>
+</div>
+<script>
+(function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
+  t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
+</script>
+<script>
+document.querySelectorAll('a.rlink[href="#course"]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); const d=document.getElementById('course'); d.open=true; d.scrollIntoView({behavior:'smooth',block:'start'}); }));
+</script>
+</body>
+</html>

@@ -189,7 +189,7 @@ details.alt .altbody{padding:0 14px 12px}
 .info b{font-weight:700}
 .info a.rlink{color:var(--blue,#2e6ea6);font-weight:700;text-decoration:none}
 .info a.rlink:hover{text-decoration:underline}
-.info a.rlink.ext{font-size:12px;margin-left:6px;color:var(--muted)}
+.info a.rlink.ext{font-size:12px;margin-left:6px;color:var(--blue)}
 /* --- course --- */
 .cmap{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
 .cmap+.cmap{margin-top:8px}
@@ -234,17 +234,17 @@ h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .datepill .dp-cloud{font-size:1.1rem;margin-right:2px}
 .datepill .dp-ico{font-size:1.4rem;margin-left:4px}
 .cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc)}
-/* 分頁標籤列（膠囊）：黏在最上面，點了跳到該區塊並展開 */
-.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:6px;padding:8px 12px;overflow-x:auto;scrollbar-width:none;
-  background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
-.tabbar::-webkit-scrollbar{display:none}
+/* 標籤列：總覽／行程／馬拉松篇／旅行篇（下拉） */
+.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:6px;padding:8px 12px;overflow:visible;background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
 .tabbar a{flex:none;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:4px 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
 .tabbar a:hover{background:#fff}
-.tabbar a.on{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
-.tabbar .div{flex:none;width:1.5px;height:18px;background:var(--b-sky);margin:0 4px;align-self:center}
-.tabbar a.pg{color:var(--blue);background:#fff;border-color:var(--b-sky)}
-.tabbar a.pg::after{content:'⤢';font-size:11px;margin-left:4px;opacity:.7}
-.tabbar a.pg:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tabbar a.on,.tabbar .dd.on>.ddt{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
+.tabbar .dd{position:relative;flex:none}
+.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px}
+.tabbar .ddm{display:none;position:absolute;left:0;top:calc(100% + 6px);min-width:120px;background:#fff;border:2px solid var(--b-sky);border-radius:12px;padding:6px;box-shadow:0 8px 20px rgba(47,127,198,.18);flex-direction:column;gap:2px}
+.tabbar .dd.open .ddm{display:flex}
+.tabbar .ddm a{border-radius:8px;padding:7px 12px}
+.tabbar .ddm a:hover{background:var(--c-sky)}
 details.sec{scroll-margin-top:58px}
 html{scroll-behavior:smooth}
 .modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:700}
@@ -347,9 +347,13 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
   <span class="current">大阪馬拉松</span>
 </nav>
 <div class="tabbar" id="tabbar">
-  <a href="#sec-days">行程</a><a href="#sec-flight">航班</a><a href="#sec-stay">住宿</a><a href="#sec-race">馬拉松</a><a href="#sec-travel">旅行</a><a href="#sec-pack">攜帶</a><a href="#sec-todo">待確認</a>
-  <span class="div"></span>
-  <a class="pg" href="plan.html">詳細行程</a><a class="pg" href="play.html">玩什麼</a><a class="pg" href="eat.html">吃什麼</a><a class="pg" href="shop.html">必買</a><a class="pg" href="notebook.html">手帳版</a>
+  <a href="./" class="on">總覽</a>
+  <a href="plan.html">行程</a>
+  <a href="race.html">馬拉松篇</a>
+  <a href="prep.html">準備</a>
+  <span class="dd"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
+    <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
+  </span>
 </div>
 
 <div class="wrap">
@@ -366,7 +370,6 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </div>
 </details>
 
-<div class="banner" aria-hidden="true">⚡🚃☁️🗼☁️🏯☁️🏃⚡</div>
 <details class="sec" id="sec-flight">
 <summary>航班資訊</summary>
 <div class="secbody">
@@ -419,103 +422,17 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </div>
 </details>
 
-<div class="banner" aria-hidden="true">🏁🎽⏱️🍙🏃‍♂️💨🏯✨</div>
 <details class="sec" id="sec-race" open>
 <summary>馬拉松篇</summary>
 <div class="secbody">
 
-<details class="sub" open>
-<summary>賽事資訊</summary>
-<div class="subbody">
 <table class="info">
-<tr><th colspan="2">比賽</th></tr>
-<tr><td>日期</td><td><b>2027/2/28（日）</b></td></tr>
-<tr><td>起跑</td><td><b>09:15</b> 第 1 波，第 2、3 波依序出發（區塊依申報成績）</td></tr>
-<tr><td>路線</td><td><a class="rlink" href="#course">大阪府廳前 → 大阪城公園內・42.195 km</a> <a class="rlink ext" href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener">官方コース紹介 ↗</a></td></tr>
-<tr><td>關門</td><td>7 小時（16:15）・中途關門點等跑者手冊</td></tr>
-<tr><th colspan="2">領號碼布（EXPO）</th></tr>
-<tr><td>地點</td><td>INTEX 大阪 6 號館（Metro 中央線 コスモスクエア → New Tram 中ふ頭）</td></tr>
-<tr><td>時間</td><td>2/26（五）11:00–19:00・2/27（六）10:00–18:00</td></tr>
-<tr><td>規定</td><td>本人＋護照，不可代領；比賽當天不受理</td></tr>
-<tr><th colspan="2">報名</th></tr>
-<tr><td>定員</td><td>全馬 31,970 人（總 34,000）</td></tr>
-<tr><td>海外費用</td><td>US$145 ＋ 慈善 2 口 $10 ＋ 手續費 11% ≈ <b>$172</b></td></tr>
-<tr><td>抽籤</td><td>7/28–8/28 登記・9/28 公布結果</td></tr>
+<tr><td>比賽日</td><td><b>2027/2/28（日）</b>・09:15 第 1 波起跑・關門 7 小時（16:15）</td></tr>
+<tr><td>路線</td><td>大阪府廳前 → 大阪城公園內・42.195 km <a class="rlink ext" href="race.html#course">跑步路線 ↗</a></td></tr>
+<tr><td>領號碼布</td><td>INTEX 大阪 6 號館・2/26（五）11:00–19:00、2/27（六）10:00–18:00・本人＋護照</td></tr>
+<tr><td>當天必記</td><td>戴安全手環才能進起跑區・提早於指定波次起跑＝取消資格・雨天照跑，中止 05:00 官網公布</td></tr>
 </table>
-<p class="hint">依官方「大会要項」（2026/10 查）。</p>
-</div>
-</details>
-
-<details class="sub" id="course" open>
-<summary>跑步路線<a class="fullpg" href="map.html" title="放大看路線圖"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
-<div class="subbody">
-<a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener"><img class="cmap" src="course_map.jpg" alt="大阪マラソン2027 コース図" loading="lazy"></a>
-<img class="cmap" src="course_elev.jpg" alt="コース高低図" loading="lazy">
-<p class="hint" style="margin-top:4px">圖片來自大會官網「コース紹介」；高低圖全程 0–30 m，只有 32–34 km 上町台地一段爬到約 20 m。</p>
-<table class="km">
-<tr><th>km</th><th>位置</th><th>怎麼跑</th></tr>
-<tr><td>0</td><td>大阪府廳前 START → 北上天神橋筋</td><td class="tip">人多，不要為了超車頻繁變速；前幾公里慢幾秒不用追</td></tr>
-<tr><td>5</td><td>扇町公園／天神橋 6 折返</td><td class="tip">折返後南下，經 東天滿・天神橋</td></tr>
-<tr><td>7–8</td><td>中之島：大阪市中央公會堂 → 渡辺橋南詰 → 肥後橋 → 淀屋橋</td><td class="tip">720 馬拉松在こども本の森中之島前結束，人會突然少</td></tr>
-<tr><td>10</td><td>御堂筋 南下（新橋附近）</td><td class="tip">大阪最寬的大道，氣氛好容易超速，照配速</td></tr>
-<tr><td>15</td><td>本田 1 → 伯楽橋西詰 → みなと通 西行</td><td class="tip">開始補給：膠、水、電解質照計畫</td></tr>
-<tr><td>17</td><td>市岡元町 3 折返（京セラドーム附近）</td><td class="tip">折返後往大正橋</td></tr>
-<tr><td>20</td><td>大正橋 → 幸町 1 → 難波</td><td class="tip">半馬點在難波附近，看一下時間</td></tr>
-<tr><td>22–27</td><td>なにわ筋 南下（塩草 2・中開）→ 25 km → 柳通 折返</td><td class="tip">長直線，單調，用步頻撐住</td></tr>
-<tr><td>29–30</td><td>回北 → 千日前通 東行 → 松屋町筋（30 km）→ 下寺町</td><td class="tip">30 km 後進入起伏段，準備收輸出</td></tr>
-<tr class="hill"><td>31–34</td><td>谷町 9 → 上本町 6 → 上町筋 南下 → 五條宮前西 → 四天王寺旁 → 勝山 4</td><td class="tip">⛰ 全程唯一的坡（上町台地，到約 20 m）：縮步幅、維持步頻，下坡不要追時間</td></tr>
-<tr><td>35</td><td>勝山通 東行（35 km）→ 大池橋</td><td class="tip">坡過了，重新穩定配速</td></tr>
-<tr><td>36–39</td><td>今里筋 北上：今里 → 緑橋</td><td class="tip">最後長直線，風通常從北邊來</td></tr>
-<tr><td>40</td><td>鴫野東 2 折向西 → 城見 1 西</td><td class="tip">大阪城前還有地下道、轉折與短坡，路面轉平再衝</td></tr>
-<tr><td>42.195</td><td>大阪城公園內 FINISH</td><td class="tip">完賽證不郵寄，官網自行下載；紀念品忘了領 3/12 前可聯絡補寄</td></tr>
-</table>
-<p class="hint">位置依官方コース図判讀，各公里標的精確位置、給水所與關門點以 2 月初寄出的參加案內（跑者手冊）為準。</p>
-</div>
-</details>
-
-<details class="sub" open>
-<summary>比賽日重要資訊</summary>
-<div class="subbody">
-<ul class="notes">
-  <li><b>起跑</b> 09:15 第 1 波，第 2、3 波依序出發；區塊由申報 PB／預估時間決定。<b>提早於指定波次起跑＝取消資格</b>。</li>
-  <li><b>安全手環</b>（領物時給）沒戴不能進起跑區；號碼布正面別好，晶片別拆。</li>
-  <li><b>寄物</b>：會場有寄物與更衣空間，<b>沒有淋浴</b>；袋子尺寸與寄物時間寫在 2 月初的參加案內。大件行李大會不運送，放飯店或用便利商店宅配。</li>
-  <li><b>起終點</b>都在大阪城公園一帶：起點大阪府廳前（Metro 谷町四丁目／天滿橋）、終點大阪城公園內（JR 大阪城公園／森ノ宮）。比賽日<b>交通管制 12 月初公布</b>。</li>
-  <li><b>關門</b>：全程 7 小時（16:15）；中途關門點等跑者手冊。</li>
-  <li><b>天候</b>：雨天照跑；暴風雨等可能中止，<b>當天清晨 5:00 左右</b>官網／官方社群公布。</li>
-  <li><b>完賽後</b>：完賽證不郵寄，官網下載；紀念品忘了領可在 2027/3/12 前聯絡客服到付寄送。</li>
-  <li><b>禁止</b>：A 區塊與田徑聯盟登記者禁止變裝；會有藥檢；申報成績造假取消資格。</li>
-</ul>
-</div>
-</details>
-
-<details class="sub">
-<summary>注意事項</summary>
-<div class="subbody">
-<ul class="notes">
-  <li>領物<b>必須本人</b>帶附照片證件（護照）＋參賽確認信，不接受代領；比賽當天不受理。</li>
-  <li>EXPO 在 INTEX 大阪（灣區）：Metro 中央線到コスモスクエア，轉 New Tram 到中ふ頭，來回保留半天；D1 到大阪直接去，最晚 2/27 18:00 前。</li>
-  <li>起跑區依申報成績分區（成績須為 2024/8/1 以後的認可賽事）；提早 60 分鐘以上到場，寄物有截止時間，寄物袋放乾上衣、外套、長褲、襪子防失溫。</li>
-  <li>路線不是純速度賽道：0–10K 人多別頻繁變速；25–35K（文樂劇場、通天閣、四天王寺）有起伏，上坡縮步幅維持步頻；35K 後大阪城前還有地下道與短坡，路面轉平再衝。</li>
-  <li>2 月底天氣落差大（2025 飄雪、2026 偏暖）：保暖與透氣兩套都帶，看賽前預報決定；起跑前要有可丟棄保暖層。</li>
-  <li>10–25K 就照計畫補膠、水、電解質，不要等口渴。A 區塊禁止變裝。</li>
-  <li>賽後隔天就搭機，補給、鹽錠用完或託運；環球影城不要排賽前。</li>
-</ul>
-</div>
-</details>
-
-<details class="sub">
-<summary>參考連結</summary>
-<div class="subbody">
-<ul class="srcs">
-  <li><a href="https://www.osaka-marathon.com/" target="_blank" rel="noopener">大阪マラソン 官方網站</a>・<a href="https://www.osaka-marathon.com/2027/info/gist" target="_blank" rel="noopener">大会要項</a>・<a href="https://www.osaka-marathon.com/2027/info/course" target="_blank" rel="noopener">コース紹介</a>・<a href="https://www.osaka-marathon.com/2027/runner/safety" target="_blank" rel="noopener">安全に完走するために</a></li>
-  <li><a href="https://running.biji.co/index.php?q=news&act=info&id=114367" target="_blank" rel="noopener">運動筆記｜2027 大阪馬拉松賽事攻略與城市跑旅指南</a>（別人的參賽心得：住宿區域、賽道分段、賽後奈良）</li>
-  <li><a href="https://www.kansai-airport.or.jp/" target="_blank" rel="noopener">關西國際機場</a>（第2航廈＝樂桃專用）</li>
-  <li><a href="https://www.jma.go.jp/bosai/forecast/#area_type=offices&area_code=270000" target="_blank" rel="noopener">大阪 天氣預報（氣象廳）</a></li>
-</ul>
-</div>
-</details>
-
+<div class="mapbar" style="margin:10px 0 4px"><a class="mapbtn" href="race.html">🏁 馬拉松篇完整內容（路線圖、逐公里、比賽日資訊、注意事項）</a></div>
 </div>
 </details>
 
@@ -541,18 +458,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </div>
 </details>
 
-<details class="sec" id="sec-pack">
-<summary>攜帶物品</summary>
-<div class="secbody">
-<div id="packlist"></div>
-<p class="hint">每個項目前面的標籤可以切換分類；選「＋ 新增分類」可自訂。</p>
-</div>
-</details>
 
-<details class="sec" id="sec-todo">
-<summary>待確認項目</summary>
-<div class="secbody"><ul class="ck" id="todolist"></ul></div>
-</details>
 
 <footer>
   <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons（拍照角度參考，各張作者與授權見連結）：<a href="https://commons.wikimedia.org/wiki/File:Acuario_de_Osaka_-_Edificio.jpg" target="_blank" rel="noopener">海遊館1</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201-2.jpg" target="_blank" rel="noopener">海遊館2</a>、<a href="https://commons.wikimedia.org/wiki/File:Aquarium_@_Tempozan_@_Osaka_(13382179803).jpg" target="_blank" rel="noopener">海遊館3</a>、<a href="https://commons.wikimedia.org/wiki/File:Kaiyukan.JPG" target="_blank" rel="noopener">海遊館4</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201.jpg" target="_blank" rel="noopener">海遊館5</a>、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg" target="_blank" rel="noopener">天保山1</a>、<a href="https://commons.wikimedia.org/wiki/File:1_Chome-1_Kaigand%C5%8Dri,_Minato-ku,_%C5%8Csaka-shi,_%C5%8Csaka-fu_552-0022,_Japan_-_panoramio_-_jetsun_(12).jpg" target="_blank" rel="noopener">天保山2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Seven-Seas-Mariner01n3200.jpg" target="_blank" rel="noopener">天保山3</a>、<a href="https://commons.wikimedia.org/wiki/File:Grand_ferris_wheel_of_Tempozan_Harbor_Village_3.jpg" target="_blank" rel="noopener">天保山4</a>、<a href="https://commons.wikimedia.org/wiki/File:Ferris_Wheel_(223575457).jpeg" target="_blank" rel="noopener">天保山5</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_Nishinomaru_Garden_April_2005.JPG" target="_blank" rel="noopener">大阪城1</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_(5239985304).jpg" target="_blank" rel="noopener">大阪城2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_Park,_Japan_(8368519077).jpg" target="_blank" rel="noopener">大阪城3</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_and_walls.jpg" target="_blank" rel="noopener">大阪城4</a>、<a href="https://commons.wikimedia.org/wiki/File:OsakaCastleM0783.jpg" target="_blank" rel="noopener">大阪城5</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9144.jpg" target="_blank" rel="noopener">和歌山城1</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9115.jpg" target="_blank" rel="noopener">和歌山城2</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9155.jpg" target="_blank" rel="noopener">和歌山城3</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9192.jpg" target="_blank" rel="noopener">和歌山城4</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9151.jpg" target="_blank" rel="noopener">和歌山城5</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_07.jpg" target="_blank" rel="noopener">勝尾寺1</a>、<a href="https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG" target="_blank" rel="noopener">勝尾寺2</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_main_gate.jpg" target="_blank" rel="noopener">勝尾寺3</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo_ji_temple_Benzaiten_Shrine_Osaka_prefecture_by_Don_Ramey_Logan.jpg" target="_blank" rel="noopener">勝尾寺4</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_on_roof.jpg" target="_blank" rel="noopener">勝尾寺5</a>、<a href="https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg" target="_blank" rel="noopener">太陽之塔1</a>、<a href="https://commons.wikimedia.org/wiki/File:%E6%A2%85%E4%B8%B9%E6%9C%AC%E8%88%97_(2813134756).jpg" target="_blank" rel="noopener">太陽之塔2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Expo%2770_Korean_Pavilion.jpg" target="_blank" rel="noopener">太陽之塔3</a>、<a href="https://commons.wikimedia.org/wiki/File:EXPO_%2770_PAVILION_bekkan_3.jpg" target="_blank" rel="noopener">太陽之塔4</a></div>
@@ -563,6 +469,12 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 <div class="modal-bg" id="mbg"><div class="modal"><button class="x" id="mx" type="button">✕</button><div id="mbody"></div></div></div>
 
 <script src="days.js?v=3"></script>
+<script>
+(function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
+  t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
+</script>
 <script>
 (function(){
 const PREFIX='osaka27.';
@@ -648,15 +560,6 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
 });
 
 /* 固定為可編輯（已移除檢視／編輯切換） */
-(function(){
-  const tabs=[...document.querySelectorAll('#tabbar a:not(.pg)')];
-  const secs=tabs.map(a=>document.querySelector(a.getAttribute('href')));
-  // 平滑捲動：先展開區塊、等版面重排一幀，再用 scrollTo 動畫捲到標籤列下方
-  function smoothTo(el){ requestAnimationFrame(()=>{ const top=el.getBoundingClientRect().top+window.scrollY-document.getElementById('tabbar').offsetHeight-6; window.scrollTo({top,behavior:'smooth'}); }); }
-  tabs.forEach((a,i)=>a.addEventListener('click',e=>{ e.preventDefault(); const d=secs[i]; if(!d) return; d.open=true; smoothTo(d); history.replaceState(null,'',a.getAttribute('href')); }));
-  function mark(){ let k=0; secs.forEach((d,i)=>{ if(d&&d.getBoundingClientRect().top<120) k=i; }); tabs.forEach((a,i)=>a.classList.toggle('on',i===k)); }
-  addEventListener('scroll',mark,{passive:true}); mark();
-})();
 
 /* 記住每個區塊的展開／收合狀態 */
 (function(){
@@ -705,98 +608,6 @@ function editList(el, key, seed){
   render();
 }
 
-/* ── 攜帶物品：單一清單；分類標籤可切換 ── */
-const PACK_CATS_HEAD = [['must','必帶'],['cloth','服裝'],['run','比賽']];
-const PACK_CATS_TAIL = [['other','其他']];
-const CAT_PALETTE = [
-  ['#f0e9f7','#c3aad9','#5b3a80'],['#e2f2f2','#9fcccc','#1f6060'],
-  ['#fdf1dd','#e0c48a','#86611a'],['#fbe9f0','#e2a8bf','#8f2c56'],
-  ['#e9edf2','#b4c0cd','#3d4d5e']
-];
-const CATS_KEY=PREFIX+'packcats';
-let CUSTOM_CATS=(()=>{ try{ const v=JSON.parse(localStorage.getItem(CATS_KEY)); return Array.isArray(v)?v:[]; }catch(e){ return []; } })();
-const PACK_CATS=()=>PACK_CATS_HEAD.concat(CUSTOM_CATS,PACK_CATS_TAIL);
-function saveCats(){ localStorage.setItem(CATS_KEY,JSON.stringify(CUSTOM_CATS)); }
-function syncCatStyles(){
-  let st=document.getElementById('catstyles');
-  if(!st){ st=document.createElement('style'); st.id='catstyles'; document.head.appendChild(st); }
-  st.textContent=CUSTOM_CATS.map((c,i)=>{ const p=CAT_PALETTE[i%CAT_PALETTE.length];
-    return `.ck .catsel.c-${c[0]}{background:${p[0]};border-color:${p[1]};color:${p[2]}}`; }).join('');
-}
-const PACK_LISTS = [
- // 沈的清單（2026/10 版）
- {key:'all', name:'攜帶物品清單', wide:1, items:[
-   ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信'],
-   ['cloth','羽絨（阿羲）'],['cloth','風雨衣（皮卡丘）'],['cloth','保暖：手套、毛帽'],['cloth','鴨舌帽'],
-   ['cloth','衣：立山、劍岳'],['cloth','褲：on、迪卡農繭型褲'],['cloth','襪：M、D'],['cloth','Y拖'],
-   ['run','補給：能量膠 ×4、鹽錠'],
-   ['other','行動電源'],['other','轉接頭'],['other','盥洗：刮鬍刀、牙刷、牙膏'],
- ]},
-];
-const packBox=document.getElementById('packlist');
-packBox.innerHTML =
-  PACK_LISTS.filter(l=>l.wide).map(l=>
-    `<details class="sub packshared" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')
-  + `<div class="packcols">${PACK_LISTS.filter(l=>!l.wide).map(l=>
-      `<details class="sub packcol" id="pack-${l.key}" open><summary>${l.name}</summary><div class="subbody"><ul class="ck pk" data-list="${l.key}"></ul></div></details>`).join('')}</div>`;
-const packRenders=[];
-function renderAllPacks(){ packRenders.forEach(f=>f()); }
-function gcCats(){
-  const used=new Set();
-  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack3-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
-  const before=CUSTOM_CATS.length;
-  CUSTOM_CATS=CUSTOM_CATS.filter(c=>used.has(c[0]));
-  if(CUSTOM_CATS.length!==before){ saveCats(); syncCatStyles(); return true; }
-  return false;
-}
-function packList(el, key, seed){
-  const K=PREFIX+'items.'+key;
-  let items;
-  try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
-  if(!Array.isArray(items)) items=seed.map(([c,t])=>({t,c,done:false}));
-  const order=c=>{ const i=PACK_CATS().findIndex(x=>x[0]===c); return i<0?PACK_CATS().length:i; };
-  function render(){
-    const cats=PACK_CATS(), ids=cats.map(c=>c[0]);
-    items.forEach(it=>{ if(!ids.includes(it.c)) it.c='other'; });
-    items.sort((a,b)=>order(a.c)-order(b.c));
-    localStorage.setItem(K, JSON.stringify(items));
-    el.innerHTML = items.map((it,i)=>`
-      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <select class="catsel c-${it.c}" data-i="${i}">${cats.map(([c,l])=>`<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}<option value="__new">＋ 新增分類…</option></select>
-      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}</span>
-      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
-      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
-    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-    el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{
-      if(se.value==='__new'){
-        const name=(prompt('新分類名稱：')||'').trim();
-        if(!name){ render(); return; }
-        const id='u'+Date.now().toString(36);
-        CUSTOM_CATS.push([id,name]); saveCats(); syncCatStyles();
-        items[+se.dataset.i].c=id;
-        localStorage.setItem(K, JSON.stringify(items));
-        renderAllPacks(); return;
-      }
-      items[+se.dataset.i].c=se.value;
-      localStorage.setItem(K, JSON.stringify(items));
-      if(gcCats()) renderAllPacks(); else render();
-    }));
-    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
-    el.querySelectorAll('.txt').forEach(sp=>{
-      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
-      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
-      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
-    });
-    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
-    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,c:'other',done:false}); render(); };
-    ab.addEventListener('click',add);
-    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
-  }
-  packRenders.push(render);
-  render();
-}
-syncCatStyles();
-PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
 
 /* 住宿、賽事資訊的文字覆寫 */
 bindEditable(document.getElementById('sec-stay'));
@@ -817,13 +628,6 @@ bindEditable(document.getElementById('sec-race'));
   });
 })();
 
-editList(document.getElementById('todolist'), 'todo3', [
- {t:'買 eSIM'},
- {t:'換日幣'},
- {t:'海遊館門票線上預購'},
- {t:'太陽之塔內部參觀預約'},
- {t:'查 千里中央 → 勝尾寺 阪急巴士時刻'},
-]);
 editList(document.getElementById('souvenirlist'), 'souv5', [
  {t:'BB 霜 ×1', n:'INTEGRATE Pro Quality BB（紅管）'},
  {t:'粉餅 ×1', n:'IHADA 薬用フェイスプロテクトパウダー SPF40'},

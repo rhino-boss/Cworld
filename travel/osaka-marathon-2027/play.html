@@ -30,6 +30,15 @@
   <a href="./">大阪馬拉松</a><span class="sep">/</span>
   <span class="current">玩什麼</span>
 </nav>
+<div class="tabbar" id="tabbar">
+  <a href="./">總覽</a>
+  <a href="plan.html">行程</a>
+  <a href="race.html">馬拉松篇</a>
+  <a href="prep.html">準備</a>
+  <span class="dd on"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
+    <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
+  </span>
+</div>
 <div class="wrap">
   <div class="hicon">🏯</div>
   <h1>玩什麼</h1>
@@ -84,6 +93,12 @@ document.getElementById('spots').innerHTML=SPOTS.map(s=>{
     (s.desc?'<div class="desc">'+esc(s.desc)+'</div>':'')+(s.tips&&s.tips.length?'<ul class="tips">'+s.tips.map(t=>{const m=t.match(/^(.*?)｜(https?:S+)$/);return '<li>'+(m?esc(m[1])+' <a class="tl" href="'+esc(m[2])+'" target="_blank" rel="noopener">店舗頁 ↗</a>':esc(t))+'</li>';}).join('')+'</ul>':'')+'</div></section>';
 }).join('');
 window.bindCarousels&&window.bindCarousels(document);
+</script>
+<script>
+(function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
+  t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
 </script>
 </body>
 </html>

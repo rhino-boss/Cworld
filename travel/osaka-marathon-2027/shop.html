@@ -28,6 +28,15 @@
   <a href="./">大阪馬拉松</a><span class="sep">/</span>
   <span class="current">必買</span>
 </nav>
+<div class="tabbar" id="tabbar">
+  <a href="./">總覽</a>
+  <a href="plan.html">行程</a>
+  <a href="race.html">馬拉松篇</a>
+  <a href="prep.html">準備</a>
+  <span class="dd on"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
+    <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
+  </span>
+</div>
 <div class="wrap">
   <div class="hicon">🛍️</div>
   <h1>必買</h1>
@@ -67,6 +76,12 @@ for(const g of ['cosme','montbell','supply']){
 }
 // 圖載成功就把「尚無照片」蓋掉
 document.querySelectorAll('.item .ph img').forEach(img=>{ img.addEventListener('load',()=>{ const n=img.parentNode.querySelector('.none'); n&&n.remove(); }); if(img.complete&&img.naturalWidth>0){ const n=img.parentNode.querySelector('.none'); n&&n.remove(); } });
+</script>
+<script>
+(function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
+  t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
 </script>
 </body>
 </html>
