@@ -93,6 +93,7 @@ details[open]>summary::before{transform:rotate(90deg)}
 .ck .del{border:none;background:none;color:#c9c9c2;cursor:pointer;font-size:12px;padding:2px 4px;flex:none}
 .ck .del:hover{color:#c0392b}
 .ck .addrow{margin-top:8px}
+.ck .txt.ro{cursor:default}
 .ck .addin{flex:1;border:1px dashed var(--cardline);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;background:var(--paper)}
 .ck .addbtn{border:none;background:#2f9e44;color:#fff;border-radius:8px;padding:2px 12px;font-size:15px;cursor:pointer;flex:none}
 .ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center}
@@ -353,6 +354,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
   <span class="dd"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
     <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
   </span>
+  <a href="stay.html">住宿</a>
   <a href="prep.html">準備</a>
 </div>
 
@@ -408,17 +410,14 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </details>
 
 <details class="sec" id="sec-stay">
-<summary>住宿資訊</summary>
+<summary>住宿資訊<a class="fullpg" href="stay.html" title="住宿完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="secbody">
-<div class="tblwrap">
-<table class="itin">
-<tr><th></th><th>日期</th><th>地點</th><th>住宿</th><th>備註</th><th>狀態</th></tr>
-<tr><td>D1</td><td>2/26</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d1.name" data-ek-default="Excellence Osaka Castle Park">Excellence Osaka Castle Park</span> <a class="site" href="https://www.booking.com/" target="_blank" rel="noopener" title="Booking.com">↗</a></td><td><span class="ed" data-ek="stay.d1.note" data-ek-default="入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）">入住 17:00 後・城東区鴫野西 2-3-19（JR 鴫野站旁，離終點大阪城公園 2 站）</span></td><td><select class="statsel" data-k="d1"></select></td></tr>
-<tr><td>D2</td><td>2/27</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d2.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d2.note" data-ek-default="賽前一晚早睡">賽前一晚早睡</span></td><td><select class="statsel" data-k="d2"></select></td></tr>
-<tr><td>D3</td><td>2/28</td><td>大阪・鴫野</td><td><span class="ed" data-ek="stay.d3.name" data-ek-default="同上">同上</span></td><td><span class="ed" data-ek="stay.d3.note" data-ek-default="3/1 退房 10:00 前">3/1 退房 10:00 前</span></td><td><select class="statsel" data-k="d3"></select></td></tr>
+<table class="info">
+<tr><td>飯店</td><td><b>Excellence Osaka Castle Park</b>・2/26–3/1 三晚・標準公寓・Booking.com 已確認（約 TWD 11,198）</td></tr>
+<tr><td>取消</td><td>2/11 前免費取消，不能改日期・確認碼看 Booking App</td></tr>
+<tr><td>地址</td><td>城東区鴫野西 2-3-19（大阪城公園東側、JR 大阪城公園站旁）・+81 50 1741 0183 <a class="rlink ext" href="https://www.google.com/maps/search/?api=1&query=34.6905358,135.5352447" target="_blank" rel="noopener">📍 Google Map</a></td></tr>
+<tr><td>入住／退房</td><td>入住 <b>17:00 後</b>・退房 <b>10:00 前</b>・民泊公寓，入住指示會從 Booking 訊息寄來，出發前要看</td></tr>
 </table>
-</div>
-<p class="hint">名稱、備註點一下就能改；狀態用下拉切換。</p>
 </div>
 </details>
 
@@ -467,7 +466,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 
 <div class="modal-bg" id="mbg"><div class="modal"><button class="x" id="mx" type="button">✕</button><div id="mbody"></div></div></div>
 
-<script src="days.js?v=3"></script>
+<script src="days.js?v=4"></script>
 <script>
 (function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
   t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
@@ -587,22 +586,11 @@ function editList(el, key, seed){
   if(!Array.isArray(items)) items=seed.map(it=>({t:it.t, n:it.n||'', done:!!it.done}));
   function render(){
     localStorage.setItem(K, JSON.stringify(items));
+    // 總覽的清單只能勾，不開放編輯文字、刪除、新增（內容在程式裡改）
     el.innerHTML = items.map((it,i)=>`
       <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span>
-      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
-      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+      <span class="txt ro${it.done?' done':''}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span></li>`).join('');
     el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
-    el.querySelectorAll('.txt').forEach(sp=>{
-      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.textContent=items[+sp.dataset.i].t; sp.contentEditable='true'; sp.focus(); });
-      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
-      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
-    });
-    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
-    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,n:'',done:false}); render(); };
-    ab.addEventListener('click',add);
-    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
   }
   render();
 }

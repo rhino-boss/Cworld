@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>住宿 · 大阪馬拉松 2027</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="sub.css?v=2">
+<style>
+.info{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0;background:#fff;border-radius:14px;overflow:hidden}
+.info th{text-align:left;font-size:12px;letter-spacing:.08em;color:var(--pink);padding:12px 10px 4px;border-bottom:2px solid var(--c-pink)}
+.info tr:first-child th{padding-top:4px}
+.info td{padding:7px 10px;border-bottom:1px solid #f3eee4;vertical-align:top;line-height:1.55}
+.info td:first-child{width:96px;color:var(--muted);font-weight:700;white-space:nowrap}
+.info b{font-weight:700}
+.info a{color:var(--blue);font-weight:700;text-decoration:none}
+.info a:hover{text-decoration:underline}
+.paid{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:0 9px;background:var(--c-yel);border:2px solid var(--b-yel);color:var(--brown);margin-left:6px}
+#stmap{height:320px;border-radius:14px;border:2px solid #fff;background:#e8ede4;z-index:0;box-shadow:0 2px 10px rgba(90,58,26,.12);margin-top:10px}
+.mapbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.mapbtn{display:inline-flex;align-items:center;gap:6px;background:#2f7fc6;color:#fff;text-decoration:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.mapbtn:hover{background:#1d5a93}
+.mapbtn.ghost{background:#fff;color:#2f7fc6;border:2px solid #aacfea}
+.mapbtn.ghost:hover{background:#e4f1fb}
+.tips{margin:8px 0 0 18px;padding:0;font-size:13.5px}
+.tips li{margin:4px 0;line-height:1.6}
+.tips li::marker{color:var(--pink)}
+.stmk{background:none;border:none}
+.stmk .pin{width:14px;height:14px;border-radius:50%;background:var(--pink);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.stmk .lb{position:absolute;left:20px;top:-2px;white-space:nowrap;font:700 12px/1.2 'Microsoft JhengHei','PingFang TC',sans-serif;color:#26261f;text-shadow:0 0 3px #fff,0 0 3px #fff,0 1px 2px #fff}
+</style>
+</head>
+<body>
+<nav class="cnav">
+  <a href="../../index.html">Cworld</a><span class="sep">/</span>
+  <a href="../index.html">旅遊</a><span class="sep">/</span>
+  <a href="./">大阪馬拉松</a><span class="sep">/</span>
+  <span class="current">住宿</span>
+</nav>
+<div class="tabbar" id="tabbar">
+  <a href="./">總覽</a>
+  <a href="plan.html">行程</a>
+  <a href="race.html">馬拉松篇</a>
+  <span class="dd"><a href="#" class="ddt">旅行篇 <i>▾</i></a>
+    <span class="ddm"><a href="shop.html">必買</a><a href="play.html">玩什麼</a><a href="eat.html">吃什麼</a></span>
+  </span>
+  <a href="stay.html" class="on">住宿</a>
+  <a href="prep.html">準備</a>
+</div>
+<div class="wrap">
+  <div class="hicon">🏨</div>
+  <h1>住宿</h1>
+  <p class="sub">三晚都住同一間，在大阪城公園東側、JR 大阪城公園站旁；終點大阪城公園走回去就到，比賽日最省事。</p>
+
+  <div class="sec yel">
+    <h2>Excellence Osaka Castle Park <span class="paid">Booking.com 已確認</span></h2>
+    <table class="info">
+      <tr><th colspan="2">訂房</th></tr>
+      <tr><td>日期</td><td><b>2027/2/26（五）– 3/1（一）</b>・3 晚・標準公寓 1 間・1 位成人</td></tr>
+      <tr><td>確認碼</td><td>預訂確認碼與 PIN 在 Booking 確認信、Booking App 裡（網頁公開，不放）</td></tr>
+      <tr><td>費用</td><td>約 <b>TWD 11,198</b>（¥53,826）＝公寓 7,665 ＋ 10% 稅 766 ＋ 清潔費 2,767（¥13,300／次）・房價不含餐</td></tr>
+      <tr><td>取消</td><td>2027/2/11 23:59 前免費；2/12 00:00 起收 ¥40,526・<b>不能改入住日期</b>（以住宿當地時間為準）</td></tr>
+      <tr><td>入住</td><td><b>17:00 – 24:00</b>（D1 先去 EXPO 領物、海遊館，約 21:00 再 Check-in）</td></tr>
+      <tr><td>退房</td><td><b>10:00 前</b>（3/1 退房後直接去和歌山）</td></tr>
+      <tr><td>怎麼報到</td><td>這是民泊型公寓（大阪市大保環執照），確認單上沒有櫃台或鑰匙箱說明；住宿方通常會在入住前幾天透過 Booking 訊息寄「入住指示」（密碼鎖／鑰匙箱位置），<b>出發前要再看一次 Booking 訊息</b>，沒收到就打 +81 50 1741 0183 問</td></tr>
+      <tr><th colspan="2">房間</th></tr>
+      <tr><td>設備</td><td>榻榻米和室・私人衛浴（浴缸＋淋浴）・陽台・廚房（灶台、微波爐、冰箱、電熱水壺、廚具）・洗衣機＋晾衣架・免治馬桶・空調／暖氣・電視含 Netflix・吹風機・毛巾寢具拖鞋・電梯</td></tr>
+      <tr><td>規定</td><td>免費 WiFi・無停車位・不可辦聚會（打牌、看球、單身派對）・損壞住宿最多賠 ¥15,000</td></tr>
+      <tr><th colspan="2">地址</th></tr>
+      <tr><td>地址</td><td>〒536-0014 大阪府大阪市城東区鴫野西 2-3-19</td></tr>
+      <tr><td>電話</td><td><a href="tel:+815017410183">+81 50 1741 0183</a>（Booking.com 客服：台灣 02 8793 3062・日本 +852 3077 5532，24 小時）</td></tr>
+      <tr><td>座標</td><td>34.6905358, 135.5352447（N 34° 41.432′, E 135° 32.115′）</td></tr>
+      <tr><td>最近車站</td><td>JR 大阪城公園站（環狀線）東側、JR 鴫野站（東西線／おおさか東線）；Metro 長堀鶴見綠地線 大阪ビジネスパーク站也在走路範圍</td></tr>
+      <tr><td>到飯店</td><td>從大阪港（海遊館）：Metro 中央線 → 森ノ宮 轉 JR 環狀線 → 大阪城公園站，出站往東過寝屋川</td></tr>
+    </table>
+    <div class="mapbar">
+      <a class="mapbtn" href="https://www.google.com/maps/search/?api=1&query=34.6905358,135.5352447" target="_blank" rel="noopener">📍 Google Map</a>
+      <a class="mapbtn ghost" href="https://www.google.com/maps/dir/?api=1&destination=34.6905358,135.5352447&travelmode=transit" target="_blank" rel="noopener">🚇 導航到飯店</a>
+      <a class="mapbtn ghost" href="https://secure.booking.com/mybooking.html" target="_blank" rel="noopener">Booking.com 訂單 ↗</a>
+    </div>
+    <div id="stmap"></div>
+  </div>
+
+  <div class="sec sky">
+    <h2>比賽日動線</h2>
+    <ul class="tips">
+      <li>起點 大阪府廳前：走路約 25 分（沿大阪城公園北側），或 JR 大阪城公園 → 森ノ宮 轉 Metro 谷町四丁目 1 站。</li>
+      <li>終點在大阪城公園內：完賽後走回飯店 15–20 分，不用擠電車。</li>
+      <li>D2 晨跑：出門就是大阪城公園，外周一圈約 5 km。</li>
+    </ul>
+  </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
+  t.addEventListener('click',e=>{ e.preventDefault(); dd.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!dd.contains(e.target)) dd.classList.remove('open'); });
+})();
+(function(){
+  const H=[34.6905358,135.5352447];
+  const map=L.map('stmap',{scrollWheelZoom:true}).setView(H,15);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
+  const mk=(ll,label,color)=>L.marker(ll,{icon:L.divIcon({className:'stmk',iconSize:null,iconAnchor:[7,7],html:'<div class="pin" style="background:'+color+'"></div><div class="lb">'+label+'</div>'})}).addTo(map);
+  mk(H,'Excellence Osaka Castle Park','#e8457c');
+  mk([34.6873,135.5262],'大阪城公園（終點）','#8a5fd8');
+  mk([34.6862,135.5203],'大阪府廳前（起點）','#2f7fc6');
+  mk([34.6935,135.5322],'JR 大阪城公園站','#5aa86e');
+  window.addEventListener('load',()=>map.invalidateSize());
+})();
+</script>
+</body>
+</html>
