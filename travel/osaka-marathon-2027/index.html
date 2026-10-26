@@ -254,25 +254,42 @@ summary::before{color:var(--pink)}
 #sec-travel{background:var(--c-lav);border-color:var(--b-lav)}
 #sec-pack{background:var(--c-pink);border-color:var(--b-pink)}
 #sec-todo{background:var(--c-sky);border-color:var(--b-sky)}
-details.sub{background:#fff;border:2px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
+details.sub{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
 details.sub>summary{color:var(--brown)}
 .secbody{padding:2px 12px 12px}
-.day{background:#fff;border:2px solid #fff;border-radius:18px;padding:12px 16px;grid-template-columns:72px 1fr;box-shadow:0 2px 10px rgba(90,58,26,.08)}
-.day .tag{align-items:center;gap:6px}
+.day{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:0;grid-template-columns:76px 1fr 128px;gap:0;overflow:hidden;box-shadow:0 2px 10px rgba(90,58,26,.08);align-items:stretch}
+.day .tag{align-items:center;justify-content:center;gap:6px;padding:14px 0;background:var(--c-sky)}
+.days .day:nth-child(1) .tag{background:var(--c-pink)}
+.days .day:nth-child(2) .tag{background:var(--c-mint)}
+.days .day:nth-child(3) .tag{background:var(--c-lav)}
+.days .day:nth-child(4) .tag{background:var(--c-sky)}
 .day .dnum{width:44px;height:44px;border-radius:50%;color:#fff;font-size:15px;justify-content:center;box-shadow:0 3px 0 rgba(0,0,0,.08)}
 .day .dnum i{display:none}
 .days .day:nth-child(1) .dnum{background:var(--d1)}
 .days .day:nth-child(2) .dnum{background:var(--d2)}
 .days .day:nth-child(3) .dnum{background:var(--d3)}
 .days .day:nth-child(4) .dnum{background:var(--d4)}
-.day .date{background:var(--c-sky);color:var(--blue);font-weight:700;border-radius:999px;padding:1px 9px;font-size:11.5px}
-.day .routeline{font-size:15px;color:var(--ink);font-weight:700;line-height:1.5}
-.day .routeline b{color:var(--brown)}
-.day .meta .stay{color:var(--pink)}
-.day .meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
-.day .meta b{color:var(--pink);font-weight:700;margin-right:2px}
-.day .meta .mi{display:inline-block;white-space:nowrap;margin-right:10px}
+.day .date{background:#fff;color:var(--brown);font-weight:700;border-radius:999px;padding:1px 9px;font-size:11.5px}
+.day .body{padding:12px 14px 12px 16px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.day .stops{display:flex;flex-wrap:wrap;align-items:center;gap:6px 0;font-size:14px;font-weight:700;color:var(--ink)}
+.day .stop{padding:3px 10px;border-radius:999px;background:#f6f1e8;color:var(--muted);font-weight:700;white-space:nowrap}
+.day .stop.key{background:var(--dc,var(--c-sky));color:var(--brown)}
+.days .day:nth-child(1){--dc:var(--c-pink);--dk:var(--d1)}
+.days .day:nth-child(2){--dc:var(--c-mint);--dk:var(--d2)}
+.days .day:nth-child(3){--dc:var(--c-lav);--dk:var(--d3)}
+.days .day:nth-child(4){--dc:var(--c-sky);--dk:var(--d4)}
+.day .arrow{width:18px;text-align:center;color:#cbbfae;font-size:12px;flex:none}
+.day .stop.flag{background:transparent;padding:3px 2px}
+.day .meta{margin:0;display:flex;flex-wrap:wrap;gap:6px;font-size:12.5px;line-height:1.5}
+.day .meta .mi{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;margin:0;padding:3px 10px 3px 8px;border-radius:999px;background:#fbf8f2;border:1px solid rgba(90,58,26,.14);color:var(--muted)}
+.day .meta .mi b{color:var(--dk,var(--pink));font-weight:700;margin:0}
+.day .meta .mi b::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--dk,var(--pink));margin-right:5px;vertical-align:1px}
+.day .cover{position:relative;background:#e8ede4;overflow:hidden}
+.day .cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.day.clickable:hover .cover img{transform:scale(1.05)}
+.day .cover::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff 0,rgba(255,255,255,0) 28%)}
 .day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
+@media (max-width:640px){.day{grid-template-columns:64px 1fr}.day .cover{display:none}.day .body{padding:10px 12px}}
 .chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
 .chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
 .chain .ctime::before{content:'🕒';font-size:11px;margin-right:4px}
@@ -281,7 +298,7 @@ details.sub>summary{color:var(--brown)}
 .chain .ctext{color:var(--muted);font-weight:700}
 .modal{border-radius:22px;border:3px solid var(--b-sky);font-family:inherit}
 .mhead i{border-radius:50%;width:16px;height:16px}
-.gfcard{background:#fff;border:2px solid var(--b-sky);border-radius:18px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
+.gfcard{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
 .gf-ap b{color:var(--brown);font-weight:700}
 .gf-conf b{color:var(--pink)}
 .gf-title{color:var(--brown)}
@@ -297,9 +314,7 @@ details.sub>summary{color:var(--brown)}
 .paid{background:var(--c-yel);border:2px solid var(--b-yel);color:var(--brown);font-weight:700}
 
 /* --- 重點資訊卡（住宿／馬拉松） --- */
-.fact{background:#fff;border:2px solid var(--b-sky);border-radius:18px;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
-#sec-stay .fact{border-color:var(--b-yel)}
-#sec-race .fact{border-color:var(--b-mint)}
+.fact{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
 .fhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .fhead b{font-size:16px;color:var(--brown)}
 .fbadge{font-size:11px;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--c-pink);border:1.5px solid var(--b-pink);color:var(--pink)}
@@ -481,7 +496,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 <details class="sec" id="sec-log" open>
 <summary>我的紀錄</summary>
 <div class="secbody">
-<div class="fact" style="border-color:var(--b-lav)">
+<div class="fact">
   <div class="fhead"><b>大阪馬拉松 紀錄表</b></div>
   <div class="frow" style="border-top:none;padding-top:0"><em>訓練、花費、備忘都記在這張表；私人檔案，要登入自己的 Google 帳號才開得了。</em></div>
   <div class="mapbar" style="margin:8px 0 2px"><a class="mapbtn" href="https://docs.google.com/spreadsheets/d/1neUSWURwccdwnfrCNy_XYF_W71mFcihUOUGVSI3whOo/edit" target="_blank" rel="noopener">📊 開啟紀錄表 ↗</a></div>
@@ -512,10 +527,19 @@ const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"
 /* ── 每日行程 ── */
 const DAYS=window.DAYS;
 const daysBox=document.getElementById('days');
+const COVER={D1:'img/kaiyukan_1.jpg',D2:'img/taiyo_1.jpg',D3:'img/osakajo_1.jpg',D4:'img/wakayama_1.jpg'};
+// 路線字串「A → <b>B</b> → 🏁 C」→ 站點膠囊；粗體＝當天重點
+function stopsHTML(route){
+  return route.split('→').map(x=>x.trim()).filter(Boolean).map(x=>{
+    const key=/<b>/.test(x); const t=x.replace(/<\/?b>/g,'');
+    return `<span class="stop${key?' key':''}">${t}</span>`;
+  }).join('<span class="arrow">›</span>');
+}
 daysBox.innerHTML=DAYS.map(v=>`
   <div class="day clickable">
     <div class="tag"><div class="dnum"><i style="background:var(--d${v.c})"></i>${v.d}</div><div class="date">${v.date}</div></div>
-    <div><div class="routeline">${v.route}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join(' ')}</div>`:''}</div>
+    <div class="body"><div class="stops">${stopsHTML(v.route)}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join('')}</div>`:''}</div>
+    <div class="cover">${COVER[v.d]?`<img src="${COVER[v.d]}" alt="" loading="lazy">`:''}</div>
   </div>`).join('');
 
 function chainHTML(chain, dayKey){
