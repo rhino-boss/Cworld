@@ -257,8 +257,7 @@ summary::before{color:var(--pink)}
 details.sub{background:#fff;border:1.5px solid var(--inner);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
 details.sub>summary{color:var(--brown)}
 .secbody{padding:2px 12px 12px}
-.day{background:#fff;border:1.5px solid var(--inner);border-radius:18px;padding:12px 14px 12px 18px;grid-template-columns:72px 1fr 112px;gap:0 14px;align-items:center;box-shadow:0 2px 10px rgba(90,58,26,.08);position:relative;overflow:hidden}
-.day::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--dk,var(--d1))}
+.day{background:#fff;border:1.5px solid var(--inner);border-radius:18px;padding:12px 16px;grid-template-columns:72px 1fr;gap:4px 14px;align-items:start;box-shadow:0 2px 10px rgba(90,58,26,.08)}
 .days .day:nth-child(1){--dk:var(--d1)}
 .days .day:nth-child(2){--dk:var(--d2)}
 .days .day:nth-child(3){--dk:var(--d3)}
@@ -273,10 +272,8 @@ details.sub>summary{color:var(--brown)}
 .day .meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
 .day .meta b{color:var(--pink);font-weight:700;margin-right:2px}
 .day .meta .mi{display:inline-block;white-space:nowrap;margin-right:10px}
-.day .cover{width:112px;height:80px;border-radius:12px;overflow:hidden;background:#e8ede4}
-.day .cover img{width:100%;height:100%;object-fit:cover;display:block}
 .day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
-@media (max-width:640px){.day{grid-template-columns:64px 1fr;padding:10px 12px 10px 16px}.day .cover{display:none}}
+@media (max-width:640px){.day{grid-template-columns:64px 1fr;padding:10px 12px}}
 .chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
 .chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
 .chain .ctime::before{content:'🕒';font-size:11px;margin-right:4px}
@@ -526,7 +523,6 @@ daysBox.innerHTML=DAYS.map(v=>`
   <div class="day clickable">
     <div class="tag"><div class="dnum"><i style="background:var(--d${v.c})"></i>${v.d}</div><div class="date">${v.date}</div></div>
     <div class="body"><div class="routeline">${v.route}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join(' ')}</div>`:''}</div>
-    <div class="cover">${COVER[v.d]?`<img src="${COVER[v.d]}" alt="" loading="lazy">`:''}</div>
   </div>`).join('');
 
 function chainHTML(chain, dayKey){
