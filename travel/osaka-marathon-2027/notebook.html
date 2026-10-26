@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>大阪馬拉松 4 天 3 夜 · 手帳版</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<style>
+/* ── 手帳風：米色底、黑色細框圓角方塊、左側時間＋虛線時間軸（參考影片） ── */
+:root{--paper:#f6f3ea;--ink:#2b2b2b;--line:#2b2b2b;--muted:#7a776f;--red:#e0736e;--redbg:#fde4e1;--yel:#f3d77a;--yelbg:#fdf3cf;
+  --blu:#8fb9d9;--blubg:#e3eef7;--grn:#9ccc9a;--grnbg:#e6f3e4;--pur:#c9a8dc;--purbg:#f0e6f5;--pink:#f0b2c0;--pinkbg:#fbe5ea}
+*{box-sizing:border-box}
+html{background:#e9e5d8}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Microsoft JhengHei','PingFang TC','Noto Sans TC',sans-serif;line-height:1.5;max-width:520px;margin:0 auto;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+b{font-weight:700}
+/* 頂欄 */
+.top{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1.5px solid var(--line)}
+.top .bar{display:flex;align-items:center;gap:10px;padding:10px 14px 0;font-size:12px;color:var(--muted)}
+.top .bar a{color:var(--muted);text-decoration:none}
+.tabs{display:flex;align-items:center;gap:6px;padding:6px 12px 10px}
+.tabs .logo{font-size:22px;margin-right:auto}
+.tabs a{text-decoration:none;color:var(--ink);font-size:14px;font-weight:700;padding:4px 12px;border-radius:999px;border:1.5px solid transparent}
+.tabs a.on{background:var(--redbg);border-color:var(--red)}
+.wrap{padding:14px 14px 60px}
+/* 封面 */
+.hero{border:1.5px solid var(--line);border-radius:16px;background:#fff;padding:14px 12px 10px;text-align:center;margin-bottom:14px}
+.hero svg{display:block;width:100%;height:auto}
+.hero h1{font-size:26px;letter-spacing:.35em;margin:8px 0 2px;font-weight:700}
+.hero .dates{font-size:14px;color:var(--muted);letter-spacing:.08em}
+.cd{display:inline-block;margin-top:10px;background:var(--yel);border:1.5px solid var(--line);border-radius:999px;padding:3px 14px;font-weight:700;font-size:14px}
+/* 區塊標題 */
+h2{display:flex;align-items:center;gap:8px;font-size:17px;margin:22px 0 10px;scroll-margin-top:110px}
+h2 .ic{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:16px;background:#fff}
+/* 航班卡 */
+.fl{border:1.5px solid var(--line);border-radius:14px;background:#fff;margin-bottom:10px;overflow:hidden}
+.fl .h{display:flex;justify-content:space-between;padding:6px 12px;font-size:13px;font-weight:700;border-bottom:1.5px solid var(--line)}
+.fl .h.go{background:var(--blubg)}.fl .h.back{background:var(--pinkbg)}
+.fl .b{padding:10px 12px 8px}
+.fl .row{display:flex;align-items:center;gap:10px}
+.fl .t{font-size:24px;font-weight:700;line-height:1}
+.fl .ap{font-size:12px;color:var(--muted)}
+.fl .dur{flex:1;text-align:center;font-size:11px;color:var(--muted);border-bottom:2px dotted var(--line);padding-bottom:2px;margin:0 6px 12px}
+.fl .note{font-size:12px;color:var(--red);font-weight:700;margin-top:6px}
+.fl .meta{font-size:12px;color:var(--muted);margin-top:2px}
+/* 日期軸 */
+.dates{display:flex;justify-content:space-between;position:relative;margin:6px 4px 16px;padding-top:22px}
+.dates::before{content:'';position:absolute;left:14px;right:14px;top:8px;border-top:1.5px solid var(--line)}
+.dates .d{position:relative;text-align:center;font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;flex:1}
+.dates .d::before{content:'';position:absolute;top:-19px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:1.5px solid var(--line)}
+.dates .d small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.dates .d.on span{background:var(--redbg);border:1.5px solid var(--red);border-radius:6px;padding:0 6px}
+.dates .d.on::before{content:'🏃';border:0;background:none;font-size:18px;top:-30px;width:auto;height:auto}
+/* 每日卡 */
+.day{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.day .em{font-size:30px;width:52px;height:52px;border:1.5px solid var(--line);border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.day .dn{font-size:11px;color:var(--muted)}
+.day .tt{font-size:15px;font-weight:700}
+.day .st{font-size:11px;color:var(--muted);margin-top:2px}
+.day.c1{background:var(--pinkbg)}.day.c2{background:var(--yelbg)}.day.c3{background:var(--grnbg)}.day.c4{background:var(--purbg)}
+.key{font-size:12px;color:var(--muted);margin:-4px 0 10px 4px}
+.key b{color:var(--red)}
+/* 時間軸 */
+.tl{position:relative;padding-left:62px;margin-bottom:8px}
+.tl::before{content:'';position:absolute;left:52px;top:8px;bottom:8px;border-left:2px dotted var(--line)}
+.ev{position:relative;margin:0 0 10px}
+.ev .tm{position:absolute;left:-62px;top:4px;width:48px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.ev .tm small{display:block;font-size:10px;color:var(--muted);font-weight:400}
+.ev::before{content:'';position:absolute;left:-14px;top:9px;width:8px;height:8px;border-radius:50%;background:#fff;border:1.5px solid var(--line)}
+.ev .box{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:7px 10px;font-size:13.5px;font-weight:700}
+.ev .box .ic{margin-left:6px;display:inline-flex;gap:4px;vertical-align:middle}
+.ev .box .ic a{text-decoration:none;font-size:12px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--ink)}
+.ev .sub{font-size:12px;color:var(--muted);margin:3px 0 0 4px;line-height:1.5}
+.ev.mv .box{background:none;border:0;padding:2px 0;font-weight:400;font-size:12.5px}
+.ev.mv::before{display:none}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1.5px solid var(--line);border-radius:7px;padding:0 7px;font-size:11.5px;font-weight:700;background:var(--blubg);margin-right:6px;white-space:nowrap}
+.pill.bus{background:var(--grnbg)}.pill.air{background:var(--yelbg)}.pill.walk{background:#fff}.pill.taxi{background:var(--purbg)}
+.photos{display:flex;gap:6px;overflow-x:auto;margin:6px 0 2px;scrollbar-width:none}
+.photos::-webkit-scrollbar{display:none}
+.photos img{flex:none;width:120px;height:84px;object-fit:cover;border-radius:8px;border:1.5px solid var(--line)}
+.alt{border:1.5px dashed var(--line);border-radius:12px;padding:8px 12px;margin:4px 0 14px;background:var(--blubg)}
+.alt summary{font-weight:700;font-size:13.5px;cursor:pointer}
+.alt .note{font-size:12px;color:var(--muted);margin:6px 0 10px}
+/* 準備 */
+.card{border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:14px}
+.ck{list-style:none;margin:0;padding:0}
+.ck li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;padding:5px 0;border-bottom:1px dotted #ccc8ba}
+.ck li:last-child{border-bottom:0}
+.ck i{width:16px;height:16px;border:1.5px solid var(--line);border-radius:4px;flex:none;margin-top:2px;background:#fff}
+.ck .cat{font-size:10.5px;border:1.5px solid var(--line);border-radius:5px;padding:0 5px;background:var(--yelbg);flex:none;margin-top:2px}
+.stay{width:100%;border-collapse:collapse;font-size:13px}
+.stay td{padding:6px 2px;border-bottom:1.5px dotted var(--line)}
+.stay tr:last-child td{border-bottom:0}
+.stay td:last-child{text-align:right;color:var(--muted);white-space:nowrap}
+footer{font-size:11px;color:var(--muted);text-align:center;margin-top:24px}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="bar"><a href="./">✕</a><span>大阪馬拉松 4 天 3 夜｜2027.02.26–03.01</span></div>
+  <div class="tabs"><span class="logo">🏃</span><a href="#flight" class="on">航班</a><a href="#plan">行程</a><a href="#prep">準備</a></div>
+</div>
+<div class="wrap">
+
+<div class="hero">
+  <svg viewBox="0 0 320 120" aria-hidden="true">
+    <path d="M0 95 Q40 70 80 90 T160 88 T240 92 T320 86 V120 H0 Z" fill="#dfe9f3" stroke="#2b2b2b" stroke-width="1.5"/>
+    <circle cx="262" cy="34" r="16" fill="#f3d77a" stroke="#2b2b2b" stroke-width="1.5"/>
+    <g stroke="#2b2b2b" stroke-width="1.5" fill="#fff">
+      <path d="M40 90 V48 h38 V90" /><path d="M46 56 h26 M46 66 h26 M46 76 h26" fill="none"/>
+      <path d="M120 90 V60 l18 -16 l18 16 V90 Z" fill="#fde4e1"/><rect x="132" y="72" width="12" height="18" fill="#fff"/>
+      <path d="M190 90 V50 h10 V40 h10 V50 h10 V90 Z" fill="#e6f3e4"/>
+    </g>
+    <g stroke="#2b2b2b" stroke-width="1.5" fill="none"><path d="M30 30 q10 -10 20 0 q10 -10 20 0" /><path d="M210 22 q8 -8 16 0 q8 -8 16 0"/></g>
+    <g transform="translate(228 56)"><circle cx="0" cy="0" r="6" fill="#fde4e1" stroke="#2b2b2b" stroke-width="1.5"/><path d="M0 6 v14 M0 10 l-9 6 M0 10 l9 -3 M0 20 l-8 10 M0 20 l9 8" stroke="#2b2b2b" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>
+    <text x="160" y="114" text-anchor="middle" font-size="9" fill="#7a776f">OSAKA MARATHON 2027</text>
+  </svg>
+  <h1>大阪馬拉松</h1>
+  <div class="dates">2027・2/26（五）– 3/1（一）・4 天 3 夜</div>
+  <div class="cd" id="cd">出發倒數 — 天</div>
+</div>
+
+<h2 id="flight"><span class="ic">✈️</span>航班</h2>
+<div class="fl"><div class="h go"><span>2/26（五）去程</span><span>MM24</span></div><div class="b">
+  <div class="row"><div><div class="t">09:40</div><div class="ap">桃園 T1</div></div><div class="dur">2h 30m</div><div style="text-align:right"><div class="t">13:10</div><div class="ap">關西 T2</div></div></div>
+  <div class="note">起飛前 120～50 分報到・訂單 QAJ7AN</div><div class="meta">Peach Aviation・自助報到機掃 QR Code</div>
+</div></div>
+<div class="fl"><div class="h back"><span>3/1（一）回程</span><span>MM027</span></div><div class="b">
+  <div class="row"><div><div class="t">15:25</div><div class="ap">關西 T2</div></div><div class="dur">2h 30m</div><div style="text-align:right"><div class="t">17:55</div><div class="ap">桃園 T1</div></div></div>
+  <div class="note">最晚 14:35 報到完</div><div class="meta">座位 7F・託運 1 件・餐：千房大阪燒</div>
+</div></div>
+
+<h2 id="plan"><span class="ic">🗓️</span>每日行程</h2>
+<div class="dates" id="datebar"></div>
+<div id="days"></div>
+
+<h2 id="prep"><span class="ic">🎒</span>出發前準備</h2>
+<div class="card"><h3>必買</h3><ul class="ck" id="buy"></ul></div>
+<div class="card"><h3>住宿</h3><table class="stay"><tr><td>Excellence Osaka Castle Park・鴫野</td><td>2/26–3/1</td></tr><tr><td>Booking.com 已付・入住 17:00 後・退房 10:00 前</td><td></td></tr></table></div>
+<div class="card"><h3>攜帶物品</h3><ul class="ck" id="pack"></ul></div>
+<div class="card"><h3>待確認</h3><ul class="ck" id="todo"></ul></div>
+
+<footer>手帳版・資料與 <a href="./">行程頁</a> 共用（days.js）</footer>
+</div>
+
+<script src="days.js"></script>
+<script>
+(function(){
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const EDITS=(()=>{ try{ return JSON.parse(localStorage.getItem('osaka27.edits'))||{}; }catch(e){ return {}; } })();
+// 倒數
+const left=Math.ceil((new Date('2027-02-26T00:00:00+08:00')-new Date())/86400000);
+document.getElementById('cd').textContent=left>0?'出發倒數 '+left+' 天':(left===0?'今天出發！':'已出發');
+// 交通字串 → 膠囊
+function pillOf(txt){
+  const t=txt.replace(/^交通：/,'');
+  const m=/樂桃|MM0?\d+|✈/.test(t)?['air','✈ 飛機']:/巴士|公車|bus/i.test(t)?['bus','🚌 公車']:/計程車|taxi/i.test(t)?['taxi','🚕 計程車']:/步行/.test(t)?['walk','🚶 步行']:/Metro|地鐵|御堂筋|中央線|單軌|New Tram/.test(t)?['','🚇 地鐵']:['','🚃 電車'];
+  return '<span class="pill '+m[0]+'">'+m[1]+'</span>'+esc(t);
+}
+const DAYEM={D1:'✈️',D2:'🗼',D3:'🏁',D4:'🏯'};
+const DAYTT={D1:'飛大阪＋EXPO 領物＋海遊館',D2:'大阪城晨跑＋太陽之塔＋勝尾寺',D3:'大阪馬拉松 42.195 km',D4:'和歌山城＋回家囉'};
+document.getElementById('datebar').innerHTML=DAYS.map(v=>'<a class="d" href="#'+v.d+'"><span>'+v.date.split(' ')[0]+'</span><small>'+(v.date.split(' ')[1]?'週'+v.date.split(' ')[1]:'')+'</small></a>').join('');
+function chain(ch,dayKey){
+  let li=0,out='',prev=null;
+  for(const item of ch){
+    if(Array.isArray(item)){
+      const o=item[2]||{}; const time=item[0].replace('--:--','');
+      const [t1,t2]=time.split('–');
+      const isMove=item[1].includes('→');
+      const mapUrl=o.m?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(o.m):'';
+      const icons=(mapUrl?'<a href="'+esc(mapUrl)+'" target="_blank" rel="noopener">📍</a>':'')+(o.u?'<a href="'+esc(o.u)+'" target="_blank" rel="noopener">↗</a>':'');
+      prev={isMove,html:'<div class="ev'+(isMove?' mv':'')+'"><div class="tm">'+(t1||'')+(t2?'<small>–'+t2+'</small>':'')+'</div><div class="box">'+(isMove?'':esc(item[1]))+(icons&&!isMove?'<span class="ic">'+icons+'</span>':'')+'%%LEG%%</div>'+
+        (o.p&&o.p.length?'<div class="photos">'+o.p.map(s=>'<img src="'+esc(s)+'" alt="" loading="lazy">').join('')+'</div>':'')+'</div>', name:item[1]};
+      out+='%%EV'+(li)+'%%';
+      // 先放占位，分段補進去
+      prev.idx=li; li++;
+      out=out.replace('%%EV'+(li-1)+'%%',prev.html);
+    } else {
+      const k='leg.'+dayKey+'.'+(li-1);
+      const txt=(EDITS[k]||item.n||'').split('；').map(x=>x.trim()).filter(Boolean);
+      const trans=txt.find(x=>/^交通：/.test(x)); const rest=txt.filter(x=>!/^交通：/.test(x));
+      let legHtml='';
+      if(prev&&prev.isMove){ legHtml=(trans?pillOf(trans):'<span class="pill">🚃 移動</span>')+'<b> '+esc(prev.name)+'</b>'+(rest.length?'<div class="sub">'+rest.map(esc).join('<br>')+'</div>':''); }
+      else { legHtml=(trans||rest.length)?'<div class="sub">'+(trans?pillOf(trans)+'<br>':'')+rest.map(esc).join('<br>')+'</div>':''; }
+      out=out.replace('%%LEG%%',legHtml);
+    }
+  }
+  return out.replace(/%%LEG%%/g,'');
+}
+document.getElementById('days').innerHTML=DAYS.map(v=>{
+  const meta=(v.meta||'').replace(/<span class="stay">[^<]*<\/span>/,'');
+  return '<section id="'+v.d+'">'+
+    '<div class="day c'+v.c+'"><div class="em">'+(DAYEM[v.d]||'📍')+'</div><div><div class="dn">Day '+v.d.slice(1)+'・'+v.date+'</div><div class="tt">'+(DAYTT[v.d]||'')+'</div><div class="st">'+(v.d==='D4'?'回程':'住 Excellence Osaka Castle Park（鴫野）')+'</div></div></div>'+
+    (meta?'<div class="key">'+meta+'</div>':'')+
+    '<div class="tl">'+chain(v.chain,v.d)+'</div>'+
+    (v.alt?'<details class="alt"><summary>☃ '+v.alt.title+'</summary><div class="note">'+esc(v.alt.note||'')+'</div><div class="tl">'+chain(v.alt.chain,v.d+'alt')+'</div></details>':'')+
+  '</section>';
+}).join('');
+// 準備：直接從行程頁的 localStorage 清單讀（沒有就用內建）
+function list(id,key,fallback,catMap){
+  let items=null; try{ items=JSON.parse(localStorage.getItem('osaka27.items.'+key)); }catch(e){}
+  if(!Array.isArray(items)) items=fallback;
+  document.getElementById(id).innerHTML=items.map(it=>'<li><i></i>'+(it.c&&catMap?'<span class="cat">'+(catMap[it.c]||it.c)+'</span>':'')+'<span>'+esc(it.t)+(it.n?' <span style="color:var(--muted)">'+esc(it.n)+'</span>':'')+'</span></li>').join('');
+}
+list('buy','souv5',[{t:'BB 霜 ×1',n:'INTEGRATE Pro Quality BB'},{t:'粉餅 ×1',n:'IHADA SPF40'},{t:'痘痘貼 ×4 組'},{t:'無印良品 溫和去角質洗面乳 ×2'},{t:'mont-bell T 恤'},{t:'mont-bell 筷子'},{t:'mont-bell 限定 T'},{t:'aminoVITAL 全馬組合包 ×8 盒'}]);
+list('pack','pack3-all',[{t:'護照',c:'must'},{t:'日幣',c:'must'},{t:'信用卡',c:'must'},{t:'參賽確認信',c:'must'},{t:'羽絨（阿羲）',c:'cloth'},{t:'風雨衣（皮卡丘）',c:'cloth'},{t:'保暖：手套、毛帽',c:'cloth'},{t:'鴨舌帽',c:'cloth'},{t:'衣：立山、劍岳',c:'cloth'},{t:'褲：on、迪卡農繭型褲',c:'cloth'},{t:'襪：M、D',c:'cloth'},{t:'Y拖',c:'cloth'},{t:'補給：能量膠 ×4、鹽錠',c:'run'},{t:'行動電源',c:'other'},{t:'轉接頭',c:'other'},{t:'盥洗：刮鬍刀、牙刷、牙膏',c:'other'}],{must:'必帶',cloth:'服裝',run:'比賽',other:'其他'});
+list('todo','todo3',[{t:'買 eSIM'},{t:'換日幣'},{t:'海遊館門票線上預購'},{t:'太陽之塔內部參觀預約'},{t:'查 千里中央 → 勝尾寺 阪急巴士時刻'}]);
+// 分頁高亮
+const tabs=[...document.querySelectorAll('.tabs a')];
+const secs=tabs.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{ let k=0; secs.forEach((s,i)=>{ if(s&&s.getBoundingClientRect().top<140) k=i; }); tabs.forEach((a,i)=>a.classList.toggle('on',i===k)); },{passive:true});
+})();
+</script>
+</body>
+</html>

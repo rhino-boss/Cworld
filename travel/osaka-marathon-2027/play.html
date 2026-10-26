@@ -38,7 +38,7 @@
 <script src="days.js"></script>
 <script>
 const SPOTS=[
-  {d:1, name:'INTEX 大阪・EXPO 領物', m:'インテックス大阪', u:'https://www.osaka-marathon.com/2027/expo/', p:[],
+  {d:1, name:'INTEX 大阪・EXPO 領物', m:'インテックス大阪', u:'https://www.osaka-marathon.com/2027/expo/', p:['img/intex_1.jpg','img/intex_2.jpg','img/intex_3.jpg','img/intex_4.jpg','img/intex_5.jpg'],
    desc:'大阪灣區的展覽館，馬拉松 EXPO 在 6 號館。', tips:['Metro 中央線 → コスモスクエア → New Tram 中ふ頭，步行 5 分','五 11:00–19:00；本人＋護照','逛廠商攤位、Mizuno 限定品']},
   {d:1, name:'海遊館', m:'海遊館', u:'https://www.kaiyukan.com/', p:['img/kaiyukan_1.jpg','img/kaiyukan_2.jpg','img/kaiyukan_3.jpg','img/kaiyukan_4.jpg','img/kaiyukan_5.jpg'],
    desc:'世界最大級水族館之一，鯨鯊是招牌。', tips:['門票 ¥2,700，線上預購免排隊','17:00 後燈光轉暗進入夜間模式；最後入館 19:00','必拍：紅藍外牆正面＋鯨鯊壁畫、太平洋大水槽的鯨鯊']},
@@ -50,15 +50,15 @@ const SPOTS=[
    desc:'1970 大阪萬博遺址，岡本太郎的太陽之塔。', tips:['入園 ¥260；內部參觀 ¥720 要預約','拍張正面照、繞一圈就走（約 1 小時）','單軌電車 万博記念公園站下車']},
   {d:2, name:'勝尾寺（達摩寺）', m:'勝尾寺', u:'https://katsuo-ji-temple.or.jp/', p:['img/katsuoji_1.jpg','img/katsuoji_2.jpg','img/katsuoji_3.jpg','img/katsuoji_4.jpg','img/katsuoji_5.jpg'],
    desc:'箕面山上的勝運寺，滿山遍野的達摩。', tips:['拜觀料 ¥500；山上有階梯','千里中央搭阪急巴士約 30 分，班次少先查時刻','必拍：達摩牆、山門、屋瓦上的小達摩']},
-  {d:2, name:'京橋（居酒屋街）', m:'京橋 居酒屋 大阪', u:'', p:[],
+  {d:2, name:'京橋（居酒屋街）', m:'京橋 居酒屋 大阪', u:'', p:['img/kyobashi_1.jpg','img/kyobashi_2.jpg','img/kyobashi_3.jpg'],
    desc:'飯店隔壁站，大阪老派居酒屋聚集地。', tips:['賽前晚餐選烤物、飯類，少喝酒']},
-  {d:3, name:'鶴橋（燒肉街）', m:'鶴橋 焼肉', u:'', p:[],
+  {d:3, name:'鶴橋（燒肉街）', m:'鶴橋 焼肉', u:'', p:['img/tsuruhashi_1.jpg','img/tsuruhashi_2.jpg','img/tsuruhashi_3.jpg','img/tsuruhashi_4.jpg'],
    desc:'大阪燒肉一條街，完賽慶功。', tips:['JR 環狀線從鴫野直達約 10 分','店家待定']},
   {d:4, name:'和歌山城', m:'和歌山城', u:'https://wakayamajo.jp/', p:['img/wakayama_1.jpg','img/wakayama_2.jpg','img/wakayama_3.jpg','img/wakayama_4.jpg','img/wakayama_5.jpg'],
    desc:'紀州德川家的居城，天守閣可登頂。', tips:['天守閣 ¥410；和歌山站搭巴士 10 分或步行 20 分','必拍：天守連立式全景、御橋廊下','午餐：和歌山拉麵 井出商店']},
-  {d:0, name:'道頓堀・心齋橋（有空檔再去）', m:'道頓堀', u:'', p:[],
+  {d:0, name:'道頓堀・心齋橋（有空檔再去）', m:'道頓堀', u:'', p:['img/dotonbori_1.jpg','img/dotonbori_2.jpg','img/dotonbori_3.jpg','img/dotonbori_4.jpg','img/dotonbori_5.jpg'],
    desc:'固力果跑跑人、蟹道樂大螃蟹，大阪最熱鬧的一條河。', tips:['Metro 御堂筋線 なんば 站','晚上燈亮了才好拍']},
-  {d:0, name:'黑門市場（有空檔再去）', m:'黒門市場', u:'https://kuromon.com/', p:[],
+  {d:0, name:'黑門市場（有空檔再去）', m:'黒門市場', u:'https://kuromon.com/', p:['img/kuromon_1.jpg','img/kuromon_2.jpg','img/kuromon_3.jpg','img/kuromon_4.jpg','img/kuromon_5.jpg'],
    desc:'大阪的廚房，邊走邊吃海鮮、水果、和牛串。', tips:['早上到中午最熱鬧，下午很多店收攤']},
 ];
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');

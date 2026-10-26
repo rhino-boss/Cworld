@@ -5,9 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>完整行程 · 大阪馬拉松 2027</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="sub.css">
 <style>
 
+/* 地圖總覽 */
+.ov{margin:0 0 16px;padding:10px 10px 8px}
+.ov .bar{display:flex;align-items:center;gap:8px;margin:0 4px 8px}
+.ov .bar b{color:var(--brown);font-size:1.05rem;margin-right:auto}
+.ov .tg{display:inline-flex;border:2px solid var(--b-sky);border-radius:999px;overflow:hidden;background:#fff}
+.ov .tg button{border:0;background:#fff;font:inherit;font-weight:700;font-size:12.5px;padding:5px 12px;cursor:pointer;color:var(--blue)}
+.ov .tg button.on{background:var(--blue);color:#fff}
+#ovmap{height:360px;border-radius:14px;border:2px solid #fff;background:#e8ede4;z-index:0;box-shadow:0 2px 10px rgba(90,58,26,.12)}
+.ov .days{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:4px;scrollbar-width:none}
+.ov .days::-webkit-scrollbar{display:none}
+.ov .dc{flex:none;min-width:150px;background:#fff;border:2px solid #fff;border-radius:14px;padding:8px 12px;cursor:pointer;box-shadow:0 2px 8px rgba(90,58,26,.08);transition:transform .15s}
+.ov .dc:hover{transform:translateY(-2px)}
+.ov .dc.on{border-color:var(--blue)}
+.ov .dc .h{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px}
+.ov .dc .h i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.ov .dc .h small{color:var(--muted);font-weight:700;font-size:11px}
+.ov .dc .pl{font-size:12px;color:var(--ink);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.ov .dc .km{font-size:11px;color:var(--muted);margin-top:2px}
+.ov .dc .km b{color:var(--blue);font-size:13px}
+.ovmk{background:none;border:none}
+.ovmk .n{width:22px;height:22px;border-radius:50%;color:#fff;font:700 11px/22px 'Microsoft JhengHei',sans-serif;text-align:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.ovmk .lb{position:absolute;left:26px;top:2px;white-space:nowrap;font:700 11px/1.2 'Microsoft JhengHei','PingFang TC',sans-serif;color:#26261f;text-shadow:0 0 3px #fff,0 0 3px #fff,0 1px 2px #fff}
+@media (max-width:640px){#ovmap{height:300px}}
 .jump{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .jump a{text-decoration:none;color:#fff;font-weight:700;font-size:.85rem;border-radius:999px;padding:5px 14px}
 .day{padding:14px 16px;margin:0 0 12px;scroll-margin-top:64px}
@@ -43,10 +67,16 @@ details.alt .altbody{padding:0 14px 12px}
   <div class="hicon">🏃</div>
   <h1>完整行程</h1>
   <p class="sub">2/26（五）– 3/1（一）・📍 Google Map・↗ 官網・照片可左右滑（拍照角度參考）</p>
+  <div class="sec ov">
+    <div class="bar"><b>🗺️ 路線總覽</b><div class="tg"><button type="button" class="on" data-mode="all">看全程</button><button type="button" data-mode="day">放大當天</button></div></div>
+    <div id="ovmap"></div>
+    <div class="days" id="ovdays"></div>
+  </div>
   <div class="jump" id="jump"></div>
   <div class="sec pink" id="days"></div>
   <footer>行程資料與行程頁共用（days.js）；備註在行程頁改過的文字這裡會一起顯示。</footer>
 </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="days.js"></script>
 <script>
 (function(){
@@ -80,6 +110,36 @@ document.getElementById('days').innerHTML=DAYS.map(v=>
     (v.alt?'<details class="alt" open><summary>☃ '+v.alt.title+'</summary><div class="altbody"><div class="route">'+v.alt.route+'</div>'+(v.alt.note?'<div class="meta">'+v.alt.note+'</div>':'')+chainHTML(v.alt.chain,v.d+'alt')+'</div></details>':'')+
   '</section>').join('');
 window.bindCarousels&&window.bindCarousels(document);
+/* ── 地圖總覽：每天的地點依序連線，底部日期卡可切換 ── */
+(function(){
+  const el=document.getElementById('ovmap'); if(!el||!window.L) return;
+  const km=(a,b)=>{const R=6371,dLa=(b[0]-a[0])*Math.PI/180,dLo=(b[1]-a[1])*Math.PI/180,x=Math.sin(dLa/2)**2+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
+  const COL={1:'#e8457c',2:'#5aa86e',3:'#8a5fd8',4:'#2f7fc6'};
+  // 每天的點：有 ll 的節點，名稱只留地點（去掉「晚餐：」「起點（…）」這類前綴）
+  const place=n=>n.replace(/^(晚餐|午餐|早餐|慶功晚餐)：/,'').replace(/（[^）]*）/g,'').replace(/・.*$/,'').replace(/s*→.*$/,'').replace(/ Check-in$/,'').trim();
+  const days=DAYS.map(v=>{const pts=[];v.chain.forEach(it=>{if(Array.isArray(it)&&it[2]&&it[2].ll){const nm=place(it[1]);if(!pts.length||pts[pts.length-1].name!==nm)pts.push({name:nm,ll:it[2].ll});}});
+    let dist=0;for(let i=1;i<pts.length;i++)dist+=km(pts[i-1].ll,pts[i].ll);return{d:v.d,date:v.date,c:v.c,pts,dist};});
+  const map=L.map('ovmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
+  const layers=days.map(dy=>{const g=L.layerGroup();
+    if(dy.pts.length>1)L.polyline(dy.pts.map(p=>p.ll),{color:COL[dy.c],weight:4,opacity:.85,dashArray:dy.d==='D4'||dy.d==='D1'?'1 0':null}).addTo(g);
+    dy.pts.forEach((p,i)=>L.marker(p.ll,{icon:L.divIcon({className:'ovmk',iconSize:null,iconAnchor:[11,11],html:'<div class="n" style="background:'+COL[dy.c]+'">'+(i+1)+'</div><div class="lb">'+p.name+'</div>'})}).addTo(g));
+    return g;});
+  let mode='all',cur=0;
+  const bounds=pts=>L.latLngBounds(pts.map(p=>p.ll));
+  function render(){
+    layers.forEach((g,i)=>{ if(mode==='all'||i===cur) g.addTo(map); else map.removeLayer(g); });
+    const pts=mode==='all'?days.flatMap(x=>x.pts):days[cur].pts;
+    if(pts.length) map.fitBounds(bounds(pts),{padding:[28,28],maxZoom:mode==='all'?10:14});
+    document.querySelectorAll('.ov .dc').forEach((c,i)=>c.classList.toggle('on',mode==='day'&&i===cur));
+    document.querySelectorAll('.ov .tg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===mode));
+  }
+  document.getElementById('ovdays').innerHTML=days.map((dy,i)=>'<div class="dc" data-i="'+i+'"><div class="h"><i style="background:'+COL[dy.c]+'"></i>'+dy.d+' <small>'+dy.date+'</small></div><div class="pl">'+dy.pts.map(p=>p.name).join('・')+'</div><div class="km"><b>'+Math.round(dy.dist)+'</b> km 移動</div></div>').join('');
+  document.querySelectorAll('.ov .dc').forEach(c=>c.addEventListener('click',()=>{cur=+c.dataset.i;mode='day';render();}));
+  document.querySelectorAll('.ov .tg button').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;render();}));
+  render();
+  window.addEventListener('load',()=>{map.invalidateSize();render();});
+})();
 if(location.hash){ const el=document.querySelector(location.hash); el&&el.scrollIntoView(); }
 })();
 </script>
