@@ -13,8 +13,7 @@ window.DAYS=[
      ['16:15–19:30','海遊館（含夜間展示）',{pl:'海遊館',ll:[34.6545,135.4289],u:'https://www.kaiyukan.com/',m:'海遊館',p:['img/kaiyukan_1.jpg','img/kaiyukan_2.jpg','img/kaiyukan_3.jpg','img/kaiyukan_4.jpg','img/kaiyukan_5.jpg']}],{n:'門票 ¥2,700（線上預購免排隊）；最後入館 19:00、閉館 20:00；17:00 後燈光轉暗進入夜間模式'},
      ['19:30–20:30','晚餐：天保山 Market Place 亂找',{pl:'天保山',ll:[34.6560,135.4302],m:'天保山マーケットプレース',p:['img/tempozan_1.jpg','img/tempozan_2.jpg','img/tempozan_3.jpg','img/tempozan_4.jpg','img/tempozan_5.jpg']}],{n:'不預設店，2F なにわ食いしんぼ横丁 走一圈看什麼順眼就吃；想吃章魚燒、壽司這裡都有'},
      ['20:30–21:00','大阪港 → 回住宿'],{n:'交通：Metro 中央線 → 森ノ宮 轉 JR'},
-     ['21:00–21:20','Excellence Osaka Castle Park Check-in',{pl:'飯店（大阪城旁）',ll:[34.69054,135.53524],u:'stay.html',m:'Excellence Osaka Castle Park 鴫野西2-3-19'}],{n:'17:00 後才能入住；城東区鴫野西 2-3-19，JR 大阪城公園站東側、過寝屋川就到'},
-     ['21:30–22:00','輕鬆跑 3 km（住宿 → 大阪城公園外圍折返）',{pl:'大阪城公園外圍',ll:[34.6920,135.5400]}],{n:'6:00 配速；只是活動筋骨、順便認路'}
+     ['21:00–21:20','Excellence Osaka Castle Park Check-in',{pl:'飯店（大阪城旁）',ll:[34.69054,135.53524],u:'stay.html',m:'Excellence Osaka Castle Park 鴫野西2-3-19'}],{n:'17:00 後才能入住；城東区鴫野西 2-3-19，JR 大阪城公園站東側、過寝屋川就到'}
    ]},
   {d:'D2', date:'2/27 六', c:2, route:'大阪城 → <b>萬博記念公園</b> → <b>勝尾寺</b> → <b>心齋橋</b> → 大阪城',
    meta:'<b>勝尾寺巴士</b> 班次少，先查時刻　<b>賽前一天</b> 碳水為主、21:00 早睡　<b>☃ 下雪</b> 改方案 2 金剛山',
