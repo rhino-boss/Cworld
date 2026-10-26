@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════
 // 爬山2 · 完百計畫 — 單頁 App（hash 路由）
 //   #trips  #trip/ID  #routes[/small|/mine]  #route/CODE
-//   #map/big  #map/small[/名稱]  #builder  #go  #done  #coef
+//   #map/big  #map/small[/名稱]  #builder  #done  #coef
 // ═══════════════════════════════════════════════
 
 // ── 儲存 ──
@@ -59,7 +59,7 @@ function unmarkDone(name) {
 }
 // sync.js 每次開頁都會用雲端 records.json 蓋掉本機，沒有 Token 的修改在換頁後會消失
 function warnNoToken() {
-  if (window.HikeSync && !HikeSync.hasToken()) setTimeout(() => toast('⚠ 未設定雲端 Token，這筆完登換頁後會被雲端資料蓋掉，請按右下「☁ 同步設定」'), 50);
+  if (window.HikeSync && !HikeSync.hasToken()) setTimeout(() => toast('⚠ 未設定雲端 Token，這筆完登換頁後會被雲端資料蓋掉，請先到「爬山」頁按「☁ 同步設定」貼上 Token'), 50);
 }
 const toggleDone = n => st.done.includes(n) ? unmarkDone(n) : markDone([n]).length > 0;
 
@@ -79,8 +79,12 @@ const pad = n => String(n).padStart(2, '0');
 const hhmm = m => { m = Math.round(m); const d = Math.floor(m / 1440); m = ((m % 1440) + 1440) % 1440; return `${pad(Math.floor(m / 60))}:${pad(m % 60)}` + (d > 0 ? '⁺¹' : ''); };
 const dur = m => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? `${h}h${pad(r)}m` : `${r}m`; };
 const km = v => (v >= 10 ? v.toFixed(1) : v.toFixed(1)) + 'k';
-const DAY_COLORS = ['#22406b', '#3d8b5a', '#d89a1e', '#7a49a8', '#2a9d8f', '#c8417a', '#8a8a2e', '#b4552d'];
+const DAY_COLORS = ['#e8457c', '#5aa86e', '#8a5fd8', '#2f7fc6', '#e0a020', '#2a9d8f', '#d86a3c', '#7a8a2e'];
 const peakByName = n => PEAKS.find(p => p.name === n);
+// 距離／爬升：任一段沒有資料，總和就算「未知」(null)
+const has = v => v !== null && v !== undefined && v !== '';
+const addK = (acc, v) => acc === null || !has(v) ? null : acc + v;
+const kmup = (km, up, down) => [has(km) ? (+km).toFixed(1) + 'k' : '', has(up) ? '↑' + up : '', has(down) ? '↓' + down : ''].filter(Boolean).join(' ');
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), msg.length > 30 ? 4500 : 1800); }
 function haversine(a, b, c, d) {
   const R = 6371000, r = Math.PI / 180, dLa = (c - a) * r, dLo = (d - b) * r;
@@ -109,7 +113,6 @@ function showHelp() {
   ・<b>路線</b>：挑一條百岳路線或自己建，按「加入我的行程」。<br>
   ・<b>行程</b>：用你的上河係數、休息比例、每日掉速，自動算出每個點的抵達時間，超過天黑會變紅。<br>
   ・<b>上河係數</b>：實際行進時間 ÷ 上河步程。1.0 = 跟上河地圖一樣快，0.8 = 快兩成。<br>
-  ・<b>行進</b>：用手機 GPS 記錄軌跡，結束後可下載 GPX。<br>
   ・<b>完百</b>：勾選完登的山，用照片 GPS 自動補登。<br>
   ・<b>我的係數</b>：用過去的紀錄算出自己的係數，套用到新行程。<br><br>
   資料都存在這台裝置的瀏覽器裡。路線步程為示範資料，出發前請再查證。</p>`);
@@ -120,7 +123,7 @@ const allRoutes = () => [...ROUTES, ...st.custom];
 const getRoute = code => allRoutes().find(r => r.code === code);
 function routeStats(r) {
   let sh = 0, dist = 0, up = 0, down = 0;
-  r.days.forEach(d => d.forEach((p, i) => { if (i) { sh += p[1]; dist += p[2]; up += p[3]; down += p[4]; } }));
+  r.days.forEach(d => d.forEach((p, i) => { if (i) { sh += p[1]; dist = addK(dist, p[2]); up = addK(up, p[3]); down = addK(down, p[4]); } }));
   return { days: r.days.length, sh, dist, up, down };
 }
 const routeHasTag = (r, k) => k === 'single' ? r.days.length === 1 : (r.tags || []).includes(k);
@@ -150,7 +153,7 @@ function plan(route, s) {
       const light = flags.includes('light');
       const coef = light && !s.same ? s.light : s.heavy;
       const w = p[1] * coef * fat, r = w * s.rest / 60;
-      t += w + r; walk += w; rest += r; sh += p[1]; dist += p[2]; up += p[3]; down += p[4];
+      t += w + r; walk += w; rest += r; sh += p[1]; dist = addK(dist, p[2]); up = addK(up, p[3]); down = addK(down, p[4]);
       return { name: p[0], sh: p[1], km: p[2], up: p[3], down: p[4], arrive: t, seg: w + r, flags, light };
     });
     const dusk = duskFor(s.date, i, s.dusk ?? 1040);
@@ -170,13 +173,13 @@ let mapObj = null;
 function render() {
   const h = location.hash.slice(1) || 'trips';
   const [a, b, c] = h.split('/').map(decodeURIComponent);
-  const tab = { trips: 'trips', trip: 'trips', routes: 'routes', route: 'routes', map: 'routes', builder: 'routes', go: 'go', done: 'done', coef: 'coef' }[a] || 'trips';
+  const tab = { trips: 'trips', trip: 'trips', routes: 'routes', route: 'routes', map: 'routes', builder: 'routes', done: 'done', coef: 'coef' }[a] || 'trips';
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
   if (mapObj) { mapObj.remove(); mapObj = null; }
   ({
     trips: renderTrips, trip: () => renderTrip(b), routes: () => renderRoutes(b || 'big'),
     route: () => renderRoute(b), map: () => renderMap(b, c), builder: renderBuilder,
-    go: renderGo, done: renderDone, coef: renderCoef,
+    done: renderDone, coef: renderCoef,
   }[a] || renderTrips)();
   window.scrollTo(0, 0);
 }
@@ -187,7 +190,7 @@ function renderTrips() {
   const items = st.trips.map(t => {
     const r = getRoute(t.code); if (!r) return '';
     const s = routeStats(r);
-    return `<div class="card pad row" style="margin-bottom:10px">
+    return `<div class="card pad row">
       <a class="grow" href="#trip/${t.id}" style="text-decoration:none">
         <div style="font-weight:700;line-height:1.5"><span class="code">${esc(r.code)}</span> ${esc(r.name)}</div>
         <div class="small muted" style="margin-top:4px">${t.settings.date ? '出發 ' + t.settings.date : '還沒設定出發日期'}</div>
@@ -197,9 +200,10 @@ function renderTrips() {
       <a href="#trip/${t.id}" class="chev" style="text-decoration:none">›</a>
     </div>`;
   }).join('');
-  view().innerHTML = `<h1 class="page">我的行程</h1>
-    ${items || '<div class="card empty">還沒有行程，先去挑一條路線吧。</div>'}
-    <a class="btn" href="#routes" style="margin-top:12px">📍 從 ${ROUTES.length} 條百岳路線挑選</a>`;
+  view().innerHTML = `<div class="page-head"><div><div class="hicon">🗺️</div><h1 class="page">我的行程</h1>
+      <p>挑一條路線，用自己的上河係數算出每個點的抵達時間。</p></div>
+      <a class="btn dark" href="#routes">📍 從 ${ROUTES.length} 條百岳路線挑選</a></div>
+    ${items ? `<div class="list cards">${items}</div>` : '<div class="card empty">還沒有行程，先去挑一條路線吧。</div>'}`;
   view().querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
     if (!confirm('刪除這個行程？')) return;
     st.trips = st.trips.filter(t => t.id != b.dataset.del); save('trips'); render();
@@ -226,21 +230,17 @@ function renderTrip(id) {
     </div>`;
   view().innerHTML = `
     <a class="crumb" href="#trips">‹ 我的行程</a>
-    <div class="trip-title"><span class="code lg">${esc(r.code)}</span> ${esc(r.name)}</div>
-    <div class="small muted">${esc(r.desc)}，${r.days.length} 天 ${Math.max(0, r.days.length - 1)} 夜</div>
-    <div class="row" style="margin:14px 0 4px">
-      <button class="btn" id="b-share">🔗 分享行程</button>
-      <button class="btn" id="b-text">📄 文字行程</button>
-    </div>
-    ${r.note ? `<div class="warn">⚠ ${esc(r.note)}</div>` : ''}
-    <div class="card pad" style="margin:12px 0">
+    <div class="page-head"><div>
+      <div class="trip-title"><span class="code lg">${esc(r.code)}</span> ${esc(r.name)}</div>
+      <div class="small muted">${esc(r.desc)}，${r.days.length} 天 ${Math.max(0, r.days.length - 1)} 夜</div>
+      <div class="xs muted" style="margin-top:4px">步程來源：${esc(r.src || '自建')}</div>
+      ${r.note ? `<div class="warn" style="margin-bottom:0">⚠ ${esc(r.note)}</div>` : ''}</div>
       <div class="row">
-        <button class="btn" id="b-loc">◎ 定位</button>
-        <a class="btn dark" href="#go">◉ 開始記錄</a>
-        <a class="btn" href="#go">▲ 行進模式</a>
+        <button class="btn" id="b-share">🔗 分享行程</button>
+        <button class="btn" id="b-text">📄 文字行程</button>
       </div>
-      <p class="xs muted" style="margin-top:10px;line-height:1.6" id="loc-out">定位：看自己在路線上的位置；記錄：螢幕關閉也持續記錄軌跡（視瀏覽器支援）。</p>
     </div>
+    <div class="layout"><aside class="side">
     <div class="card" style="padding:0 16px;margin-bottom:12px">
       ${slider('heavy', '重裝上河係數', 0.5, 1.6, 0.01, [0.7, 0.8, 0.9, 1.0])}
       <div class="ctl" id="light-wrap"><label>輕裝上河係數（單攻來回段）</label>
@@ -253,8 +253,9 @@ function renderTrip(id) {
         <span class="xs muted">填日期會自動算每天的天黑時間</span></div>
       <div class="ctl" id="dusk-wrap" ${s.date ? 'style="display:none"' : ''}><label>天黑時間</label><input type="time" id="dusk" value="${hhmm(s.dusk ?? 1040)}"></div>
     </div>
+    </aside><section>
     <div id="plan"></div>
-    <p class="foot-note">步程為示範資料（參考上河地圖精神：以「標準體力、重裝」計）。實際時間會受天候、路況、隊伍體能影響，請保守規劃並留意天黑。</p>`;
+    <p class="foot-note">步程以上河文化 2004 步程示意圖為主（標準體力、重裝），少數路線改用網路紀錄，來源標在標題下方。實際時間會受天候、路況、隊伍體能影響，請保守規劃並留意天黑。</p></section></div>`;
 
   function fmtVal(k, v) { return k === 'rest' || k === 'fatigue' ? String(v) : Number(v).toFixed(2); }
   view().querySelectorAll('input[type=range]').forEach(inp => inp.oninput = () => {
@@ -279,7 +280,6 @@ function renderTrip(id) {
     if (navigator.share) { try { await navigator.share({ title: r.name, text: txt }); return; } catch {} }
     copyText(txt);
   };
-  $('#b-loc').onclick = () => locateOnRoute(r);
 
   function drawPlan() {
     const P = plan(r, s);
@@ -309,7 +309,7 @@ function renderTrip(id) {
             <div><small>上河</small><b>${d.sh} 分</b></div>
             <div><small>行進</small><b style="color:#4a6fa5">${dur(d.walk)}</b></div>
             <div><small>含休息</small><b>${dur(d.walk + d.rest)}</b></div>
-            <div><small>距離／爬升</small><b style="font-size:.85rem">${d.dist.toFixed(1)}k ↑${d.up} ↓${d.down}</b></div>
+            <div><small>距離／爬升</small><b style="font-size:.85rem">${kmup(d.dist, d.up, d.down) || '—'}</b></div>
             <div class="${d.end > d.dusk ? 'over' : ''}"><small>抵達</small><b>${hhmm(d.end)}</b></div>
             <div><small>天黑</small><b>${hhmm(d.dusk)}</b></div>
           </div>
@@ -317,14 +317,29 @@ function renderTrip(id) {
         <table class="wp"><tr><th>地點</th><th style="text-align:center">上河（分）</th><th style="text-align:right">抵達</th><th style="text-align:right">過夜</th></tr>
           ${d.rows.map((w, j) => w.first
             ? `<tr><td colspan="2" class="muted">${esc(w.name)} 出發</td><td class="time">${hhmm(w.arrive)}</td><td></td></tr>`
-            : `<tr class="${w.arrive > d.dusk ? 'late' : ''}"><td><div class="nm">${esc(w.name)}</div><div class="meta">${w.km.toFixed(1)}k ↑${w.up} ↓${w.down}</div></td>
+            : `<tr class="${w.arrive > d.dusk ? 'late' : ''}"><td><div class="nm">${esc(w.name)}</div><div class="meta">${kmup(w.km, w.up, w.down)}</div></td>
               <td class="num">${w.sh}</td>
               <td class="time">${hhmm(w.arrive)}<small>行進 ${dur(w.seg)}</small></td>
               <td style="text-align:right">${w.flags.includes('camp') ? '<span class="tag camp">過夜</span>' : w.light ? '<span class="tag light">輕裝</span>' : ''}</td></tr>`).join('')}
         </table>
       </div>`;
     }).join('');
-    $('#plan').innerHTML = gantt + days;
+    const overview = `<div class="card sec" style="--accent:#d4cba8;margin-bottom:14px">
+      <div class="sec-title">行程</div>
+      <p class="hint">點任一天可跳到當日詳細資料（分段時間、抵達、過夜）。</p>
+      <div class="days">${P.map(d => {
+        const camp = d.rows.filter(w => w.flags.includes('camp')).pop();
+        return `<a class="ovday" href="#" data-goto="${d.i}">
+          <div class="tag"><div class="dnum"><i style="background:${DAY_COLORS[d.i % 8]}"></i>D${d.i + 1}</div>
+            <div class="date">${dateLabel(s, d.i) || hhmm(d.start) + ' 出發'}</div></div>
+          <div><div class="routeline">${d.rows.map(w => esc(w.name)).filter((n, k, a) => n !== a[k - 1]).join(' → ')}</div>
+            <div class="meta">${camp ? `<span class="stay">宿：${esc(camp.name)}</span>　` : ''}上河 ${d.sh} 分 · 抵達 <b class="${d.end > d.dusk ? 'warn' : ''}">${hhmm(d.end)}</b></div></div></a>`;
+      }).join('')}</div></div>`;
+    $('#plan').innerHTML = overview + gantt + days;
+    $('#plan').querySelectorAll('.card.day').forEach((el, k) => el.id = 'day-' + k);
+    $('#plan').querySelectorAll('[data-goto]').forEach(a => a.onclick = e => {
+      e.preventDefault(); document.getElementById('day-' + a.dataset.goto).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     $('#plan').querySelectorAll('.start-sel').forEach(sel => sel.onchange = () => {
       s.starts = s.starts || []; s.starts[+sel.dataset.day] = +sel.value; persist();
     });
@@ -337,24 +352,11 @@ function tripText(r, s) {
   let t = `【${r.code} ${r.name}】${r.days.length} 天\n係數 重裝 ${s.heavy.toFixed(2)}${s.same ? '' : ' / 輕裝 ' + s.light.toFixed(2)}，休息 ${s.rest} 分/時\n`;
   if (s.date) t += `出發日 ${s.date}\n`;
   P.forEach(d => {
-    t += `\nD${d.i + 1} ${dateLabel(s, d.i)} ${d.from} → ${d.to}（上河 ${d.sh} 分，${d.dist.toFixed(1)}k ↑${d.up}）\n`;
+    t += `\nD${d.i + 1} ${dateLabel(s, d.i)} ${d.from} → ${d.to}（上河 ${d.sh} 分${kmup(d.dist, d.up) ? '，' + kmup(d.dist, d.up) : ''}）\n`;
     d.rows.forEach(w => { t += `  ${hhmm(w.arrive)}  ${w.name}${w.first ? ' 出發' : ''}${w.flags.includes('camp') ? '（過夜）' : ''}\n`; });
     t += `  天黑 ${hhmm(d.dusk)}${d.end > d.dusk ? '  ⚠ 抵達晚於天黑' : ''}\n`;
   });
   return t;
-}
-
-function locateOnRoute(r) {
-  const out = $('#loc-out');
-  if (!navigator.geolocation) { out.textContent = '這個瀏覽器不支援定位。'; return; }
-  out.textContent = '定位中…';
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude: la, longitude: lo, altitude: al } = pos.coords;
-    const near = r.peaks.map(peakByName).filter(Boolean)
-      .map(p => ({ p, d: haversine(la, lo, p.lat, p.lng) })).sort((a, b) => a.d - b.d)[0];
-    out.innerHTML = `目前位置 ${la.toFixed(5)}, ${lo.toFixed(5)}${al ? `，海拔約 ${Math.round(al)}m` : ''}` +
-      (near ? `<br>距離本路線的 <b>${near.p.name}</b> 約 ${(near.d / 1000).toFixed(1)} km` : '');
-  }, e => { out.textContent = '定位失敗：' + e.message; }, { enableHighAccuracy: true, timeout: 15000 });
 }
 
 // ── 路線 ──
@@ -363,10 +365,11 @@ function renderRoutes(seg) {
     <a href="#routes" class="${seg === 'big' ? 'on' : ''}">百岳路線<small>${ROUTES.length}</small></a>
     <a href="#routes/small" class="${seg === 'small' ? 'on' : ''}">小百岳<small>${SMALL_PEAKS.length}</small></a>
     <a href="#routes/mine" class="${seg === 'mine' ? 'on' : ''}">我的<small>${st.custom.length}</small></a></div>`;
-  view().innerHTML = `<h1 class="page">路線</h1>
-    <div class="search">🔍<input id="q" placeholder="搜尋百岳、小百岳、山屋、登山口、路線…" value="${esc(st.q)}"></div>
-    ${segBar}<div id="seg-body"></div>
-    <p class="foot-note">內建路線的步程參考上河文化步程精神整理，為示範資料；完登紀錄存在這台裝置。地圖底圖 © OpenStreetMap contributors、OpenTopoMap。出發前請再確認路況與水源。</p>`;
+  view().innerHTML = `<div class="page-head"><div><div class="hicon">⛰️</div><h1 class="page">路線</h1>
+      <p>百岳路線、小百岳，或用 GPX／自組建立自己的路線。</p></div></div>
+    <div class="toolbar"><div class="search">🔍<input id="q" placeholder="搜尋百岳、小百岳、山屋、登山口、路線…" value="${esc(st.q)}"></div>
+    ${segBar}</div><div id="seg-body"></div>
+    <p class="foot-note">內建路線步程取自上河文化 2004 步程示意圖（郡大山、羊頭山除外），上河圖沒有距離與爬升所以顯示「—」。地圖底圖 © OpenStreetMap contributors。出發前請再確認路況與水源。</p>`;
   $('#q').oninput = e => { st.q = e.target.value.trim(); body(); };
   const body = () => ({ big: segBig, small: segSmall, mine: segMine }[seg] || segBig)($('#seg-body'));
   body();
@@ -390,7 +393,7 @@ function segBig(el) {
       <button id="ud" class="${st.undone ? 'on' : ''}">未完登</button>
     </div>
     <p class="xs muted" style="margin-bottom:6px">${list.length} 條</p>
-    <div class="list">${list.map(routeItem).join('') || '<div class="empty">沒有符合的路線</div>'}</div>`;
+    <div class="list cards">${list.map(routeItem).join('') || '<div class="empty">沒有符合的路線</div>'}</div>`;
   el.querySelector('#df').value = st.dayFilter;
   el.querySelector('#df').onchange = e => { st.dayFilter = e.target.value; segBig(el); };
   el.querySelector('#ud').onclick = () => { st.undone = !st.undone; segBig(el); };
@@ -401,7 +404,7 @@ function routeItem(r) {
   const nDone = r.peaks.filter(n => st.done.includes(n)).length;
   return `<a class="item" href="#route/${encodeURIComponent(r.code)}"><div class="grow">
     <div class="t"><span class="code">${esc(r.code)}</span> ${esc(r.name)}</div>
-    <div class="s">${s.days} 天 · 上河 ${s.sh} 分 · ${s.dist.toFixed(1)} km · ↑${s.up}</div>
+    <div class="s">${s.days} 天 · 上河 ${s.sh} 分${has(s.dist) ? ` · ${s.dist.toFixed(1)} km` : ''}${has(s.up) ? ` · ↑${s.up}` : ''}</div>
     <div class="s">百岳 ${r.peaks.length} 座${nDone ? `（已完登 ${nDone}）` : ''}</div></div><span class="chev">›</span></a>`;
 }
 
@@ -415,7 +418,7 @@ function segSmall(el) {
     <div class="hscroll">${SMALL_TAGS.map(t => `<button class="cat ${st.smallTag === t.key ? 'on' : ''}" data-tag="${t.key}"><b>${t.title}</b><span>${SMALL_PEAKS.filter(p => p.tags.includes(t.key)).length} 座</span></button>`).join('')}</div>
     ${tag ? `<div class="sec-h"><h3>${tag.title}</h3><button class="pill" data-tag="">× 看全部</button></div><p class="xs muted" style="margin-bottom:10px">${tag.sub}</p>` : ''}
     <p class="xs muted" style="margin-bottom:6px">${list.length} 座</p>
-    <div class="list">${list.map(p => `<div class="item">
+    <div class="list cards">${list.map(p => `<div class="item">
       <input type="checkbox" data-name="${esc(p.name)}" ${st.doneSmall.includes(p.name) ? 'checked' : ''}>
       <a class="grow" href="#map/small/${encodeURIComponent(p.name)}" style="text-decoration:none">
         <div class="t">${p.n ? `<span class="n">${p.n}</span>` : ''}${esc(p.name)}</div>
@@ -431,13 +434,12 @@ function segSmall(el) {
 
 function segMine(el) {
   const mine = st.custom.filter(r => routeMatches(r, st.q));
-  el.innerHTML = `<div class="stack">
+  el.innerHTML = `<div class="tools">
     <a class="action-card hl" href="#builder"><b>＋ 自組路線</b><p>一段一段填入地點與上河步程，也可以標記過夜點、輕裝單攻段。</p></a>
     <label class="action-card dashed" style="cursor:pointer"><b>＋ 匯入 GPX 建立新路線</b>
       <p>可用健行筆記、Hikingbook、Garmin 匯出的軌跡；有航點會自動帶入節點名稱，有時間紀錄會自動找出過夜點。</p>
-      <input type="file" accept=".gpx,application/gpx+xml" id="gpx-in" hidden></label>
-    ${mine.length ? `<div class="list">${mine.map(routeItem).join('')}</div>` : '<p class="small muted" style="line-height:1.7">還沒有自己的路線。用上面兩種方式建立。</p>'}
-  </div>`;
+      <input type="file" accept=".gpx,application/gpx+xml" id="gpx-in" hidden></label></div>
+    ${mine.length ? `<div class="list cards">${mine.map(routeItem).join('')}</div>` : '<p class="small muted" style="line-height:1.7">還沒有自己的路線。用上面兩種方式建立。</p>'}`;
   el.querySelector('#gpx-in').onchange = async e => {
     const f = e.target.files[0]; if (!f) return;
     try {
@@ -455,28 +457,32 @@ function renderRoute(code) {
   const custom = st.custom.includes(r);
   view().innerHTML = `
     <a class="crumb" href="${custom ? '#routes/mine' : '#routes'}">‹ 路線</a>
-    <div class="trip-title"><span class="code lg">${esc(r.code)}</span> ${esc(r.name)}</div>
-    <div class="small muted">${esc(r.desc || '')}</div>
-    ${r.note ? `<div class="warn">⚠ ${esc(r.note)}</div>` : ''}
-    <div class="card pad" style="margin:14px 0">
+    <div class="page-head"><div>
+      <div class="trip-title"><span class="code lg">${esc(r.code)}</span> ${esc(r.name)}</div>
+      <div class="small muted">${esc(r.desc || '')}</div>
+      <div class="xs muted" style="margin-top:4px">步程來源：${esc(r.src || '自建')}</div>
+      ${r.note ? `<div class="warn" style="margin-bottom:0">⚠ ${esc(r.note)}</div>` : ''}</div></div>
+    <div class="layout"><aside class="side">
+    <div class="card pad" style="margin-bottom:14px">
       <div class="stats" style="margin:0">
         <div><small>天數</small><b>${s.days} 天</b></div>
         <div><small>上河</small><b>${s.sh} 分</b></div>
-        <div><small>距離</small><b>${s.dist.toFixed(1)} km</b></div>
-        <div><small>爬升</small><b>↑${s.up}</b></div>
-        <div><small>下降</small><b>↓${s.down}</b></div>
+        <div><small>距離</small><b>${has(s.dist) ? s.dist.toFixed(1) + ' km' : '—'}</b></div>
+        <div><small>爬升</small><b>${has(s.up) ? '↑' + s.up : '—'}</b></div>
+        <div><small>下降</small><b>${has(s.down) ? '↓' + s.down : '—'}</b></div>
         <div><small>百岳</small><b>${r.peaks.length} 座</b></div>
       </div>
       ${r.peaks.length ? `<div class="row" style="flex-wrap:wrap;margin-top:12px">${r.peaks.map(n => { const p = peakByName(n); return `<span class="tag ${st.done.includes(n) ? 'camp' : ''}">${p ? 'No.' + p.rank + ' ' : ''}${esc(n)}</span>`; }).join('')}</div>` : ''}
     </div>
     <button class="btn dark block" id="add">＋ 加入我的行程</button>
-    ${r.days.map((d, i) => `<div class="card day" style="--c:${DAY_COLORS[i % 8]};margin-top:14px">
+    ${custom ? '<button class="btn block" id="del" style="margin-top:10px;color:var(--red)">刪除這條自建路線</button>' : ''}
+    </aside><section class="days-grid">
+    ${r.days.map((d, i) => `<div class="card day" style="--c:${DAY_COLORS[i % 8]}">
       <div class="day-h"><div class="tt"><em>D${i + 1}</em>${esc(d[0][0])} → ${esc(d[d.length - 1][0])}</div></div>
       <table class="wp"><tr><th>地點</th><th style="text-align:center">上河（分）</th><th style="text-align:right">距離／爬升</th><th></th></tr>
-      ${d.slice(1).map(p => `<tr><td class="nm">${esc(p[0])}</td><td class="num">${p[1]}</td><td class="time xs">${p[2].toFixed(1)}k ↑${p[3]} ↓${p[4]}</td>
+      ${d.slice(1).map(p => `<tr><td class="nm">${esc(p[0])}</td><td class="num">${p[1]}</td><td class="time xs">${kmup(p[2], p[3], p[4]) || '—'}</td>
         <td style="text-align:right">${(p[5] || '').includes('camp') ? '<span class="tag camp">過夜</span>' : (p[5] || '').includes('light') ? '<span class="tag light">輕裝</span>' : ''}</td></tr>`).join('')}
-      </table></div>`).join('')}
-    ${custom ? '<button class="btn block" id="del" style="margin-top:14px;color:var(--red)">刪除這條自建路線</button>' : ''}`;
+      </table></div>`).join('')}</section></div>`;
   $('#add').onclick = () => addTrip(r.code);
   if (custom) $('#del').onclick = () => {
     if (!confirm('刪除這條路線？使用它的行程也會一起刪除。')) return;
@@ -487,7 +493,7 @@ function renderRoute(code) {
 
 // ── 自組路線 ──
 function renderBuilder() {
-  view().innerHTML = `<a class="crumb" href="#routes/mine">‹ 路線</a><h1 class="page">自組路線</h1>
+  view().innerHTML = `<div class="narrow"><a class="crumb" href="#routes/mine">‹ 路線</a><div class="page-head"><div class="hicon">✏️</div><h1 class="page">自組路線</h1></div>
     <div class="card pad">
       <div class="field"><label>路線名稱</label><input id="b-name" placeholder="例：雪山主東"></div>
       <div class="field"><label>說明（選填）</label><input id="b-desc" placeholder="例：武陵雪山登山口出"></div>
@@ -496,7 +502,7 @@ function renderBuilder() {
       <div id="b-rows"></div>
       <button class="btn block" id="b-add" style="margin-top:6px">＋ 下一個點</button>
     </div>
-    <button class="btn dark block" id="b-save" style="margin-top:14px">儲存路線</button>`;
+    <button class="btn dark block" id="b-save" style="margin-top:14px">儲存路線</button></div>`;
   const rows = $('#b-rows');
   const addRow = () => {
     const d = document.createElement('div');
@@ -601,138 +607,126 @@ function gpxToRoute(text, fallback) {
   return { code: nextCode(), name: name || fallback || '匯入路線', desc: 'GPX 匯入（步程為估算）', tags: [], peaks, days };
 }
 
-// ── 地圖 ──
+// ── 地圖（樣式沿用「爬山」頁：OSM 底圖＋▲山名標籤，依縮放顯示）──
 function renderMap(kind, focus) {
   const big = kind !== 'small';
-  const data = big ? PEAKS.map(p => ({ name: p.name, alt: p.alt, lat: p.lat, lng: p.lng, label: 'No.' + p.rank }))
-    : SMALL_PEAKS.map(p => ({ name: p.name, alt: p.alt, lat: p.lat, lng: p.lng, label: p.n ? '#' + p.n : p.region }));
+  const data = big ? PEAKS.map(p => ({ name: p.name, alt: p.alt, lat: p.lat, lng: p.lng, sub: `第 ${p.rank} 名`, sort: p.rank }))
+    : SMALL_PEAKS.map(p => ({ name: p.name, alt: p.alt, lat: p.lat, lng: p.lng, sub: (p.n ? `小百岳 #${p.n} · ` : '') + p.region, sort: p.n || 999 }));
+  data.sort((a, b) => a.sort - b.sort);
   const doneList = () => big ? st.done : st.doneSmall;
   const inRoutes = big ? new Set(ROUTES.flatMap(r => r.peaks)).size : SMALL_PEAKS.length;
   view().innerHTML = `
-    <div class="row" style="margin-bottom:14px"><span class="code lg">${big ? 'G01' : '小'}</span>
-      <h1 class="page grow" style="margin:0;font-size:1.3rem">${big ? '高山百岳總覽' : '台灣小百岳總覽'}</h1>
-      <a class="pill" href="${big ? '#routes' : '#routes/small'}" style="text-decoration:none">← 路線</a></div>
-    <div class="kpis"><div><small>已完登</small><b id="k-done">${doneList().length} / ${data.length}</b></div>
-      <div><small>有內建路線</small><b>${inRoutes} 座</b></div></div>
-    <div id="map"></div>
-    <p class="foot-note">點山頭可以標記完登。底圖 © OpenStreetMap contributors、SRTM｜OpenTopoMap。</p>`;
-  mapObj = L.map('map', { zoomControl: true }).setView([23.7, 121.0], 7);
-  L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    maxZoom: 16, attribution: '© OpenStreetMap contributors, SRTM | © OpenTopoMap',
-  }).addTo(mapObj);
-  const markers = {};
-  const icon = got => L.divIcon({ className: '', html: `<div class="pin ${got ? 'got' : ''}"></div>`, iconSize: [12, 12], iconAnchor: [6, 6] });
-  data.forEach(p => {
-    const m = L.marker([p.lat, p.lng], { icon: icon(doneList().includes(p.name)) }).addTo(mapObj);
-    m.bindPopup(() => {
-      const got = doneList().includes(p.name);
-      const div = document.createElement('div'); div.style.padding = '12px 14px';
-      div.innerHTML = `<b>${esc(p.name)}</b> <span class="xs muted">${esc(p.label)} · ${p.alt}m</span><br>
-        <button class="btn" style="margin-top:8px;padding:5px 10px;font-size:.78rem">${got ? '✓ 已完登（取消）' : '標記完登'}</button>`;
-      div.querySelector('button').onclick = () => {
-        if (big) { if (!toggleDone(p.name)) return; }
-        else st.doneSmall = got ? st.doneSmall.filter(x => x !== p.name) : [...st.doneSmall, p.name];
-        m.setIcon(icon(!got)); m.closePopup(); $('#k-done').textContent = `${doneList().length} / ${data.length}`;
-      };
-      return div;
-    });
-    markers[p.name] = m;
-  });
-  if (focus && markers[focus]) { mapObj.setView(markers[focus].getLatLng(), 13); markers[focus].openPopup(); }
-  setTimeout(() => mapObj && mapObj.invalidateSize(), 50);
-}
+    <a class="crumb" href="${big ? '#routes' : '#routes/small'}">‹ 路線</a>
+    <div class="page-head"><div><h1 class="page">${big ? '高山百岳總覽' : '台灣小百岳總覽'}</h1>
+      <p>點山頭可以標記完登；${big ? '放大地圖會顯示更多山頭。' : '勾選會同步到「爬山」頁的小百岳地圖。'}</p></div>
+      <div class="kpis" style="margin:0"><div><small>已完登</small><b id="k-done">${doneList().length} / ${data.length}</b></div>
+        <div><small>有內建路線</small><b>${inRoutes} 座</b></div></div></div>
+    <div class="layout map-layout">
+      <div class="map-wrap"><div id="map"></div>${big ? '<div class="zoom-hint" id="zoom-hint">🔍 放大地圖可看到更多山頭</div>' : ''}</div>
+      <aside class="card peak-side"><div class="search">🔍<input id="pq" placeholder="搜尋山名"></div><div class="peak-list" id="plist"></div></aside>
+    </div>
+    <p class="foot-note">底圖 © OpenStreetMap contributors。座標為近似值。</p>`;
+  mapObj = L.map('map', { center: [23.8, 121.0], zoom: big ? 8 : 9 });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors', maxZoom: 19 }).addTo(mapObj);
+  if (!big) mapObj.setView([25.07, 121.6], 10);
 
-// ── 行進（GPS 記錄）──
-const rec = { on: false, pts: LS.get('recPts', []), t0: LS.get('recT0', null), watch: null, timer: null, lock: null };
-function renderGo() {
-  const s = rec.pts.length > 1 ? trackStats(rec.pts.map(p => ({ ...p, time: new Date(p.t) }))) : { km: 0, up: 0, down: 0 };
-  const last = rec.pts[rec.pts.length - 1];
-  const near = last ? nearestPeak(last.lat, last.lon) : null;
-  const el = rec.t0 ? (Date.now() - rec.t0) / 60000 : 0;
-  view().innerHTML = `<h1 class="page">行進</h1>
-    <div class="card pad" style="text-align:center;margin-bottom:12px">
-      <div class="xs muted">${rec.on ? '● 記錄中' : rec.pts.length ? '已暫停' : '尚未開始'}</div>
-      <div class="go-big" id="g-el">${hhmmss(el)}</div>
-    </div>
-    <div class="go-grid">
-      <div class="card"><small>距離</small><b>${s.km.toFixed(2)} km</b></div>
-      <div class="card"><small>累計爬升</small><b>↑${s.up} m</b></div>
-      <div class="card"><small>目前海拔</small><b>${last?.ele ? Math.round(last.ele) + ' m' : '—'}</b></div>
-      <div class="card"><small>最近的百岳</small><b style="font-size:.95rem">${near ? `${near.peak.name} · ${(near.dist / 1000).toFixed(1)}km` : '—'}</b></div>
-    </div>
-    <div class="row" style="margin-top:16px">
-      ${rec.on ? '<button class="btn dark grow" id="g-stop">■ 暫停記錄</button>'
-               : `<button class="btn dark grow" id="g-start">◉ ${rec.pts.length ? '繼續記錄' : '開始記錄'}</button>`}
-    </div>
-    ${rec.pts.length > 1 && !rec.on ? `<div class="row" style="margin-top:10px">
-      <button class="btn grow" id="g-gpx">⬇ 下載 GPX</button><button class="btn grow" id="g-route">存成我的路線</button>
-      <button class="btn" id="g-clear" style="color:var(--red)">清除</button></div>` : ''}
-    <p class="foot-note">使用手機 GPS 記錄軌跡（${rec.pts.length} 個點）。網頁版在螢幕關閉或切到背景時可能暫停記錄，長程請搭配專用 App。資料只存在這台裝置。</p>`;
-  if (rec.on && !rec.timer) rec.timer = setInterval(() => { const e = $('#g-el'); if (e && rec.t0) e.textContent = hhmmss((Date.now() - rec.t0) / 60000); else { clearInterval(rec.timer); rec.timer = null; } }, 1000);
-  $('#g-start') && ($('#g-start').onclick = startRec);
-  $('#g-stop') && ($('#g-stop').onclick = stopRec);
-  $('#g-gpx') && ($('#g-gpx').onclick = () => downloadGpx());
-  $('#g-route') && ($('#g-route').onclick = () => {
-    const r = gpxToRoute(buildGpx(), '行進紀錄 ' + new Date(rec.t0).toLocaleDateString());
-    st.custom.push(r); save('custom'); location.hash = '#route/' + encodeURIComponent(r.code);
+  const markers = {};
+  const isGot = p => doneList().includes(p.name);
+  const icon = p => L.divIcon({
+    className: '',
+    html: `<div class="marker-triangle"><span class="tri ${isGot(p) ? 'tri-visited' : 'tri-unvisited'}">▲</span>
+      <div class="label-wrap"><span class="lbl-name ${isGot(p) ? 'visited' : ''}">${esc(p.name)}</span><span class="lbl-alt">${p.alt.toLocaleString()}m</span></div></div>`,
+    iconSize: [1, 1], iconAnchor: [0, 8],
   });
-  $('#g-clear') && ($('#g-clear').onclick = () => { if (!confirm('清除這次記錄？')) return; rec.pts = []; rec.t0 = null; LS.set('recPts', []); LS.set('recT0', null); render(); });
-}
-const hhmmss = m => { const s = Math.floor(m * 60); return `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
-async function startRec() {
-  if (!navigator.geolocation) { toast('這個瀏覽器不支援定位'); return; }
-  rec.on = true; rec.t0 = rec.t0 || Date.now(); LS.set('recT0', rec.t0);
-  try { rec.lock = await navigator.wakeLock?.request('screen'); } catch {}
-  rec.watch = navigator.geolocation.watchPosition(pos => {
-    const c = pos.coords, last = rec.pts[rec.pts.length - 1];
-    if (c.accuracy > 60) return;
-    if (last && haversine(last.lat, last.lon, c.latitude, c.longitude) < 5) return;
-    rec.pts.push({ lat: c.latitude, lon: c.longitude, ele: c.altitude || 0, t: pos.timestamp });
-    LS.set('recPts', rec.pts);
-    if (location.hash === '#go') renderGo();
-  }, e => toast('定位失敗：' + e.message), { enableHighAccuracy: true, maximumAge: 5000 });
-  render();
-}
-function stopRec() {
-  rec.on = false; navigator.geolocation.clearWatch(rec.watch); rec.lock?.release?.(); rec.lock = null;
-  render();
-}
-function buildGpx() {
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Cworld 爬山2" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>行進紀錄</name><trkseg>\n` +
-    rec.pts.map(p => `<trkpt lat="${p.lat}" lon="${p.lon}"><ele>${p.ele.toFixed(1)}</ele><time>${new Date(p.t).toISOString()}</time></trkpt>`).join('\n') +
-    `\n</trkseg></trk></gpx>`;
-}
-function downloadGpx() {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([buildGpx()], { type: 'application/gpx+xml' }));
-  a.download = `track-${new Date(rec.t0).toISOString().slice(0, 10)}.gpx`; a.click();
+  const minAlt = z => !big ? 0 : z <= 8 ? 3500 : z <= 9 ? 3300 : z <= 10 ? 3100 : z <= 11 ? 2900 : 0;
+  const updateZoom = () => {
+    if (!mapObj) return;
+    const z = mapObj.getZoom(), m = minAlt(z), hint = $('#zoom-hint');
+    if (hint) hint.style.display = z >= 12 ? 'none' : '';
+    data.forEach(p => {
+      const mk = markers[p.name], show = isGot(p) || p.alt >= m || p.name === focus;
+      if (show && !mapObj.hasLayer(mk)) mk.addTo(mapObj);
+      if (!show && mapObj.hasLayer(mk)) mk.remove();
+    });
+  };
+  const popup = (p, mk) => {
+    const got = isGot(p), div = document.createElement('div');
+    div.className = 'popup-inner';
+    div.innerHTML = `<div class="popup-title">${esc(p.name)}</div>
+      <div class="popup-sub">${esc(p.sub)} · ${p.alt.toLocaleString()} m</div>
+      ${got ? '<div class="popup-date">✓ 已完登</div>' : '<div class="popup-sub">尚未完登</div>'}
+      <div class="popup-actions"><button class="pbtn ${got ? 'pbtn-danger' : 'pbtn-primary'}">${got ? '取消完登' : '＋ 標記完登'}</button></div>`;
+    div.querySelector('button').onclick = () => {
+      if (big) { if (!toggleDone(p.name)) return; }
+      else st.doneSmall = got ? st.doneSmall.filter(x => x !== p.name) : [...st.doneSmall, p.name];
+      mk.setIcon(icon(p)); mk.closePopup(); $('#k-done').textContent = `${doneList().length} / ${data.length}`;
+      drawList(); updateZoom();
+    };
+    return div;
+  };
+  data.forEach(p => {
+    const mk = L.marker([p.lat, p.lng], { icon: icon(p) });
+    mk.bindPopup(() => popup(p, mk), { maxWidth: 300 });
+    markers[p.name] = mk;
+  });
+  const flyTo = name => {
+    const p = data.find(x => x.name === name), mk = markers[name]; if (!p) return;
+    focus = name; mk.addTo(mapObj);
+    mapObj.flyTo([p.lat, p.lng], 13, { duration: 0.8 });
+    setTimeout(() => mk.openPopup(), 900);
+  };
+  const drawList = () => {
+    const q = $('#pq').value.trim();
+    $('#plist').innerHTML = data.filter(p => !q || p.name.includes(q)).map(p => `<div class="peak-row ${isGot(p) ? 'got' : ''}" data-n="${esc(p.name)}">
+      <i></i><div class="grow"><div class="nm">${esc(p.name)}</div><div class="mt">${esc(p.sub)} · ${p.alt.toLocaleString()} m</div></div></div>`).join('')
+      || '<div class="empty">找不到</div>';
+    $('#plist').querySelectorAll('[data-n]').forEach(r => r.onclick = () => flyTo(r.dataset.n));
+  };
+  $('#pq').oninput = drawList;
+  drawList();
+  mapObj.on('zoomend', updateZoom);
+  updateZoom();
+  if (focus && markers[focus]) { const p = data.find(x => x.name === focus); mapObj.setView([p.lat, p.lng], 13); markers[focus].openPopup(); }
+  setTimeout(() => mapObj && mapObj.invalidateSize(), 50);
 }
 
 // ── 完百 ──
 function renderDone() {
   const n = st.done.length;
-  view().innerHTML = `<h1 class="page">我的完百計畫</h1>
-    <div class="small">完登 <b style="font-size:1.2rem">${n}</b> / 100</div>
-    <div style="height:4px;background:var(--line);border-radius:2px;margin:8px 0 18px"><i style="display:block;height:100%;width:${n}%;background:#e0a243;border-radius:2px"></i></div>
-    <div class="stack">
-      <label class="action-card dashed" style="cursor:pointer"><b>📷 登頂相機</b>
-        <p>在山頂拍照：依照片或手機 GPS 找出最近的百岳，自動印上「▲ 山名・海拔・百岳編號」戳記，並記錄完登。</p>
-        <input type="file" accept="image/*" capture="environment" id="cam" hidden></label>
-      <button class="action-card dashed" id="open-sheet"><b>🗺️ 我的完百計畫</b>
-        <p>台灣地圖＋每座百岳的登頂狀態，排成一張海報，可以存全開大圖。</p></button>
-      <label class="action-card dashed" style="cursor:pointer"><b>🖼️ 匯入以前爬過的照片</b>
-        <p>選取有位置資訊（GPS）的照片，找出你在哪些百岳拍過，一次補上完登紀錄。</p>
-        <input type="file" accept="image/jpeg" multiple id="old-photos" hidden></label>
-      <button class="action-card dashed" id="open-stamps"><b>🏅 完百集章</b>
-        <p>100 格集章簿：看哪些登過、補登、換每座山的登頂照。</p></button>
-    </div>
-    <p class="foot-note">完登紀錄跟「路線」分頁的百岳總覽是同一份：這裡登頂或匯入的山會自動打勾，那邊打勾的山也會出現在海報上。</p>`;
-  $('#open-sheet').onclick = () => openSheet(false);
-  $('#open-stamps').onclick = () => openSheet(true);
-  $('#old-photos').onchange = async e => { const r = await importPhotos([...e.target.files]); toast(r); render(); };
+  view().innerHTML = `<div class="page-head"><div><div class="hicon">🏅</div><h1 class="page">我的完百計畫</h1>
+      <p>完登紀錄跟「爬山」頁共用：那邊新增的紀錄會出現在這裡，這裡登頂或補登的山也會同步過去。</p></div></div>
+    <div class="layout"><aside class="side"><div class="card pad">
+      <div class="small muted">已完登</div>
+      <div class="big-num">${n} <small>/ 100 座</small></div>
+      <div class="bar light"><i style="width:${n}%"></i></div>
+      <canvas id="poster" style="width:100%;height:auto;border-radius:6px;border:1px solid var(--line)"></canvas>
+      <button class="btn dark block" id="poster-dl" style="margin-top:12px">⬇ 下載完百海報</button>
+    </div></aside>
+    <section>
+      <div class="tools">
+        <label class="action-card dashed" style="cursor:pointer"><b>📷 登頂相機</b>
+          <p>依照片或 GPS 找出最近的百岳，印上「▲ 山名・海拔・編號」戳記並記錄完登。</p>
+          <input type="file" accept="image/*" capture="environment" id="cam" hidden></label>
+        <label class="action-card dashed" style="cursor:pointer"><b>🖼️ 匯入以前爬過的照片</b>
+          <p>選取有 GPS 的照片，找出在哪些百岳拍過，一次補上完登。</p>
+          <input type="file" accept="image/jpeg" multiple id="old-photos" hidden></label>
+        <a class="action-card dashed" href="#map/big"><b>🗺️ 百岳總覽地圖</b>
+          <p>在地圖上看哪些山登過、哪些還沒，點山頭可以補登。</p></a>
+      </div>
+      <h2 class="h-serif" style="margin-top:0">🏅 完百集章 <span class="xs muted" style="font-family:var(--sans)">點格子可以補登或取消</span></h2>
+      <div class="grid100 light">${PEAKS.slice(0, 100).map(p => `<button class="${st.done.includes(p.name) ? 'got' : ''}" data-p="${esc(p.name)}">
+        <small>No.${p.rank}</small>${esc(p.name)}<small>${p.alt}m</small></button>`).join('')}</div>
+    </section></div>`;
+  drawPoster($('#poster'), 2);
+  $('#poster-dl').onclick = () => {
+    const cv = document.createElement('canvas'); drawPoster(cv, 5);
+    const a = document.createElement('a'); a.href = cv.toDataURL('image/png'); a.download = '完百計畫.png'; a.click();
+  };
+  const stay = fn => async (...args) => { const y = scrollY; await fn(...args); renderDone(); scrollTo(0, y); };
+  view().querySelectorAll('[data-p]').forEach(b => b.onclick = stay(() => toggleDone(b.dataset.p)));
+  $('#old-photos').onchange = stay(async e => toast(await importPhotos([...e.target.files])));
   $('#cam').onchange = e => e.target.files[0] && summitCamera(e.target.files[0]);
 }
-
 
 function drawPoster(cv, scale = 1) {
   const W = cv.width = 240 * scale, H = cv.height = 340 * scale, g = cv.getContext('2d');
@@ -748,39 +742,6 @@ function drawPoster(cv, scale = 1) {
     g.beginPath(); g.arc(x(p.lng), y(p.lat), (got ? 3.2 : 2.2) * scale, 0, 7);
     g.fillStyle = got ? '#d4891c' : '#9a9a9a'; g.fill();
   });
-}
-
-function openSheet(scrollToGrid) {
-  const sh = document.createElement('div'); sh.className = 'dark-sheet';
-  const draw = () => {
-    const n = st.done.length;
-    sh.innerHTML = `<div class="in">
-      <div class="top"><span></span><b>完百進度</b><button data-x>完成</button></div>
-      <div class="big-num">${n} <small>/ 100 座</small></div><div class="bar"><i style="width:${n}%"></i></div>
-      <div class="poster"><canvas></canvas><div class="meta"><b>我的完百計畫</b><small>${n} 座登頂 · 完百 ${n}/100</small>
-        <a href="#" data-poster>▣ 看海報・存全開・分享</a></div></div>
-      <label class="import-btn" style="text-align:center;cursor:pointer">🖼️ 從相簿一次匯入以前爬過的百岳<input type="file" accept="image/jpeg" multiple hidden data-imp></label>
-      <p style="font-size:.7rem;color:#888;line-height:1.6">在山頂拍照或匯入含 GPS 的照片會自動蓋章並放進「我的完百計畫」；點格子可以補登、換登頂照。</p>
-      <div class="grid100" id="grid100">${PEAKS.slice(0, 100).map(p => `<button class="${st.done.includes(p.name) ? 'got' : ''}" data-p="${esc(p.name)}">
-        <small>No.${p.rank}</small>${esc(p.name)}<small>${p.alt}m</small></button>`).join('')}</div></div>`;
-    drawPoster(sh.querySelector('canvas'));
-    sh.querySelector('[data-x]').onclick = () => { sh.remove(); render(); };
-    sh.querySelectorAll('[data-p]').forEach(b => b.onclick = () => {
-      const nm = b.dataset.p;
-      if (!toggleDone(nm)) return;
-      const y = sh.scrollTop; draw(); sh.scrollTop = y;
-    });
-    sh.querySelector('[data-imp]').onchange = async e => { toast(await importPhotos([...e.target.files])); const y = sh.scrollTop; draw(); sh.scrollTop = y; };
-    sh.querySelector('[data-poster]').onclick = e => {
-      e.preventDefault();
-      const cv = document.createElement('canvas'); drawPoster(cv, 5);
-      const url = cv.toDataURL('image/png');
-      modal(`<b>完百海報</b><img src="${url}" style="width:100%;margin:10px 0;border-radius:4px">
-        <a class="btn dark block" href="${url}" download="完百計畫.png">⬇ 存全開圖</a>`);
-    };
-  };
-  draw(); document.body.appendChild(sh);
-  if (scrollToGrid) setTimeout(() => sh.querySelector('#grid100').scrollIntoView({ behavior: 'smooth' }), 50);
 }
 
 // EXIF GPS 讀取（JPEG）
@@ -855,7 +816,8 @@ function renderCoef() {
   const hv = avg(by('重裝').map(c => c.coef)), lt = avg(by('輕裝').map(c => c.coef));
   const rs = avg(st.records.map(recCoef).map(c => c.rest).filter(x => x > 0));
   const c = st.coef;
-  view().innerHTML = `<h1 class="page">我的係數</h1>
+  view().innerHTML = `<div class="page-head"><div><div class="hicon">⏱️</div><h1 class="page">我的係數</h1>
+      <p>用過去的紀錄算出自己的上河係數與休息比例，新行程會自動套用。</p></div></div>
     <div class="card pad">
       <div class="xs muted" style="margin-bottom:8px">新行程的預設值</div>
       <div class="stats" style="margin:0;grid-template-columns:repeat(4,1fr)">
@@ -865,11 +827,13 @@ function renderCoef() {
         <button class="btn dark block" id="apply" style="margin-top:8px">套用為新行程預設</button>` : ''}
     </div>
 
+    <div class="two-col"><div>
     <h2 class="h-serif">方法 A：用 GPX 軌跡估算</h2>
     <p class="xs muted" style="line-height:1.7;margin-bottom:8px">選一個有時間紀錄的 GPX，用距離與爬升估算標準步程，再跟實際移動時間比較。</p>
     <label class="btn" style="cursor:pointer">選擇 GPX 檔…<input type="file" accept=".gpx" id="c-gpx" hidden></label>
     <div id="c-gpx-out"></div>
 
+    </div><div>
     <h2 class="h-serif">方法 B：手動輸入爬過的百岳</h2>
     <p class="xs muted" style="line-height:1.7;margin-bottom:8px">填上河總時間與你實際花的時間。知道休息多久就填，不知道會依預設休息比例扣掉。多日行程分天填。</p>
     <div class="card pad">
@@ -882,8 +846,9 @@ function renderCoef() {
       <button class="btn dark" id="c-add" style="margin-top:8px">新增紀錄</button>
     </div>
 
+    </div></div>
     <h2 class="h-serif">我的紀錄（${st.records.length}）</h2>
-    <div class="list">${st.records.map((r, i) => { const k = recCoef(r); return `<div class="item"><div class="grow">
+    <div class="list cards">${st.records.map((r, i) => { const k = recCoef(r); return `<div class="item"><div class="grow">
       <div class="t">${esc(r.name)} <span class="tag">${r.gear}</span></div>
       <div class="s">${r.date} · ${r.days.length} 天 · 係數 ${k.coef.toFixed(2)} · 休息 ${Math.round(k.rest)} 分/時</div></div>
       <button class="muted" data-rm="${i}" style="padding:6px">×</button></div>`; }).join('') || '<div class="empty">還沒有紀錄</div>'}</div>`;
@@ -927,6 +892,6 @@ function renderCoef() {
 }
 
 render();
-const refresh = () => { if (!document.querySelector('.dark-sheet, .modal') && !/^#(trip|builder|coef|go)/.test(location.hash)) render(); };
+const refresh = () => { if (!document.querySelector('.dark-sheet, .modal') && !/^#(trip|builder|coef)/.test(location.hash)) render(); };
 if (window.HikeSync) HikeSync.onReady(() => { migrate(); refresh(); }); else migrate();
 window.addEventListener('storage', e => { if (e.key === 'hikeRecords' || e.key === 'peaksSmallDone') refresh(); });
