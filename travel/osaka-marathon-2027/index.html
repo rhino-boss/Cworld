@@ -271,6 +271,7 @@ details.sub>summary{color:var(--brown)}
 .day .meta .stay{color:var(--pink)}
 .day .meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
 .day .meta b{color:var(--pink);font-weight:700;margin-right:2px}
+.day .meta .mi{display:inline-block;white-space:nowrap;margin-right:10px}
 .day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
 .chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
 .chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
@@ -421,7 +422,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 <summary>住宿資訊<a class="fullpg" href="stay.html" title="住宿完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="secbody">
 <div class="fact">
-  <div class="fhead"><b>Excellence Osaka Castle Park</b><span class="fbadge">Booking.com 已確認</span></div>
+  <div class="fhead"><b>Excellence Osaka Castle Park</b></div>
   <div class="fgrid">
     <div class="ft"><span>入住</span><b>2/26 五・17:00～</b></div>
     <div class="ft"><span>退房</span><b>3/1 一・～10:00</b></div>
@@ -439,7 +440,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 <summary>馬拉松篇<a class="fullpg" href="race.html" title="馬拉松篇完整內容"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
 <div class="secbody">
 <div class="fact">
-  <div class="fhead"><b>大阪マラソン 2027</b><span class="fbadge">2027/2/28（日）</span></div>
+  <div class="fhead"><b>大阪マラソン 2027・2/28（日）</b></div>
   <div class="fgrid">
     <div class="ft"><span>起跑</span><b>09:15 第 1 波</b></div>
     <div class="ft"><span>關門</span><b>16:15（7 小時）</b></div>
@@ -481,7 +482,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 <summary>我的紀錄</summary>
 <div class="secbody">
 <div class="fact" style="border-color:var(--b-lav)">
-  <div class="fhead"><b>大阪馬拉松 紀錄表</b><span class="fbadge">Google 試算表</span></div>
+  <div class="fhead"><b>大阪馬拉松 紀錄表</b></div>
   <div class="frow" style="border-top:none;padding-top:0"><em>訓練、花費、備忘都記在這張表；私人檔案，要登入自己的 Google 帳號才開得了。</em></div>
   <div class="mapbar" style="margin:8px 0 2px"><a class="mapbtn" href="https://docs.google.com/spreadsheets/d/1neUSWURwccdwnfrCNy_XYF_W71mFcihUOUGVSI3whOo/edit" target="_blank" rel="noopener">📊 開啟紀錄表 ↗</a></div>
 </div>
@@ -514,7 +515,7 @@ const daysBox=document.getElementById('days');
 daysBox.innerHTML=DAYS.map(v=>`
   <div class="day clickable">
     <div class="tag"><div class="dnum"><i style="background:var(--d${v.c})"></i>${v.d}</div><div class="date">${v.date}</div></div>
-    <div><div class="routeline">${v.route}</div>${v.meta?`<div class="meta">${v.meta}</div>`:''}</div>
+    <div><div class="routeline">${v.route}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join(' ')}</div>`:''}</div>
   </div>`).join('');
 
 function chainHTML(chain, dayKey){
