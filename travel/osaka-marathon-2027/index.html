@@ -242,22 +242,22 @@ details.sec{scroll-margin-top:58px}
 html{scroll-behavior:smooth}
 .modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:700}
 .modebtn:hover{background:var(--yellow);color:var(--brown)}
-details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
+details.sec{--inner:color-mix(in srgb,var(--b-sky) 55%,#fff);border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
 details.sec::before{display:none}
 details.sec>summary{color:var(--brown);font-size:1.15rem;padding:14px 20px 10px}
 summary::before{color:var(--pink)}
-#sec-days{background:var(--c-pink);border-color:var(--b-pink)}
-#sec-flight{background:var(--c-sky);border-color:var(--b-sky)}
-#sec-log{background:var(--c-lav);border-color:var(--b-lav)}
-#sec-stay{background:var(--c-yel);border-color:var(--b-yel)}
-#sec-race{background:var(--c-mint);border-color:var(--b-mint)}
-#sec-travel{background:var(--c-lav);border-color:var(--b-lav)}
-#sec-pack{background:var(--c-pink);border-color:var(--b-pink)}
-#sec-todo{background:var(--c-sky);border-color:var(--b-sky)}
-details.sub{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
+#sec-days{background:var(--c-pink);border-color:var(--b-pink);--inner:color-mix(in srgb,var(--b-pink) 55%,#fff)}
+#sec-flight{background:var(--c-sky);border-color:var(--b-sky);--inner:color-mix(in srgb,var(--b-sky) 55%,#fff)}
+#sec-log{background:var(--c-lav);border-color:var(--b-lav);--inner:color-mix(in srgb,var(--b-lav) 55%,#fff)}
+#sec-stay{background:var(--c-yel);border-color:var(--b-yel);--inner:color-mix(in srgb,var(--b-yel) 55%,#fff)}
+#sec-race{background:var(--c-mint);border-color:var(--b-mint);--inner:color-mix(in srgb,var(--b-mint) 55%,#fff)}
+#sec-travel{background:var(--c-lav);border-color:var(--b-lav);--inner:color-mix(in srgb,var(--b-lav) 55%,#fff)}
+#sec-pack{background:var(--c-pink);border-color:var(--b-pink);--inner:color-mix(in srgb,var(--b-pink) 55%,#fff)}
+#sec-todo{background:var(--c-sky);border-color:var(--b-sky);--inner:color-mix(in srgb,var(--b-sky) 55%,#fff)}
+details.sub{background:#fff;border:1.5px solid var(--inner);border-radius:16px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
 details.sub>summary{color:var(--brown)}
 .secbody{padding:2px 12px 12px}
-.day{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:12px 14px 12px 18px;grid-template-columns:72px 1fr 112px;gap:0 14px;align-items:center;box-shadow:0 2px 10px rgba(90,58,26,.08);position:relative;overflow:hidden}
+.day{background:#fff;border:1.5px solid var(--inner);border-radius:18px;padding:12px 14px 12px 18px;grid-template-columns:72px 1fr 112px;gap:0 14px;align-items:center;box-shadow:0 2px 10px rgba(90,58,26,.08);position:relative;overflow:hidden}
 .day::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--dk,var(--d1))}
 .days .day:nth-child(1){--dk:var(--d1)}
 .days .day:nth-child(2){--dk:var(--d2)}
@@ -285,7 +285,7 @@ details.sub>summary{color:var(--brown)}
 .chain .ctext{color:var(--muted);font-weight:700}
 .modal{border-radius:22px;border:3px solid var(--b-sky);font-family:inherit}
 .mhead i{border-radius:50%;width:16px;height:16px}
-.gfcard{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
+.gfcard{background:#fff;border:1.5px solid var(--inner);border-radius:18px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
 .gf-ap b{color:var(--brown);font-weight:700}
 .gf-conf b{color:var(--pink)}
 .gf-title{color:var(--brown)}
@@ -301,7 +301,7 @@ details.sub>summary{color:var(--brown)}
 .paid{background:var(--c-yel);border:2px solid var(--b-yel);color:var(--brown);font-weight:700}
 
 /* --- 重點資訊卡（住宿／馬拉松） --- */
-.fact{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
+.fact{background:#fff;border:1.5px solid var(--inner);border-radius:18px;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
 .fhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .fhead b{font-size:16px;color:var(--brown)}
 .fbadge{font-size:11px;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--c-pink);border:1.5px solid var(--b-pink);color:var(--pink)}

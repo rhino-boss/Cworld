@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>準備 · 大阪馬拉松 2027</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
-<link rel="stylesheet" href="sub.css?v=6">
+<link rel="stylesheet" href="sub.css?v=7">
 <style>
-.prog{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:14px 18px;margin:0 0 16px;box-shadow:0 2px 10px rgba(90,58,26,.06);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.prog{--inner:color-mix(in srgb,var(--b-sky) 55%,#fff);background:#fff;border:1.5px solid var(--inner);border-radius:18px;padding:14px 18px;margin:0 0 16px;box-shadow:0 2px 10px rgba(90,58,26,.06);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .prog .pt{font-weight:700;color:var(--brown);font-size:15px}
 .prog .pt small{font-weight:700;color:var(--muted);font-size:12px;margin-left:6px}
 .prog .bar{flex:1;min-width:160px;height:12px;border-radius:999px;background:var(--c-sky);overflow:hidden}
 .prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),#ff9fbf);border-radius:999px;transition:width .3s}
 .prog .pct{font-weight:700;color:var(--pink);min-width:44px;text-align:right}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.pcat{background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:18px;padding:12px 14px 10px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
+.pcat{background:#fff;border:1.5px solid var(--inner);border-radius:18px;padding:12px 14px 10px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
 .pcat h3{margin:0 0 8px;font-size:15px;color:var(--brown);display:flex;align-items:center;gap:8px}
 .pcat h3 .ic{width:30px;height:30px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px}
 .pcat.c-must h3 .ic{background:var(--c-pink)}.pcat.c-cloth h3 .ic{background:var(--c-sky)}.pcat.c-run h3 .ic{background:var(--c-mint)}.pcat.c-other h3 .ic{background:var(--c-yel)}
@@ -33,7 +33,7 @@
 .todo .ck li{padding:8px 6px}
 .todo .ck li:last-child{border-bottom:1px solid #f3eee4}
 .todo .ck li:hover{background:transparent}
-.tipbox{margin-top:12px;background:#fff;border:1.5px solid rgba(90,58,26,.14);border-radius:14px;padding:10px 14px;font-size:12.5px;color:var(--muted);line-height:1.7}
+.tipbox{margin-top:12px;background:#fff;border:1.5px solid var(--inner);border-radius:14px;padding:10px 14px;font-size:12.5px;color:var(--muted);line-height:1.7}
 .tipbox b{color:var(--pink)}
 @media (max-width:640px){.pgrid{grid-template-columns:1fr}.todo .ck{grid-template-columns:1fr}}
 </style>
