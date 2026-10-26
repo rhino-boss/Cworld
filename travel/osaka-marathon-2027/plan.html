@@ -89,7 +89,6 @@ details.alt .altbody{padding:0 14px 12px}
 <script src="routes.js?v=3"></script>
 <script>
 (function(){
-const EDITS=(()=>{ try{ return JSON.parse(localStorage.getItem('osaka27.edits'))||{}; }catch(e){ return {}; } })();
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 function chainHTML(chain, dayKey){
   let li=0;
@@ -106,7 +105,7 @@ function chainHTML(chain, dayKey){
     }
     const def=[item.n,item.t].filter(Boolean).join('・');
     const k='leg.'+dayKey+'.'+(li++);
-    const txt=esc(EDITS[k]||def).split(/；/).map(x=>x.trim()).filter(Boolean).join('<br>');
+    const txt=esc(def).split(/；/).map(x=>x.trim()).filter(Boolean).join('<br>');
     return '<div class="cleg"><span class="cbar"></span><span class="ctext">'+txt+'</span></div>';
   }).join('')+'</div>';
 }

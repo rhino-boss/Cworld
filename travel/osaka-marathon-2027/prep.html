@@ -28,14 +28,9 @@ details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:point
 .ck .note{color:var(--stayicon);font-weight:700;font-style:normal}
 .ck .txt{flex:1;cursor:text;border-radius:4px;padding:0 2px}
 .ck .txt.done{color:var(--muted);text-decoration:line-through}
-.ck .txt[contenteditable="true"]{outline:2px solid #a8d4b8;background:#fff}
-.ck .del{border:none;background:none;color:#c9c9c2;cursor:pointer;font-size:12px;padding:2px 4px;flex:none}
-.ck .del:hover{color:#c0392b}
-.ck .addrow{margin-top:8px}
 .ck .addin{flex:1;border:1px dashed var(--cardline);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;background:var(--paper)}
 .ck .addbtn{border:none;background:#2f9e44;color:#fff;border-radius:8px;padding:2px 12px;font-size:15px;cursor:pointer;flex:none}
-.ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center}
-.ck .catsel:hover{filter:brightness(.95)}
+.ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;text-align:center}
 .ck .catsel.c-must{background:#fde8e6;border-color:#e5a9a2;color:#8f2c20}
 .ck .catsel.c-cloth{background:#e6effb;border-color:#a9c2e5;color:#204a8f}
 .ck .catsel.c-run{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
@@ -51,8 +46,6 @@ details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:point
 .packcol .ck::-webkit-scrollbar,.packshared .ck::-webkit-scrollbar{height:6px}
 .packcol .ck::-webkit-scrollbar-thumb,.packshared .ck::-webkit-scrollbar-thumb{background:#dcdcd6;border-radius:99px}
 .ed{border-radius:4px;padding:0 2px}
-body:not(.viewmode) .ed,body:not(.viewmode) .cleg .ctext{cursor:text}
-body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:#f2f1ea;outline:1px dashed var(--cardline)}
 .ck .catsel{border-width:2px;font-weight:700}
 .ck .catsel.c-must{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
 .ck .catsel.c-cloth{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
@@ -61,9 +54,7 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 .ck input[type=checkbox]{accent-color:var(--pink);width:16px;height:16px}
 .ck .addbtn{background:var(--pink);border-radius:999px}
 .ck .addin{border:2px dashed var(--b-sky);border-radius:999px;background:#fff}
-.ck .txt[contenteditable="true"]{outline:2px solid var(--b-sky)}
 .ed{border-radius:999px}
-body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:var(--c-yel);outline:1px dashed var(--b-yel)}
 @media (max-width:720px){ .packcols{grid-template-columns:1fr} }
 
 </style>
@@ -111,7 +102,7 @@ body:not(.viewmode) .ed:hover,body:not(.viewmode) .cleg .ctext:hover{background:
 <script>
 (function(){
 const PREFIX='osaka27.';
-/* ── 可編輯清單 ── */
+/* ── 清單（只能勾選） ── */
 const esc2=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 function editList(el, key, seed){
   const K=PREFIX+'items.'+key;
@@ -122,42 +113,15 @@ function editList(el, key, seed){
     localStorage.setItem(K, JSON.stringify(items));
     el.innerHTML = items.map((it,i)=>`
       <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span>
-      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
-      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+      <span class="txt${it.done?' done':''}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span></li>`).join('');
     el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
-    el.querySelectorAll('.txt').forEach(sp=>{
-      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.textContent=items[+sp.dataset.i].t; sp.contentEditable='true'; sp.focus(); });
-      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
-      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
-    });
-    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
-    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,n:'',done:false}); render(); };
-    ab.addEventListener('click',add);
-    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
   }
   render();
 }
 
-/* ── 攜帶物品：單一清單；分類標籤可切換 ── */
-const PACK_CATS_HEAD = [['must','必帶'],['cloth','服裝'],['run','比賽']];
-const PACK_CATS_TAIL = [['other','其他']];
-const CAT_PALETTE = [
-  ['#f0e9f7','#c3aad9','#5b3a80'],['#e2f2f2','#9fcccc','#1f6060'],
-  ['#fdf1dd','#e0c48a','#86611a'],['#fbe9f0','#e2a8bf','#8f2c56'],
-  ['#e9edf2','#b4c0cd','#3d4d5e']
-];
-const CATS_KEY=PREFIX+'packcats';
-let CUSTOM_CATS=(()=>{ try{ const v=JSON.parse(localStorage.getItem(CATS_KEY)); return Array.isArray(v)?v:[]; }catch(e){ return []; } })();
-const PACK_CATS=()=>PACK_CATS_HEAD.concat(CUSTOM_CATS,PACK_CATS_TAIL);
-function saveCats(){ localStorage.setItem(CATS_KEY,JSON.stringify(CUSTOM_CATS)); }
-function syncCatStyles(){
-  let st=document.getElementById('catstyles');
-  if(!st){ st=document.createElement('style'); st.id='catstyles'; document.head.appendChild(st); }
-  st.textContent=CUSTOM_CATS.map((c,i)=>{ const p=CAT_PALETTE[i%CAT_PALETTE.length];
-    return `.ck .catsel.c-${c[0]}{background:${p[0]};border-color:${p[1]};color:${p[2]}}`; }).join('');
-}
+/* ── 攜帶物品：單一清單；分類為固定標籤 ── */
+const PACK_CATS = [['must','必帶'],['cloth','服裝'],['run','比賽'],['other','其他']];
+const CAT_LABEL = Object.fromEntries(PACK_CATS);
 const PACK_LISTS = [
  // 沈的清單（2026/10 版）
  {key:'all', name:'攜帶物品清單', wide:1, items:[
@@ -170,63 +134,26 @@ const PACK_LISTS = [
 ];
 const packBox=document.getElementById('packlist');
 packBox.innerHTML = PACK_LISTS.map(l=>`<div class="card listbox"><ul class="ck pk" data-list="${l.key}"></ul></div>`).join('');
-const packRenders=[];
-function renderAllPacks(){ packRenders.forEach(f=>f()); }
-function gcCats(){
-  const used=new Set();
-  PACK_LISTS.forEach(l=>{ try{ const arr=JSON.parse(localStorage.getItem(PREFIX+'items.pack3-'+l.key)); if(Array.isArray(arr)) arr.forEach(it=>used.add(it.c)); }catch(e){} });
-  const before=CUSTOM_CATS.length;
-  CUSTOM_CATS=CUSTOM_CATS.filter(c=>used.has(c[0]));
-  if(CUSTOM_CATS.length!==before){ saveCats(); syncCatStyles(); return true; }
-  return false;
-}
 function packList(el, key, seed){
   const K=PREFIX+'items.'+key;
   let items;
   try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
   if(!Array.isArray(items)) items=seed.map(([c,t])=>({t,c,done:false}));
-  const order=c=>{ const i=PACK_CATS().findIndex(x=>x[0]===c); return i<0?PACK_CATS().length:i; };
+  // 項目與分類固定在程式裡；localStorage 只記勾選狀態
+  const done=new Set(items.filter(it=>it.done).map(it=>it.t));
+  items=seed.map(([c,t])=>({t,c,done:done.has(t)}));
+  const order=c=>{ const i=PACK_CATS.findIndex(x=>x[0]===c); return i<0?PACK_CATS.length:i; };
+  items.sort((a,b)=>order(a.c)-order(b.c));
   function render(){
-    const cats=PACK_CATS(), ids=cats.map(c=>c[0]);
-    items.forEach(it=>{ if(!ids.includes(it.c)) it.c='other'; });
-    items.sort((a,b)=>order(a.c)-order(b.c));
     localStorage.setItem(K, JSON.stringify(items));
     el.innerHTML = items.map((it,i)=>`
       <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <select class="catsel c-${it.c}" data-i="${i}">${cats.map(([c,l])=>`<option value="${c}"${it.c===c?' selected':''}>${l}</option>`).join('')}<option value="__new">＋ 新增分類…</option></select>
-      <span class="txt${it.done?' done':''}" data-i="${i}">${esc2(it.t)}</span>
-      <button class="del" data-i="${i}" title="刪除">✕</button></li>`).join('')
-      + `<li class="addrow"><input type="text" class="addin" placeholder="＋ 新增項目…"><button class="addbtn">＋</button></li>`;
+      <span class="catsel c-${it.c}">${CAT_LABEL[it.c]||'其他'}</span>
+      <span class="txt${it.done?' done':''}">${esc2(it.t)}</span></li>`).join('');
     el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-    el.querySelectorAll('.catsel').forEach(se=>se.addEventListener('change',()=>{
-      if(se.value==='__new'){
-        const name=(prompt('新分類名稱：')||'').trim();
-        if(!name){ render(); return; }
-        const id='u'+Date.now().toString(36);
-        CUSTOM_CATS.push([id,name]); saveCats(); syncCatStyles();
-        items[+se.dataset.i].c=id;
-        localStorage.setItem(K, JSON.stringify(items));
-        renderAllPacks(); return;
-      }
-      items[+se.dataset.i].c=se.value;
-      localStorage.setItem(K, JSON.stringify(items));
-      if(gcCats()) renderAllPacks(); else render();
-    }));
-    el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>{items.splice(+b.dataset.i,1);render();}));
-    el.querySelectorAll('.txt').forEach(sp=>{
-      sp.addEventListener('click',()=>{ if(document.body.classList.contains('viewmode')||sp.isContentEditable) return; sp.contentEditable='true'; sp.focus(); });
-      sp.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();sp.blur();} });
-      sp.addEventListener('blur',()=>{ const v=sp.textContent.trim(); sp.contentEditable='false'; if(v) items[+sp.dataset.i].t=v; render(); });
-    });
-    const ai=el.querySelector('.addin'), ab=el.querySelector('.addbtn');
-    const add=()=>{ const v=ai.value.trim(); if(!v) return; items.push({t:v,c:'other',done:false}); render(); };
-    ab.addEventListener('click',add);
-    ai.addEventListener('keydown',e=>{ if(e.key==='Enter') add(); });
   }
-  packRenders.push(render);
   render();
 }
-syncCatStyles();
 PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
 
 editList(document.getElementById('todolist'), 'todo3', [
