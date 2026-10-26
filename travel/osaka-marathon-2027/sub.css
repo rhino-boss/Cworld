@@ -22,7 +22,7 @@ body{
 }
 b{font-weight:700}
 /* 導覽列 */
-.cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc);padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:5}
+.cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc);padding:0 24px;display:flex;align-items:center;gap:8px;height:52px}
 .cnav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem}
 .cnav a:hover{color:#fff}
 .cnav .sep{color:rgba(255,255,255,.4);font-size:.85rem}
