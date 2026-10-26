@@ -19,6 +19,8 @@
 .tips{margin:8px 0 0 18px;padding:0;font-size:13px}
 .tips li{margin:2px 0}
 .tips li::marker{color:var(--pink)}
+.tips a.tl{color:var(--blue);font-weight:700;text-decoration:none;white-space:nowrap}
+.tips a.tl:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -56,6 +58,18 @@ const SPOTS=[
    desc:'大阪燒肉一條街，完賽慶功。', tips:['JR 環狀線從鴫野直達約 10 分','店家待定']},
   {d:4, name:'和歌山城', m:'和歌山城', u:'https://wakayamajo.jp/', p:['img/wakayama_1.jpg','img/wakayama_2.jpg','img/wakayama_3.jpg','img/wakayama_4.jpg','img/wakayama_5.jpg'],
    desc:'紀州德川家的居城，天守閣可登頂。', tips:['天守閣 ¥410；和歌山站搭巴士 10 分或步行 20 分','必拍：天守連立式全景、御橋廊下','午餐：和歌山拉麵 井出商店']},
+  {d:0, name:'寶可夢中心 Osaka（大丸心齋橋 9F）', m:'ポケモンセンターオーサカ', u:'https://www.pokemon.co.jp/shop/pokecen/osaka/', p:['img/pokemon_1.jpg'],
+   desc:'大丸心齋橋店本館 9F，同層還有 Pokémon Center Osaka DX 和 Pokémon Café（咖啡要預約）。', tips:['Metro 御堂筋線 心斎橋站直結','同棟南館 6F 就是 mont-bell 大丸心齋橋店，一次逛完','大阪限定商品：穿法被的皮卡丘']},
+  {d:0, name:'mont-bell 門市（路線上會經過的）', m:'モンベル ららぽーとEXPOCITY店', u:'https://store.montbell.jp/search/?pref=27', p:[],
+   desc:'大阪府 14 間，挑你行程會經過的：', tips:[
+     'D2 ★ ららぽーとEXPOCITY店 — 萬博記念公園站步行 2 分，看完太陽之塔順路｜https://www.montbell.jp/search/shopinfo/?shop_no=678543',
+     '大丸心齋橋店 南館 6F — 和寶可夢中心同一棟｜https://www.montbell.jp/search/shopinfo/?shop_no=678624',
+     'なんばCITY店 南館 — 南海なんば站直結，D1 從機場進市區會經過｜https://www.montbell.jp/search/shopinfo/?shop_no=678546',
+     'D4 天王寺MIO店 — JR 天王寺站 1 分，去和歌山轉車時可逛｜https://www.montbell.jp/search/shopinfo/?shop_no=679926',
+     'あべの店 — あべのハルカス旁 1–2F，天王寺區最大間｜https://www.montbell.jp/search/shopinfo/?shop_no=618949',
+     'うめきた店（Grand Front 南館 5F）／ルクア大阪店（LUCUA 1100 6F）— 梅田，JR 大阪站直結｜https://www.montbell.jp/search/shopinfo/?shop_no=678503',
+     '方案 2 ☃ モンベルルーム 金剛山麓店（千早本道登山口）＋ 山頂売店 mont-bell コーナー｜https://www.montbell.jp/search/shopinfo/?shop_no=678602',
+     '和歌山店 在イオンモール和歌山，離和歌山城遠、D4 時間不夠，跳過']},
   {d:0, name:'道頓堀・心齋橋（有空檔再去）', m:'道頓堀', u:'', p:['img/dotonbori_1.jpg','img/dotonbori_2.jpg','img/dotonbori_3.jpg','img/dotonbori_4.jpg','img/dotonbori_5.jpg'],
    desc:'固力果跑跑人、蟹道樂大螃蟹，大阪最熱鬧的一條河。', tips:['Metro 御堂筋線 なんば 站','晚上燈亮了才好拍']},
   {d:0, name:'黑門市場（有空檔再去）', m:'黒門市場', u:'https://kuromon.com/', p:['img/kuromon_1.jpg','img/kuromon_2.jpg','img/kuromon_3.jpg','img/kuromon_4.jpg','img/kuromon_5.jpg'],
@@ -67,7 +81,7 @@ document.getElementById('spots').innerHTML=SPOTS.map(s=>{
   const photos=s.p.length?'<div class="cphoto"><div class="track">'+s.p.map(src=>'<img src="'+esc(src)+'" alt="">').join('')+'</div>'+(s.p.length>1?'<button type="button" class="pv">‹</button><button type="button" class="nx">›</button><div class="dots"></div>':'')+'</div>':'<div class="nophoto">（還沒放照片）</div>';
   return '<section class="card spot">'+photos+'<div class="body"><div class="head"><span class="day" style="background:var(--d'+s.d+')">D'+s.d+'</span><span class="name">'+esc(s.name)+'</span>'+
     '<span class="icons"><a class="lnk map" href="'+esc(map)+'" target="_blank" rel="noopener" title="Google Map">📍</a>'+(s.u?'<a class="lnk" href="'+esc(s.u)+'" target="_blank" rel="noopener" title="官網">↗</a>':'')+'</span></div>'+
-    (s.desc?'<div class="desc">'+esc(s.desc)+'</div>':'')+(s.tips&&s.tips.length?'<ul class="tips">'+s.tips.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'')+'</div></section>';
+    (s.desc?'<div class="desc">'+esc(s.desc)+'</div>':'')+(s.tips&&s.tips.length?'<ul class="tips">'+s.tips.map(t=>{const m=t.match(/^(.*?)｜(https?:S+)$/);return '<li>'+(m?esc(m[1])+' <a class="tl" href="'+esc(m[2])+'" target="_blank" rel="noopener">店舗頁 ↗</a>':esc(t))+'</li>';}).join('')+'</ul>':'')+'</div></section>';
 }).join('');
 window.bindCarousels&&window.bindCarousels(document);
 </script>
