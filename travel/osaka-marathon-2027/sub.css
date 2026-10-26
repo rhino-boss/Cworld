@@ -1,6 +1,6 @@
 /* 大阪馬拉松 子頁共用（plan／shop／play／eat）：跟行程頁同一套視覺 — 淡藍天空雲朵底、粉彩圓角大卡、白色小卡 */
 :root{
-  --inner:color-mix(in srgb,#aacfea 75%,#fff);
+  --inner:#bfdbef;
   --sky:#dff1fb;--sky2:#f4fbff;--brown:#5a3a1a;--pink:#e8457c;--blue:#2f7fc6;--yellow:#ffc53d;
   --c-pink:#ffe3ec;--c-mint:#e2f6ea;--c-lav:#ece4f8;--c-yel:#fff5d6;--c-sky:#e4f1fb;
   --b-pink:#f6b7cd;--b-mint:#a8dcc0;--b-lav:#c9b6e8;--b-yel:#f3dc8f;--b-sky:#aacfea;
@@ -36,11 +36,11 @@ h1{color:var(--brown);font-size:1.7rem;font-weight:700;margin:10px 0 4px;letter-
 /* 粉彩大卡（同 details.sec） */
 .sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);padding:14px 14px 12px;margin:0 0 16px;
   box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
-.sec{--inner:color-mix(in srgb,var(--b-sky) 75%,#fff)}
-.sec.pink{background:var(--c-pink);border-color:var(--b-pink);--inner:color-mix(in srgb,var(--b-pink) 75%,#fff)}
-.sec.mint{background:var(--c-mint);border-color:var(--b-mint);--inner:color-mix(in srgb,var(--b-mint) 75%,#fff)}
-.sec.lav{background:var(--c-lav);border-color:var(--b-lav);--inner:color-mix(in srgb,var(--b-lav) 75%,#fff)}
-.sec.yel{background:var(--c-yel);border-color:var(--b-yel);--inner:color-mix(in srgb,var(--b-yel) 75%,#fff)}
+.sec{--inner:#bfdbef}
+.sec.pink{background:var(--c-pink);border-color:var(--b-pink);--inner:#f8c9da}
+.sec.mint{background:var(--c-mint);border-color:var(--b-mint);--inner:#bee5d0}
+.sec.lav{background:var(--c-lav);border-color:var(--b-lav);--inner:#cfc0ee}
+.sec.yel{background:var(--c-yel);border-color:var(--b-yel);--inner:#f6e4ab}
 .sec>h2{font-size:1.1rem;color:var(--brown);margin:2px 6px 10px;font-weight:700}
 /* 白色小卡 */
 .card{background:#fff;border:1.5px solid var(--inner);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(90,58,26,.08)}
