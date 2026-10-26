@@ -71,8 +71,16 @@ footer a{color:var(--blue)}
 .tabbar a:hover{background:#fff}
 .tabbar a.on,.tabbar .dd.on>.ddt{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
 .tabbar .dd{position:relative;flex:none;display:inline-flex;align-items:center}
-.tabbar .dd .ddt i{font-style:normal;font-size:11px;margin-left:2px;line-height:27px}
-.tabbar .ddm{display:none;position:absolute;left:0;top:calc(100% + 6px);min-width:120px;background:#fff;border:2px solid var(--b-sky);border-radius:12px;padding:6px;box-shadow:0 8px 20px rgba(47,127,198,.18);flex-direction:column;gap:2px}
+.tabbar .dd .ddt{position:relative;padding-right:13px}
+.tabbar .dd .ddt i{position:absolute;right:1px;top:0;font-style:normal;font-size:9px;line-height:27px;opacity:.75;transition:transform .15s}
+.tabbar .dd.open .ddt i{transform:rotate(180deg)}
+.tabbar .ddm{display:none;position:absolute;left:50%;transform:translateX(-50%);top:calc(100% + 8px);min-width:132px;background:#fff;border:2px solid var(--b-pink);border-radius:16px;padding:8px;box-shadow:0 10px 24px rgba(232,69,124,.14);flex-direction:column;gap:4px}
+.tabbar .ddm::before{content:'';position:absolute;left:50%;top:-8px;width:12px;height:12px;background:#fff;border-left:2px solid var(--b-pink);border-top:2px solid var(--b-pink);transform:translateX(-50%) rotate(45deg);border-radius:3px 0 0 0}
 .tabbar .dd.open .ddm{display:flex}
-.tabbar .ddm a{display:block;height:auto;line-height:1.5;border-radius:8px;padding:7px 12px}
-.tabbar .ddm a:hover{background:var(--c-sky)}
+.tabbar .ddm a{display:flex;align-items:center;gap:8px;height:34px;line-height:1;border-radius:999px;padding:0 14px 0 10px;background:var(--c-pink);border:1.5px solid transparent;color:var(--brown);white-space:nowrap}
+.tabbar .ddm a::before{font-size:15px}
+.tabbar .ddm a[href="shop.html"]::before{content:'🛍️'}
+.tabbar .ddm a[href="play.html"]::before{content:'🎡'}
+.tabbar .ddm a[href="eat.html"]::before{content:'🍜'}
+.tabbar .ddm a:hover{background:#fff;border-color:var(--b-pink)}
+.tabbar .ddm a.on{background:#fff;border-color:var(--pink);color:var(--pink)}
