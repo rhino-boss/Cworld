@@ -225,8 +225,9 @@ h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .tabbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:6px;padding:8px 12px;overflow:visible;background:rgba(228,241,251,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky);box-shadow:0 2px 10px rgba(47,127,198,.08)}
 @media (max-width:640px){
   .tabbar{flex-wrap:wrap;justify-content:center;gap:2px 0;padding:6px 6px}
-  .tabbar a{font-size:13px;padding:0 9px}
-  .tabbar .dd .ddt{padding-right:12px}
+  .tabbar a{font-size:12.5px;padding:0 7px}
+  .tabbar .dd .ddt{padding-right:11px}
+  .tabbar .dd .ddt i{right:1px}
   .tabbar .ddm{left:auto;right:0;transform:none}
   .tabbar .ddm::before{left:auto;right:22px;transform:rotate(45deg)}
 }
@@ -281,7 +282,7 @@ details.sub>summary{color:var(--brown)}
 .day .meta b{color:var(--pink);font-weight:700;margin-right:2px}
 .day .meta .mi{display:inline-block;white-space:nowrap;margin-right:10px}
 .day.clickable:hover{box-shadow:0 8px 22px rgba(47,127,198,.22)}
-@media (max-width:640px){.day{grid-template-columns:64px 1fr;padding:10px 12px}.day .meta .mi{display:inline;white-space:normal}}
+@media (max-width:640px){.day{grid-template-columns:64px 1fr;padding:10px 12px}.day .meta .mi{display:block;white-space:normal;margin:0}}
 .chain .cnode{background:#fff;border:2px solid var(--c-sky);border-radius:14px;padding:6px 10px}
 .chain .ctime{background:var(--c-sky);color:var(--blue);border-radius:999px;padding:0 9px;min-width:0;font-size:12.5px}
 .chain .ctime::before{content:'🕒';font-size:11px;margin-right:4px}
