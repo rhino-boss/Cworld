@@ -234,6 +234,14 @@ h1{color:var(--brown);font-size:1.7rem;letter-spacing:0}
 .datepill .dp-cloud{font-size:1.1rem;margin-right:2px}
 .datepill .dp-ico{font-size:1.4rem;margin-left:4px}
 .cnav{background:linear-gradient(90deg,#2f7fc6,#5aa0dc)}
+/* 分頁標籤列（膠囊）：黏在最上面，點了跳到該區塊並展開 */
+.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:6px;padding:8px 12px;overflow-x:auto;scrollbar-width:none;
+  background:rgba(244,251,255,.92);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--b-sky)}
+.tabbar::-webkit-scrollbar{display:none}
+.tabbar a{flex:none;text-decoration:none;font-size:13.5px;font-weight:700;color:var(--brown);padding:4px 13px;border-radius:999px;border:1.5px solid transparent;transition:background .15s}
+.tabbar a:hover{background:#fff}
+.tabbar a.on{background:var(--c-pink);border-color:var(--pink);color:var(--pink)}
+details.sec{scroll-margin-top:58px}
 .modebtn{background:#fff;color:var(--blue);border-radius:999px;font-weight:700}
 .modebtn:hover{background:var(--yellow);color:var(--brown)}
 details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
@@ -333,6 +341,9 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
   <span class="sep">/</span>
   <span class="current">大阪馬拉松</span>
 </nav>
+<div class="tabbar" id="tabbar">
+  <a href="#sec-days">行程</a><a href="#sec-flight">航班</a><a href="#sec-stay">住宿</a><a href="#sec-race">馬拉松</a><a href="#sec-travel">旅行</a><a href="#sec-pack">攜帶</a><a href="#sec-todo">待確認</a>
+</div>
 
 <div class="wrap">
 <header>
@@ -631,6 +642,13 @@ document.querySelectorAll('#days .day').forEach((div,i)=>{
 });
 
 /* 固定為可編輯（已移除檢視／編輯切換） */
+(function(){
+  const tabs=[...document.querySelectorAll('#tabbar a')];
+  const secs=tabs.map(a=>document.querySelector(a.getAttribute('href')));
+  tabs.forEach((a,i)=>a.addEventListener('click',e=>{ e.preventDefault(); const d=secs[i]; if(!d) return; d.open=true; d.scrollIntoView({behavior:'smooth',block:'start'}); history.replaceState(null,'',a.getAttribute('href')); }));
+  function mark(){ let k=0; secs.forEach((d,i)=>{ if(d&&d.getBoundingClientRect().top<120) k=i; }); tabs.forEach((a,i)=>a.classList.toggle('on',i===k)); }
+  addEventListener('scroll',mark,{passive:true}); mark();
+})();
 
 /* 記住每個區塊的展開／收合狀態 */
 (function(){
