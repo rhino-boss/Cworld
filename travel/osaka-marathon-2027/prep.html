@@ -7,56 +7,34 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d32020'/%3E%3Ctext x='32' y='46' font-family='Helvetica,Arial,sans-serif' font-size='46' font-weight='700' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
 <link rel="stylesheet" href="sub.css?v=4">
 <style>
-:root{--stayicon:#d97316;--cardline:#efe6d6;--staybg:rgba(230,140,40,.20);--stayborder:rgba(200,110,20,.45)}
-details.sec{border-radius:22px;border:3px solid var(--b-sky);background:var(--c-sky);margin:0 0 16px;box-shadow:0 6px 0 rgba(90,58,26,.06),0 10px 24px rgba(47,127,198,.12)}
-#sec-pack{background:var(--c-pink);border-color:var(--b-pink)}
-details.sec>summary{color:var(--brown);font-size:1.15rem;font-weight:700;padding:14px 20px 10px;cursor:pointer;list-style:none}
-summary::-webkit-details-marker{display:none}
-summary::before{content:'▸';display:inline-block;margin-right:8px;color:var(--pink);transition:transform .15s}
-details[open]>summary::before{transform:rotate(90deg)}
-details.sub{margin:0 0 12px;border:2px solid rgba(255,255,255,.9);border-radius:16px;background:#fff;box-shadow:0 2px 8px rgba(90,58,26,.06)}
-details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:pointer;color:var(--brown);list-style:none}
-.secbody{padding:2px 12px 12px}
-.subbody{padding:2px 12px 12px}
-.hint{font-size:12px;color:var(--faint);margin:8px 0 0}
-.sec>h2{font-size:1.15rem;color:var(--brown);margin:0;padding:14px 20px 10px;font-weight:700}
-.listbox{padding:8px 12px}
-.listbox .ck{margin:0}
-.ck{list-style:none;margin:4px 0;padding:0;font-size:13.5px}
-.ck li{margin:4px 0;line-height:1.7;display:flex;gap:8px;align-items:center}
-.ck input[type=checkbox]{margin-top:0;flex:none;accent-color:#2f9e44}
-.ck .note{color:var(--stayicon);font-weight:700;font-style:normal}
-.ck .txt{flex:1;cursor:text;border-radius:4px;padding:0 2px}
-.ck .txt.done{color:var(--muted);text-decoration:line-through}
-.ck .addin{flex:1;border:1px dashed var(--cardline);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;background:var(--paper)}
-.ck .addbtn{border:none;background:#2f9e44;color:#fff;border-radius:8px;padding:2px 12px;font-size:15px;cursor:pointer;flex:none}
-.ck .catsel{flex:none;font:inherit;font-size:11px;font-weight:700;color:var(--ink);background:var(--staybg);border:1px solid var(--stayborder);border-radius:999px;padding:1px 6px;text-align:center}
-.ck .catsel.c-must{background:#fde8e6;border-color:#e5a9a2;color:#8f2c20}
-.ck .catsel.c-cloth{background:#e6effb;border-color:#a9c2e5;color:#204a8f}
-.ck .catsel.c-run{background:#e5f5ea;border-color:#a3d2b4;color:#1f6b3a}
-.ck .catsel.c-other{background:#f0efe9;border-color:#cfcdc2;color:#5f5c50}
-.packcols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.packshared{margin-top:10px}
-.packcol>summary,.packshared>summary{font-size:14px;font-weight:700;padding:8px 12px}
-.packcol,.packshared{margin-bottom:0}
-.packcol .subbody,.packshared .subbody{padding:0 12px 8px}
-.packcol .ck,.packshared .ck{margin:0;overflow-x:auto;overflow-y:hidden}
-.packcol .ck li,.packshared .ck li{margin:2px 0;width:max-content;min-width:100%;flex-wrap:nowrap}
-.packcol .ck .txt,.packshared .ck .txt{white-space:nowrap}
-.packcol .ck::-webkit-scrollbar,.packshared .ck::-webkit-scrollbar{height:6px}
-.packcol .ck::-webkit-scrollbar-thumb,.packshared .ck::-webkit-scrollbar-thumb{background:#dcdcd6;border-radius:99px}
-.ed{border-radius:4px;padding:0 2px}
-.ck .catsel{border-width:2px;font-weight:700}
-.ck .catsel.c-must{background:var(--c-pink);border-color:var(--b-pink);color:var(--pink)}
-.ck .catsel.c-cloth{background:var(--c-sky);border-color:var(--b-sky);color:var(--blue)}
-.ck .catsel.c-run{background:var(--c-mint);border-color:var(--b-mint);color:#2f7a4c}
-.ck .catsel.c-other{background:var(--c-yel);border-color:var(--b-yel);color:var(--brown)}
-.ck input[type=checkbox]{accent-color:var(--pink);width:16px;height:16px}
-.ck .addbtn{background:var(--pink);border-radius:999px}
-.ck .addin{border:2px dashed var(--b-sky);border-radius:999px;background:#fff}
-.ed{border-radius:999px}
-@media (max-width:720px){ .packcols{grid-template-columns:1fr} }
-
+.prog{background:#fff;border:2px solid var(--b-sky);border-radius:18px;padding:14px 18px;margin:0 0 16px;box-shadow:0 2px 10px rgba(90,58,26,.06);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.prog .pt{font-weight:700;color:var(--brown);font-size:15px}
+.prog .pt small{font-weight:700;color:var(--muted);font-size:12px;margin-left:6px}
+.prog .bar{flex:1;min-width:160px;height:12px;border-radius:999px;background:var(--c-sky);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),#ff9fbf);border-radius:999px;transition:width .3s}
+.prog .pct{font-weight:700;color:var(--pink);min-width:44px;text-align:right}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pcat{background:#fff;border:2px solid var(--b-sky);border-radius:18px;padding:12px 14px 10px;box-shadow:0 2px 10px rgba(90,58,26,.06)}
+.pcat.c-must{border-color:var(--b-pink)}.pcat.c-cloth{border-color:var(--b-sky)}.pcat.c-run{border-color:var(--b-mint)}.pcat.c-other{border-color:var(--b-yel)}
+.pcat h3{margin:0 0 8px;font-size:15px;color:var(--brown);display:flex;align-items:center;gap:8px}
+.pcat h3 .ic{width:30px;height:30px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px}
+.pcat.c-must h3 .ic{background:var(--c-pink)}.pcat.c-cloth h3 .ic{background:var(--c-sky)}.pcat.c-run h3 .ic{background:var(--c-mint)}.pcat.c-other h3 .ic{background:var(--c-yel)}
+.pcat h3 .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700}
+.pcat h3 .cnt.ok{color:#2f7a4c}
+.ck{list-style:none;margin:0;padding:0;font-size:13.5px}
+.ck li{margin:0;display:flex;gap:9px;align-items:center;padding:6px 6px;border-radius:10px;line-height:1.5}
+.ck li:hover{background:var(--c-sky)}
+.pcat.c-must .ck li:hover{background:var(--c-pink)}.pcat.c-run .ck li:hover{background:var(--c-mint)}.pcat.c-other .ck li:hover{background:var(--c-yel)}
+.ck input[type=checkbox]{flex:none;accent-color:var(--pink);width:17px;height:17px;margin:0;cursor:pointer}
+.ck label{flex:1;cursor:pointer;color:var(--brown)}
+.ck .done{color:var(--muted);text-decoration:line-through}
+.ck .note{color:var(--muted);font-style:normal;font-size:12px;margin-left:4px}
+.todo .ck{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}
+.todo .ck li{border-bottom:1px dashed #eee6d8;border-radius:0;padding:8px 6px}
+.todo .ck li:hover{background:transparent}
+.tipbox{margin-top:12px;background:#fff;border-radius:14px;padding:10px 14px;font-size:12.5px;color:var(--muted);line-height:1.7}
+.tipbox b{color:var(--pink)}
+@media (max-width:640px){.pgrid{grid-template-columns:1fr}.todo .ck{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -80,18 +58,19 @@ details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:point
   <div class="hicon">🎒</div>
   <h1>準備</h1>
   <p class="sub">出發前把清單一項項勾掉；比賽裝備（跑鞋、襪子、衣褲）都用練跑穿慣的，不要帶新品直接上場。</p>
-<div class="sec" id="sec-pack">
-<h2>攜帶物品</h2>
-<div class="secbody">
-<div id="packlist"></div>
-<p class="hint">每個項目前面的標籤可以切換分類；選「＋ 新增分類」可自訂。</p>
-</div>
-</div>
 
-<div class="sec" id="sec-todo">
-<h2>待確認項目</h2>
-<div class="secbody"><div class="card listbox"><ul class="ck" id="todolist"></ul></div></div>
-</div>
+  <div class="prog"><div class="pt">打包進度<small id="pcount"></small></div><div class="bar"><i id="pbar"></i></div><div class="pct" id="ppct">0%</div></div>
+
+  <div class="sec pink">
+    <h2>攜帶物品</h2>
+    <div class="pgrid" id="packlist"></div>
+    <div class="tipbox"><b>提醒</b>：號碼布、安全手環 D1 在 INTEX 領到後就放進比賽袋；比賽日不寄物，起跑前保暖層要可以丟；補給膠賽前一晚先別在短褲上。</div>
+  </div>
+
+  <div class="sec sky todo">
+    <h2>待確認</h2>
+    <div class="pcat c-cloth"><ul class="ck" id="todolist"></ul></div>
+  </div>
 </div>
 <script>
 (function(){ const dd=document.querySelector('#tabbar .dd'); if(!dd) return; const t=dd.querySelector('.ddt');
@@ -102,68 +81,55 @@ details.sub>summary{font-size:15px;font-weight:700;padding:9px 12px;cursor:point
 <script>
 (function(){
 const PREFIX='osaka27.';
-/* ── 清單（只能勾選） ── */
-const esc2=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
-function editList(el, key, seed){
-  const K=PREFIX+'items.'+key;
-  let items;
-  try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
-  if(!Array.isArray(items)) items=seed.map(it=>({t:it.t, n:it.n||'', done:!!it.done}));
-  function render(){
-    localStorage.setItem(K, JSON.stringify(items));
-    el.innerHTML = items.map((it,i)=>`
-      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <span class="txt${it.done?' done':''}">${esc2(it.t)}${it.n?` <em class="note">${esc2(it.n)}</em>`:''}</span></li>`).join('');
-    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-  }
-  render();
-}
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const load=K=>{ try{ const v=JSON.parse(localStorage.getItem(K)); return Array.isArray(v)?v:[]; }catch(e){ return []; } };
+const save=(K,v)=>{ try{ localStorage.setItem(K,JSON.stringify(v)); }catch(e){} };
+const idOf=(pre,t)=>pre+t.replace(/[^\w\u4e00-\u9fff]/g,'_');
 
-/* ── 攜帶物品：單一清單；分類為固定標籤 ── */
-const PACK_CATS = [['must','必帶'],['cloth','服裝'],['run','比賽'],['other','其他']];
-const CAT_LABEL = Object.fromEntries(PACK_CATS);
-const PACK_LISTS = [
- // 沈的清單（2026/10 版）
- {key:'all', name:'攜帶物品清單', wide:1, items:[
-   ['must','護照'],['must','日幣'],['must','信用卡'],['must','參賽確認信'],
-   ['cloth','羽絨（阿羲）'],['cloth','風雨衣（皮卡丘）'],['cloth','保暖：手套、毛帽'],['cloth','鴨舌帽'],
-   ['cloth','衣：立山、劍岳'],['cloth','褲：on、迪卡農繭型褲'],['cloth','襪：M、D'],['cloth','Y拖'],
-   ['run','補給：能量膠 ×4、鹽錠'],
-   ['other','行動電源'],['other','轉接頭'],['other','盥洗：刮鬍刀、牙刷、牙膏'],
- ]},
+/* ── 攜帶物品：分類固定在程式裡，瀏覽器只記勾選 ── */
+const CATS=[
+  {c:'must',  name:'必帶',  ic:'🛂', items:['護照','日幣','信用卡','參賽確認信']},
+  {c:'cloth', name:'服裝',  ic:'🧥', items:['羽絨（阿羲）','風雨衣（皮卡丘）','保暖：手套、毛帽','鴨舌帽','衣：立山、劍岳','褲：on、迪卡農繭型褲','襪：M、D','Y拖']},
+  {c:'run',   name:'比賽',  ic:'🏃', items:['補給：能量膠 ×4、鹽錠','跑鞋','號碼布、安全手環（D1 領）','可丟的起跑保暖層']},
+  {c:'other', name:'其他',  ic:'🔌', items:['行動電源','轉接頭','盥洗：刮鬍刀、牙刷、牙膏']},
 ];
-const packBox=document.getElementById('packlist');
-packBox.innerHTML = PACK_LISTS.map(l=>`<div class="card listbox"><ul class="ck pk" data-list="${l.key}"></ul></div>`).join('');
-function packList(el, key, seed){
-  const K=PREFIX+'items.'+key;
-  let items;
-  try{ items=JSON.parse(localStorage.getItem(K)); }catch(e){}
-  if(!Array.isArray(items)) items=seed.map(([c,t])=>({t,c,done:false}));
-  // 項目與分類固定在程式裡；localStorage 只記勾選狀態
-  const done=new Set(items.filter(it=>it.done).map(it=>it.t));
-  items=seed.map(([c,t])=>({t,c,done:done.has(t)}));
-  const order=c=>{ const i=PACK_CATS.findIndex(x=>x[0]===c); return i<0?PACK_CATS.length:i; };
-  items.sort((a,b)=>order(a.c)-order(b.c));
-  function render(){
-    localStorage.setItem(K, JSON.stringify(items));
-    el.innerHTML = items.map((it,i)=>`
-      <li><input type="checkbox" data-i="${i}" ${it.done?'checked':''}>
-      <span class="catsel c-${it.c}">${CAT_LABEL[it.c]||'其他'}</span>
-      <span class="txt${it.done?' done':''}">${esc2(it.t)}</span></li>`).join('');
-    el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{items[+cb.dataset.i].done=cb.checked;render();}));
-  }
-  render();
+const PK=PREFIX+'pack4.done';
+let done=new Set(load(PK));
+const box=document.getElementById('packlist');
+function renderPack(){
+  box.innerHTML=CATS.map(g=>{
+    const n=g.items.filter(t=>done.has(t)).length;
+    return `<div class="pcat c-${g.c}"><h3><span class="ic">${g.ic}</span>${g.name}<span class="cnt${n===g.items.length?' ok':''}">${n} / ${g.items.length}</span></h3><ul class="ck">`+
+      g.items.map(t=>{ const id=idOf('p_',t); return `<li><input type="checkbox" id="${id}" data-t="${esc(t)}" ${done.has(t)?'checked':''}><label for="${id}" class="${done.has(t)?'done':''}">${esc(t)}</label></li>`; }).join('')+'</ul></div>';
+  }).join('');
+  const all=CATS.reduce((a,g)=>a+g.items.length,0), k=CATS.reduce((a,g)=>a+g.items.filter(t=>done.has(t)).length,0);
+  const pct=all?Math.round(k/all*100):0;
+  document.getElementById('pcount').textContent=`${k} / ${all}`;
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('ppct').textContent=pct+'%';
+  box.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{ cb.checked?done.add(cb.dataset.t):done.delete(cb.dataset.t); save(PK,[...done]); renderPack(); }));
 }
-PACK_LISTS.forEach(l=>packList(packBox.querySelector(`ul[data-list="${l.key}"]`), 'pack3-'+l.key, l.items));
+renderPack();
 
-editList(document.getElementById('todolist'), 'todo3', [
- {t:'買 eSIM'},
- {t:'換日幣'},
- {t:'海遊館門票線上預購'},
- {t:'太陽之塔內部參觀預約'},
- {t:'查 千里中央 → 勝尾寺 阪急巴士時刻'},
-]);
-
+/* ── 待確認 ── */
+const TODO=[
+  {t:'買 eSIM'},
+  {t:'換日幣'},
+  {t:'海遊館門票線上預購', n:'¥2,700'},
+  {t:'太陽之塔內部參觀預約', n:'¥720'},
+  {t:'查 千里中央 → 勝尾寺 阪急巴士時刻'},
+  {t:'心齋橋燒肉訂位', n:'D3 18:00'},
+  {t:'出發前看 Booking 訊息的入住指示'},
+];
+const TK=PREFIX+'todo4.done';
+let tdone=new Set(load(TK));
+const tl=document.getElementById('todolist');
+function renderTodo(){
+  tl.innerHTML=TODO.map(it=>{ const id=idOf('t_',it.t); const d=tdone.has(it.t);
+    return `<li><input type="checkbox" id="${id}" data-t="${esc(it.t)}" ${d?'checked':''}><label for="${id}" class="${d?'done':''}">${esc(it.t)}${it.n?`<em class="note">${esc(it.n)}</em>`:''}</label></li>`; }).join('');
+  tl.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{ cb.checked?tdone.add(cb.dataset.t):tdone.delete(cb.dataset.t); save(TK,[...tdone]); renderTodo(); }));
+}
+renderTodo();
 })();
 </script>
 </body>
