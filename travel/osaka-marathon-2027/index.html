@@ -377,15 +377,9 @@ details.sec>summary::after{content:'';position:absolute;right:18px;top:3px;width
 details.sec:not([open]){margin:10px 0}
 details.sec:not([open])>summary{min-height:0;padding-top:9px;padding-bottom:9px}
 details.sec:not([open])>summary::after{top:50%;margin-top:-30px;height:60px;width:64px}
-/* 收合時右半邊鋪該區塊的水彩場景，往左淡出成區塊底色 */
-#sec-days{--sbg:#f5faff;--scene:url(img/pika/h_plan.webp)}
-#sec-flight{--sbg:var(--c-sky);--scene:url(img/pika/d1.webp)}
-#sec-stay{--sbg:var(--c-yel);--scene:url(img/pika/h_stay.webp)}
-#sec-race{--sbg:var(--c-mint);--scene:url(img/pika/h_race.webp)}
-#sec-travel{--sbg:var(--c-lav);--scene:url(img/pika/h_shop.webp)}
-details.sec:not([open]){background-image:linear-gradient(90deg,var(--sbg) 28%,color-mix(in srgb,var(--sbg) 55%,transparent) 62%,color-mix(in srgb,var(--sbg) 15%,transparent)),var(--scene);
-  background-size:auto,62% auto;background-position:0 0,right 40%;background-repeat:no-repeat}
-@media (max-width:640px){details.sec:not([open]){background-size:auto,80% auto}}
+/* 區塊底色上加白色寶可夢球／閃電／星星底紋（用 id 才蓋得過各區塊的 background 簡寫）；行程收合時跟其他條一樣用粉色底 */
+#sec-days,#sec-flight,#sec-stay,#sec-race,#sec-travel{background-image:var(--pika-pattern);background-size:160px 120px}
+details#sec-days:not([open]){background-color:var(--c-pink);border-color:var(--b-pink)}
 #sec-days>summary::after{background-image:url(img/pika/s_days.webp)}
 #sec-flight>summary::after{background-image:url(img/pika/s_flight.webp)}
 #sec-stay>summary::after{background-image:url(img/pika/s_stay.webp)}
