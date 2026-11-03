@@ -182,3 +182,9 @@ body table.km tr.hill td:first-child{box-shadow:inset 4px 0 0 var(--pink);color:
 body .ov .bar{flex-direction:column;align-items:flex-start;gap:2px}
 body .ov .bar b{margin-right:0;white-space:nowrap}
 body .ov .bar .hint{margin:0;line-height:1.5}
+/* 必買：購買地點改成上下排 — 寶可夢球日期膠囊在上、店名在中、補充在下，每筆之間虛線 */
+body .item .buy{gap:0}
+body .item .buy li{flex-direction:column;align-items:flex-start;gap:4px;padding:8px 0;border-bottom:1.5px dashed var(--inner)}
+body .item .buy li:last-child{border-bottom:0;padding-bottom:0}
+body .item .buy li>span:last-child b{display:block;font-size:13.5px;line-height:1.45}
+body .item .buy li>span:last-child small{display:block;margin-top:2px;line-height:1.5}
