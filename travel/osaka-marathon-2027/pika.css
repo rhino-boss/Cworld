@@ -157,3 +157,17 @@ body .mapbar .lnk{flex:none;width:32px;height:32px;font-size:15px}
 /* 右上角探頭皮卡丘：在藍色導覽列／標籤列裡上下置中 */
 .tabbar::after{bottom:auto;top:50%;transform:translateY(-50%)}
 @media (max-width:640px){.cnav::after{bottom:auto;top:50%;transform:translateY(-50%)}}
+
+/* 準備：進度條刻度（25／50／75% 長刻度、中間短刻度），蓋在進度色上面也看得到 */
+body .prog .bar::before{content:'';position:absolute;inset:0;border-radius:999px;pointer-events:none;z-index:1;
+  background:
+    linear-gradient(90deg,transparent calc(25% - 1px),rgba(90,58,26,.28) calc(25% - 1px) calc(25% + 1px),transparent calc(25% + 1px)),
+    linear-gradient(90deg,transparent calc(50% - 1px),rgba(90,58,26,.28) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px)),
+    linear-gradient(90deg,transparent calc(75% - 1px),rgba(90,58,26,.28) calc(75% - 1px) calc(75% + 1px),transparent calc(75% + 1px)),
+    repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(90,58,26,.14) calc(12.5% - 1px) 12.5%);
+  background-size:100% 100%,100% 100%,100% 100%,100% 45%;background-position:0 0,0 0,0 0,0 50%;background-repeat:no-repeat}
+body .prog .bar i{z-index:0}
+body .prog .bar i::after{z-index:2}
+/* 刻度下的數字 */
+body .prog .bar{margin-bottom:20px}
+body .prog .bar>b.tk{position:absolute;top:calc(100% + 3px);transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--faint);line-height:1}
