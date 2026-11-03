@@ -300,10 +300,7 @@ body .modal .mhead b,body .modal .mhead span{text-shadow:0 0 6px #fff,0 0 3px #f
 /* 彈窗頂部插畫：加高、往下多露一點，淡出改在更下面才開始 */
 body .modal .mban{height:210px;object-position:center 45%;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}
 @media (max-width:640px){body .modal .mban{height:190px}}
-/* 時間節點：時間膠囊不斷行；同一行放不下標題時，標題（連同右側圖示）整個換到下一行 */
-.chain .cnode{flex-wrap:wrap;align-items:center;row-gap:6px}
-.chain .cnode .ctime{flex:none;white-space:nowrap}
-.chain .cnode .cname{flex:1 1 auto;min-width:0}
+
 /* 彈窗插畫：皮卡丘多在圖的下半部，取景往下移、淡出延後、日期列不再往上疊，讓皮卡丘完整露出 */
 body .modal .mban{height:230px;object-position:center 82%;-webkit-mask-image:linear-gradient(180deg,#000 86%,transparent);mask-image:linear-gradient(180deg,#000 86%,transparent);margin-bottom:6px}
 body .modal .mhead{margin-top:0}
