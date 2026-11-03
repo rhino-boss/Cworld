@@ -75,17 +75,36 @@ window.DAYS=[
    ]},
 ];
 
-// 照片輪播（index.html 彈窗與 plan.html 共用）：左右滑／按箭頭，下方圓點顯示第幾張
+// 照片輪播（index.html 彈窗與各子頁共用）：左右滑／按箭頭，下方圓點顯示第幾張；
+// 頭尾各接一張複製圖，滑過最後一張會接回第一張（往前也一樣），一直滑會循環
 window.bindCarousels=function(root){
   (root||document).querySelectorAll('.cphoto:not([data-bound])').forEach(box=>{
     box.dataset.bound='1';
     const track=box.querySelector('.track'), dots=box.querySelector('.dots');
     const n=track.children.length;
     if(dots) dots.innerHTML=Array.from({length:n},(_,i)=>'<i'+(i?'':' class="on"')+'></i>').join('');
-    const idx=()=>Math.round(track.scrollLeft/track.clientWidth);
-    const go=i=>track.scrollTo({left:Math.max(0,Math.min(n-1,i))*track.clientWidth,behavior:'smooth'});
-    box.querySelector('.pv')?.addEventListener('click',e=>{e.stopPropagation();go(idx()-1);});
-    box.querySelector('.nx')?.addEventListener('click',e=>{e.stopPropagation();go(idx()+1);});
-    track.addEventListener('scroll',()=>{ if(!dots) return; const k=idx(); [...dots.children].forEach((el,i)=>el.classList.toggle('on',i===k)); },{passive:true});
+    if(n<2) return;
+    track.insertBefore(track.lastElementChild.cloneNode(true),track.firstElementChild);
+    track.appendChild(track.children[1].cloneNode(true));
+    const w=()=>track.clientWidth;
+    const pos=()=>Math.round(track.scrollLeft/w());
+    // 不帶動畫直接跳到第 p 格（暫時關掉吸附，免得被拉回去）
+    const jump=p=>{ track.style.scrollSnapType='none'; track.style.scrollBehavior='auto'; track.scrollLeft=p*w();
+      requestAnimationFrame(()=>{ track.style.scrollSnapType=''; track.style.scrollBehavior=''; }); };
+    // 一開始停在真正的第一張；彈窗裡的輪播一開始寬度是 0，等量得到寬度再定位
+    let ready=false;
+    const init=()=>{ if(ready||!w()) return; ready=true; jump(1); };
+    init(); if(!ready && window.ResizeObserver) new ResizeObserver(init).observe(track);
+    const go=d=>track.scrollTo({left:(pos()+d)*w(),behavior:'smooth'});
+    box.querySelector('.pv')?.addEventListener('click',e=>{e.stopPropagation();go(-1);});
+    box.querySelector('.nx')?.addEventListener('click',e=>{e.stopPropagation();go(1);});
+    let t;
+    track.addEventListener('scroll',()=>{
+      if(!ready||!w()) return;
+      const k=(pos()-1+n)%n;
+      if(dots) [...dots.children].forEach((el,i)=>el.classList.toggle('on',i===k));
+      // 停下來時若落在複製圖上，就悄悄換回對應的真正那張
+      clearTimeout(t); t=setTimeout(()=>{ const p=pos(); if(p===0) jump(n); else if(p===n+1) jump(1); },120);
+    },{passive:true});
   });
 };
