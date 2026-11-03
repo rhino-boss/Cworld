@@ -21,6 +21,26 @@
       a.oncancel = () => { d.style.overflow = ''; };
     });
   }
+  /* 玩什麼／吃什麼卡片標題：括號補充（例如「（有空檔再去）」）只在右邊 📍↗ 不會被擠到下一行時才顯示；
+     D0（不排在特定哪天）的標籤改寫成「有空」 */
+  document.querySelectorAll('.spot .head .day').forEach(el => { if (el.textContent.trim() === 'D0') el.textContent = '有空'; });
+  document.querySelectorAll('.spot .head .name').forEach(n => {
+    const m = n.textContent.match(/^(.*?)\s*([（(].*[）)])\s*$/);
+    if (!m) return;
+    n.innerHTML = '';
+    n.append(m[1]);
+    const pn = document.createElement('span'); pn.className = 'pn'; pn.textContent = m[2]; n.append(pn);
+  });
+  const fitNotes = () => document.querySelectorAll('.spot .head').forEach(h => {
+    const pn = h.querySelector('.name .pn'), ic = h.querySelector('.icons'), nm = h.querySelector('.name');
+    if (!pn) return;
+    pn.style.display = '';
+    if (!ic) return;
+    // 圖示和標題不在同一行（被擠下去）就把括號補充藏起來
+    if (ic.getBoundingClientRect().top > nm.getBoundingClientRect().top + 4) pn.style.display = 'none';
+  });
+  fitNotes(); window.addEventListener('load', fitNotes); window.addEventListener('resize', fitNotes);
+
   const run = () => document.querySelectorAll('details').forEach(bind);
   run();
   // 有些區塊是 JS 之後才產生的，晚一點再補綁一次
