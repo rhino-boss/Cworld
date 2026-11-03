@@ -291,3 +291,9 @@ body details.sub>summary::after{content:none!important;display:none!important}
 /* 玩什麼：「確定要去／備案」區塊標題右側的數量膠囊 */
 #spots>h2,#spots+.sec>h2{display:flex;align-items:center;margin:2px 6px 12px}
 #spots>h2 .cnt,#spots+.sec>h2 .cnt{margin-left:auto;font-size:12px;background:#fff;border:1.5px solid var(--inner);border-radius:999px;padding:1px 10px;color:var(--muted)}
+/* D 幾那一行不要底色（不擋插畫）：彈窗日期列、總覽每日卡左上角；改用白色光暈讓字在圖上看得清楚 */
+body .modal .mhead{background:none;padding:0 2px;margin-top:-6px}
+body .modal .mhead b,body .modal .mhead span{text-shadow:0 0 6px #fff,0 0 3px #fff,0 0 2px #fff}
+.days .day .tag{background:none;box-shadow:none;padding-left:4px}
+.days .day .tag .dnum,.days .day .tag .date{text-shadow:0 0 6px #fff,0 0 3px #fff,0 0 2px #fff}
+.days .day .tag .dnum::before{filter:drop-shadow(0 0 2px #fff)}

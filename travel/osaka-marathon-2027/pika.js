@@ -41,9 +41,9 @@
   });
   fitNotes(); window.addEventListener('load', fitNotes); window.addEventListener('resize', fitNotes);
 
-  /* 玩什麼：分成「確定要去」（有排 D1～D4）和「備案」（有空再去）兩個區塊，各自維持原本順序 */
+  /* 玩什麼／吃什麼：分成「確定要去」（有排 D1～D4）和「備案」（有空再去）兩個區塊，各自維持原本順序 */
   const spots = document.getElementById('spots');
-  if (spots && document.querySelector('.ddm a.on[href="play.html"]')) {
+  if (spots && document.querySelector('.ddm a.on[href="play.html"],.ddm a.on[href="eat.html"]')) {
     const cards = [...spots.querySelectorAll(':scope>.spot')];
     const isPlan = c => /^D[1-4]$/.test(c.querySelector('.head .day')?.textContent.trim() || '');
     const backup = cards.filter(c => !isPlan(c));
