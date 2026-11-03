@@ -178,3 +178,7 @@ body .prog .bar>b.tk{position:absolute;top:calc(100% + 3px);transform:translateX
 /* 馬拉松篇公里表：上坡那段不用整片黃底，改成淡綠底＋左側粉紅標線、公里數變粉紅 */
 body table.km tr.hill td{background:#f2faf5}
 body table.km tr.hill td:first-child{box-shadow:inset 4px 0 0 var(--pink);color:var(--pink)}
+/* 行程頁「路線總覽」：標題一行、補充說明在下一行 */
+body .ov .bar{flex-direction:column;align-items:flex-start;gap:2px}
+body .ov .bar b{margin-right:0;white-space:nowrap}
+body .ov .bar .hint{margin:0;line-height:1.5}
