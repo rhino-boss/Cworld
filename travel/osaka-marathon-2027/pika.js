@@ -41,6 +41,22 @@
   });
   fitNotes(); window.addEventListener('load', fitNotes); window.addEventListener('resize', fitNotes);
 
+  /* 玩什麼：分成「確定要去」（有排 D1～D4）和「備案」（有空再去）兩個區塊，各自維持原本順序 */
+  const spots = document.getElementById('spots');
+  if (spots && document.querySelector('.ddm a.on[href="play.html"]')) {
+    const cards = [...spots.querySelectorAll(':scope>.spot')];
+    const isPlan = c => /^D[1-4]$/.test(c.querySelector('.head .day')?.textContent.trim() || '');
+    const backup = cards.filter(c => !isPlan(c));
+    if (backup.length) {
+      const sec2 = document.createElement('div');
+      sec2.className = 'sec yel';
+      sec2.innerHTML = '<h2>備案<span class="cnt">' + backup.length + ' 個・有空檔再去</span></h2>';
+      backup.forEach(c => sec2.appendChild(c));
+      spots.after(sec2);
+      spots.insertAdjacentHTML('afterbegin', '<h2>確定要去<span class="cnt">' + (cards.length - backup.length) + ' 個</span></h2>');
+    }
+  }
+
   /* 必買：各類標題右側的件數 */
   document.querySelectorAll('.shopsec').forEach(s => { const c = s.querySelector('h2 .cnt'); if (c) c.textContent = s.querySelectorAll('.item').length + ' 項'; });
 

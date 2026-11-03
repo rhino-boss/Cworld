@@ -288,3 +288,6 @@ footer::before{content:none!important;display:none!important}
 body details.sub>summary::after{content:none!important;display:none!important}
 /* 飯店／賽事名稱跟「訂房」同層級：用同一顆超級球、同樣大小 */
 .stay2 .fhead b::before,#sec-stay .fhead b::before,#sec-race .fhead b::before{width:18px!important;height:18px!important;background:var(--greatball) center/contain no-repeat!important}
+/* 玩什麼：「確定要去／備案」區塊標題右側的數量膠囊 */
+#spots>h2,#spots+.sec>h2{display:flex;align-items:center;margin:2px 6px 12px}
+#spots>h2 .cnt,#spots+.sec>h2 .cnt{margin-left:auto;font-size:12px;background:#fff;border:1.5px solid var(--inner);border-radius:999px;padding:1px 10px;color:var(--muted)}
