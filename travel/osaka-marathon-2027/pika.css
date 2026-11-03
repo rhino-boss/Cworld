@@ -293,3 +293,7 @@ footer::before{content:none!important;display:none!important}
 .dgrp i{margin-left:auto;font-style:normal;font-size:12px;font-weight:700;color:var(--muted)}
 .dgrp::after{content:'';flex:1;order:3;height:0;border-top:2px dashed color-mix(in srgb,var(--dk) 35%,transparent)}
 .dgrp i{order:4;margin-left:0}
+/* 飯店／賽事名稱前的圓形 emoji 換成寶可夢球（住宿頁＋總覽資訊卡） */
+.stay2 .fhead b::before,#sec-stay .fhead b::before,#sec-race .fhead b::before{content:''!important;width:28px;height:28px;border-radius:0;background:var(--pokeball) center/contain no-repeat!important;box-shadow:none}
+/* 馬拉松篇子區塊標題（賽事資訊、跑步路線…）後面不放寶可夢球 */
+body details.sub>summary::after{content:none!important;display:none!important}
