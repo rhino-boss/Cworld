@@ -220,3 +220,5 @@ body #days.sec{background:none;border:0;box-shadow:none;padding:0}
 body .ck input[type=checkbox]:checked{background-image:var(--greatball)}
 body .ck input[type=checkbox]{border-color:#aacfea}
 body .tips li::before,body .notes li::before,body .srcs li::before,body .info th::before,body details.sub>summary::after,body .mtitle::before,body .modal .mlegs>b::before{background-image:var(--greatball)}
+/* 頁尾那排小圖示換成六隻寶可夢頭像（皮卡丘、伊布、妙蛙種子、小火龍、傑尼龜、胖丁） */
+footer::before{content:''!important;display:block;height:46px;margin:2px auto 10px;max-width:300px;letter-spacing:0;background:url(img/pika/s_heads.webp) center/contain no-repeat}
