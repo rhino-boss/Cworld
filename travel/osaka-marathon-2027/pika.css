@@ -1,0 +1,24 @@
+/* 大阪馬拉松：皮卡丘主題共用裝飾（總覽與各子頁都載入） */
+:root{
+  --pokeball:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M1 10a9 9 0 0 1 18 0z' fill='%23e8457c'/%3E%3Cpath d='M1 10a9 9 0 0 0 18 0z' fill='%23fff'/%3E%3Ccircle cx='10' cy='10' r='9' fill='none' stroke='%235a3a1a' stroke-width='1.6'/%3E%3Cpath d='M1 10h18' stroke='%235a3a1a' stroke-width='1.6'/%3E%3Ccircle cx='10' cy='10' r='3' fill='%23fff' stroke='%235a3a1a' stroke-width='1.6'/%3E%3C/svg%3E");
+  /* 粉彩底上的白色小圖案：寶可夢球、閃電、星星，像交通卡底紋 */
+  --pika-pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120'%3E%3Cg fill='none' stroke='%23fff' stroke-width='2' opacity='.85'%3E%3Ccircle cx='24' cy='26' r='10'/%3E%3Cpath d='M14 26h20'/%3E%3Ccircle cx='24' cy='26' r='3'/%3E%3Ccircle cx='118' cy='84' r='8'/%3E%3Cpath d='M110 84h16'/%3E%3Ccircle cx='118' cy='84' r='2.4'/%3E%3C/g%3E%3Cg fill='%23fff' opacity='.85'%3E%3Cpath d='M96 14l-6 9h6l-4 9 10-12h-6l4-6z'/%3E%3Cpath d='M40 88l-5 7h5l-3 7 8-9h-5l3-5z'/%3E%3Cpath d='M70 52l2 5 5 2-5 2-2 5-2-5-5-2 5-2z'/%3E%3Cpath d='M146 40l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z'/%3E%3Ccircle cx='140' cy='108' r='2'/%3E%3Ccircle cx='8' cy='70' r='2'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── 標籤列：右側探頭皮卡丘、目前頁籤前小寶可夢球、下緣一排小閃電 ── */
+.tabbar{padding-right:84px}
+.tabbar::after{content:'';position:absolute;right:16px;bottom:0;width:62px;height:42px;background:url(img/pika/s_peek.webp) center bottom/contain no-repeat;pointer-events:none}
+.tabbar::before{content:'';position:absolute;left:0;right:0;bottom:-7px;height:7px;pointer-events:none;opacity:.8;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='7'%3E%3Cpath d='M20 0l-3 4h3l-2 3 5-4h-3l2-3z' fill='%23ffc53d'/%3E%3C/svg%3E") 0 0/44px 7px repeat-x}
+.tabbar a.on::before,.tabbar .dd.on>.ddt::before{content:'';display:inline-block;width:12px;height:12px;margin:0 5px 0 -3px;vertical-align:-1px;background:var(--pokeball) center/contain no-repeat}
+@media (max-width:640px){.tabbar{padding-right:6px}.tabbar::after{right:8px;width:48px;height:32px}}
+
+/* ── 粉彩大卡加白色底紋 ── */
+details.sec,.sec{background-image:var(--pika-pattern);background-size:160px 120px}
+.days .day{background-image:var(--pika-pattern);background-size:160px 120px}
+
+/* ── 子頁標題：右上角主題皮卡丘貼圖，區塊標題前小寶可夢球 ── */
+.wrap>.pk{float:right;width:118px;height:auto;margin:-10px 0 0 12px;filter:drop-shadow(0 3px 4px rgba(90,58,26,.15))}
+.wrap>.pk~h1{margin-top:18px}
+.sec>h2::before{content:'';display:inline-block;width:18px;height:18px;margin-right:8px;vertical-align:-3px;background:var(--pokeball) center/contain no-repeat}
+@media (max-width:640px){.wrap>.pk{width:88px;margin-top:-4px}}

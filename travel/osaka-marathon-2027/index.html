@@ -353,7 +353,105 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 .mapbtn.ghost{background:#fff;color:#2f7fc6;border:2px solid #aacfea}
 .mapbtn.ghost:hover{background:#e4f1fb}
 @media (max-width:640px){ .datepill{font-size:1.35rem;padding:6px 16px} .datepill small{font-size:.85rem} }
+
+/* ════════ 皮卡丘 × 當地插畫版每日卡（仿 11/19 交通卡：大圓編號＋地點標題、左插畫右路線、該日色淡底） ════════ */
+/* 頂部橫幅：滿版到視窗左右兩邊，只有下緣淡出接到天空背景；標題與日期條疊在下方 */
+header:has(.hero){position:relative;text-align:center}
+.wrap:has(.hero){padding-top:0}
+.hero{display:block;width:100vw;max-width:none;margin:0 0 -64px calc(50% - 50vw);height:clamp(230px,30vw,400px);object-fit:cover;object-position:center 62%;
+  -webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
+body{overflow-x:clip}
+/* 日期條：跟下方區塊同寬同形狀 */
+.hero~.datepill{display:block;text-align:center;white-space:nowrap;width:100%;border-radius:22px;margin:10px 0 4px;padding:12px 16px}
+@media (max-width:640px){.hero{object-position:22% 62%}.hero~.datepill{font-size:1.25rem}}
+.hero~.hicon{display:none}
+.hero~h1{position:relative;text-shadow:0 0 12px #fff,0 0 4px #fff}
+.divider{display:block;width:100%;aspect-ratio:21/9;max-height:230px;object-fit:cover;margin:0;
+  -webkit-mask-image:radial-gradient(ellipse 60% 64% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 60% 64% at 50% 50%,#000 55%,transparent 100%)}
+.divider.foot{aspect-ratio:auto;max-height:120px;margin-top:10px}
+/* 各區塊標題右側放一隻主題皮卡丘貼圖（去背），像交通卡角落的角色 */
+details.sec>summary{position:relative;display:flex;align-items:center;min-height:66px;padding-right:96px}
+details.sec>summary::after{content:'';position:absolute;right:18px;top:3px;width:78px;height:76px;background:center bottom/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(90,58,26,.15));transition:transform .2s}
+#sec-days>summary::after{background-image:url(img/pika/s_days.webp)}
+#sec-flight>summary::after{background-image:url(img/pika/s_flight.webp)}
+#sec-stay>summary::after{background-image:url(img/pika/s_stay.webp)}
+#sec-race>summary::after{background-image:url(img/pika/s_race.webp)}
+#sec-travel>summary::after{background-image:url(img/pika/s_travel.webp)}
+details.sec>summary:hover::after{transform:rotate(-6deg) scale(1.06)}
+
+/* ── 航班／住宿／馬拉松：仿交通卡的資訊格（圖示＋彩色標籤＋大字數值＋虛線分隔），角落淡淡的寶可夢球 ── */
+#sec-flight{--sc:#2f7fc6}
+#sec-stay{--sc:#c98410}
+#sec-race{--sc:#2f9a5c}
+.fact,.gfcard{position:relative;overflow:hidden;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%23fbe3eb' stroke-width='5'/%3E%3Cpath d='M4 50h30M66 50h30' stroke='%23fbe3eb' stroke-width='5'/%3E%3Ccircle cx='50' cy='50' r='14' fill='none' stroke='%23fbe3eb' stroke-width='5'/%3E%3C/svg%3E") right -22px bottom -22px/96px no-repeat,#fff}
+.fhead b{font-size:17px;display:inline-flex;align-items:center;gap:8px}
+.fhead b::before{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sc);box-shadow:0 2px 0 rgba(0,0,0,.08);display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+#sec-stay .fhead b::before{content:'🏨'}
+#sec-race .fhead b::before{content:'🏃'}
+.fgrid{gap:0;border:2px solid var(--inner);border-radius:16px;overflow:hidden;background:#fff}
+.ft,#sec-stay .ft,#sec-race .ft{background:#fff;border-radius:0;padding:10px 8px;text-align:center;border-left:2px dashed var(--inner)}
+.ft:first-child{border-left:0}
+.ft span{display:inline-block;background:var(--sc);color:#fff;border-radius:999px;padding:1px 10px;font-size:11.5px;letter-spacing:.06em}
+.ft span::before{margin-right:4px}
+.ft b{font-size:17px;color:var(--sc);margin-top:6px;white-space:normal}
+#sec-race .ft:nth-child(1) span::before{content:'🏁'}
+#sec-race .ft:nth-child(2) span::before{content:'⏰'}
+#sec-race .ft:nth-child(3) span::before{content:'📏'}
+#sec-race .ft:nth-child(4) span::before{content:'🎯'}
+#sec-stay .ft:nth-child(1) span::before{content:'🔑'}
+#sec-stay .ft:nth-child(2) span::before{content:'🧳'}
+#sec-stay .ft:nth-child(3) span::before{content:'🛏️'}
+#sec-stay .ft:nth-child(4) span::before{content:'💴'}
+.frow{border-top:1.5px dashed var(--inner);align-items:center}
+.frow>span{width:auto;min-width:72px;text-align:center;background:var(--inner);color:var(--brown);border-radius:999px;padding:1px 10px;font-size:12px}
+.fnotes{border-top:0;background:color-mix(in srgb,var(--inner) 35%,#fff);border-radius:12px;padding:8px 12px;margin-top:8px;color:var(--ink)}
+.gf-ap b{color:var(--sc);font-size:30px}
+.gf-arc path{stroke:var(--pink);stroke-dasharray:5 5}
+.gf-conf b{display:inline-block;background:var(--c-sky);border:1.5px solid var(--b-sky);color:var(--sc);border-radius:999px;padding:0 10px;font-size:13px}
+.gf-title::before{content:'✈️';display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--sc);font-size:13px;margin-right:8px;vertical-align:middle}
+@media (max-width:640px){.ft:nth-child(odd){border-left:0}.ft:nth-child(n+3){border-top:2px dashed var(--inner)}}
+.days{gap:12px}
+.days .day:nth-child(1){--dbg:var(--c-pink);--dln:var(--b-pink)}
+.days .day:nth-child(2){--dbg:var(--c-mint);--dln:var(--b-mint)}
+.days .day:nth-child(3){--dbg:var(--c-lav);--dln:var(--b-lav)}
+.days .day:nth-child(4){--dbg:var(--c-sky);--dln:var(--b-sky)}
+/* 插畫不加框：貼齊卡片左下邊、右側與上緣淡出融進卡片底色；路線區是半透明白底，不是另一張卡 */
+.day{position:relative;overflow:hidden;grid-template-columns:230px 1fr;grid-template-areas:none;gap:0;background:var(--dbg);border:2px solid var(--dln);border-radius:22px;padding:0}
+/* 卡片高度只由右側白色區決定：插畫與編號都絕對定位在左欄，不撐高卡片 */
+.day .tag{position:absolute;top:0;left:0;z-index:2;flex-direction:row;align-items:center;gap:10px;padding:10px 14px 4px}
+/* D1～D4 做成寶可夢球：上半該日顏色寫編號、中間棕線、白色按鈕 */
+.day .dnum{position:relative;width:60px;height:60px;font-size:13px;line-height:1;align-items:flex-start;padding-top:8px;border:3px solid #fff;
+  background:linear-gradient(180deg,var(--dk) 0 50%,var(--brown) 50% 57%,#fff 57%);box-shadow:0 3px 8px rgba(0,0,0,.14),inset 0 0 0 2px var(--brown)}
+.day .dnum::after{content:'';position:absolute;left:50%;top:53.5%;width:14px;height:14px;border-radius:50%;background:#fff;border:2.5px solid var(--brown);transform:translate(-50%,-50%)}
+.day .date{background:rgba(255,255,255,.85);font-size:13px;padding:2px 12px}
+.day .pika{position:absolute;top:0;left:0;bottom:0;width:250px;height:100%;object-fit:cover;object-position:center 35%;border:0;border-radius:0;box-shadow:none;background:none;
+  -webkit-mask-image:linear-gradient(90deg,#000 66%,transparent);mask-image:linear-gradient(90deg,#000 66%,transparent)}
+.day .body{grid-row:1;grid-column:2;background:rgba(255,255,255,.72);border-radius:16px;padding:12px 16px;margin:8px 8px 8px -24px;position:relative;z-index:1;backdrop-filter:blur(2px)}
+.day .ttl{font-size:19px;font-weight:700;color:var(--brown);letter-spacing:.5px;line-height:1.3;margin-bottom:6px}
+.day .stops{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:14px;font-weight:700;color:var(--muted)}
+.day .stops .stop.key{font-size:16px;color:var(--ink)}
+.day .stops .arrow{color:var(--pink);font-size:20px;line-height:1;opacity:.75}
+.day .meta{border-top:1.5px dashed var(--dln);padding-top:8px}
+.day .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.day .meta .mi{margin:0;white-space:normal;background:var(--dbg);border:1.5px solid var(--dln);border-radius:12px;padding:2px 10px;font-size:12.5px;line-height:1.6}
+.day .meta .mi b{color:var(--dk)}
+@media (max-width:640px){
+  .day{grid-template-columns:1fr}
+  .day .pika{position:static;width:100%;grid-row:1;grid-column:1;aspect-ratio:16/10;height:auto;
+    -webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+  .day .body{grid-row:2;grid-column:1;margin:-36px 10px 10px}
+  .day .ttl{font-size:17px}
+  .day .meta .mi{display:inline-block}
+}
+/* 收合時標題旁的重點小膠囊，讓空白處有內容 */
+.peek{display:none;flex-wrap:wrap;gap:6px;margin-left:14px;font-size:12.5px;font-weight:700;min-width:0}
+details.sec:not([open])>summary .peek{display:flex}
+.peek i{font-style:normal;background:rgba(255,255,255,.85);border:1.5px solid var(--inner);color:var(--brown);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.peek i.k{background:var(--pink);border-color:var(--pink);color:#fff}
+@media (max-width:640px){details.sec>summary{flex-wrap:wrap}.peek{margin:6px 0 0 18px;width:100%;font-size:11.5px}}
 </style>
+<link rel="stylesheet" href="pika.css">
 </head>
 <body>
 
@@ -377,20 +475,21 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 
 <div class="wrap">
 <header>
+  <img class="hero" src="img/pika/header.webp" alt="" onerror="this.remove()">
   <div class="hicon">🏃</div>
   <h1>大阪馬拉松 2027</h1>
   <div class="datepill"><span class="dp-cloud">☁️</span>2/26<small>（五）</small> – 3/1<small>（一）</small><span class="dp-ico">🚃</span></div>
 </header>
 
 <details class="sec" id="sec-days" open>
-<summary>行程<a class="fullpg" href="plan.html" title="完整行程"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
+<summary>行程<a class="fullpg" href="plan.html" title="完整行程"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a><span class="peek"><i class="k">4 天 3 夜</i><i>D1 海遊館</i><i>D2 勝尾寺</i><i>D3 Race Day</i><i>D4 和歌山城</i></span></summary>
 <div class="secbody">
 <div class="days" id="days"></div>
 </div>
 </details>
 
 <details class="sec" id="sec-flight">
-<summary>航班資訊</summary>
+<summary>航班資訊<span class="peek"><i class="k">TPE ⇄ KIX</i><i>去 2/26 MM24 09:40</i><i>回 3/1 MM027 15:25</i></span></summary>
 <div class="secbody">
 <div class="gflights">
   <div class="gfcard">
@@ -427,7 +526,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </details>
 
 <details class="sec" id="sec-stay">
-<summary>住宿資訊<a class="fullpg" href="stay.html" title="住宿完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
+<summary>住宿資訊<a class="fullpg" href="stay.html" title="住宿完整頁"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a><span class="peek"><i class="k">3 晚</i><i>大阪城公園旁</i><i>17:00 後入住</i></span></summary>
 <div class="secbody">
 <div class="fact">
   <div class="fhead"><b>Excellence Osaka Castle Park</b></div>
@@ -444,8 +543,10 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </div>
 </details>
 
+<img class="divider" src="img/pika/divider.webp" alt="" loading="lazy" onerror="this.remove()">
+
 <details class="sec" id="sec-race" open>
-<summary>馬拉松篇<a class="fullpg" href="race.html" title="馬拉松篇完整內容"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a></summary>
+<summary>馬拉松篇<a class="fullpg" href="race.html" title="馬拉松篇完整內容"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a><span class="peek"><i class="k">2/28 09:15 起跑</i><i>42.195 km</i><i>關門 7 小時</i></span></summary>
 <div class="secbody">
 <div class="fact">
   <div class="fhead"><b>大阪マラソン 2027・2/28（日）</b></div>
@@ -463,7 +564,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 </details>
 
 <details class="sec" id="sec-travel">
-<summary>旅行篇</summary>
+<summary>旅行篇<span class="peek"><i class="k">必買 8</i><i>玩什麼 12</i><i>吃什麼 6</i></span></summary>
 <div class="secbody">
 
 <details class="sub">
@@ -487,6 +588,7 @@ details.sub>summary .fullpg svg{width:14px;height:14px}
 
 
 
+<img class="divider foot" src="img/pika/footer.webp" alt="" loading="lazy" onerror="this.remove()">
 <footer>
   <div style="margin-bottom:6px">景點照片來自 Wikimedia Commons（拍照角度參考，各張作者與授權見連結）：<a href="https://commons.wikimedia.org/wiki/File:Acuario_de_Osaka_-_Edificio.jpg" target="_blank" rel="noopener">海遊館1</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201-2.jpg" target="_blank" rel="noopener">海遊館2</a>、<a href="https://commons.wikimedia.org/wiki/File:Aquarium_@_Tempozan_@_Osaka_(13382179803).jpg" target="_blank" rel="noopener">海遊館3</a>、<a href="https://commons.wikimedia.org/wiki/File:Kaiyukan.JPG" target="_blank" rel="noopener">海遊館4</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Aquarium_%22Kaiyukan%22_20190201.jpg" target="_blank" rel="noopener">海遊館5</a>、<a href="https://commons.wikimedia.org/wiki/File:Tempozan_Ferris_Wheel_in_Osaka_at_Dusk.jpg" target="_blank" rel="noopener">天保山1</a>、<a href="https://commons.wikimedia.org/wiki/File:1_Chome-1_Kaigand%C5%8Dri,_Minato-ku,_%C5%8Csaka-shi,_%C5%8Csaka-fu_552-0022,_Japan_-_panoramio_-_jetsun_(12).jpg" target="_blank" rel="noopener">天保山2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Seven-Seas-Mariner01n3200.jpg" target="_blank" rel="noopener">天保山3</a>、<a href="https://commons.wikimedia.org/wiki/File:Grand_ferris_wheel_of_Tempozan_Harbor_Village_3.jpg" target="_blank" rel="noopener">天保山4</a>、<a href="https://commons.wikimedia.org/wiki/File:Ferris_Wheel_(223575457).jpeg" target="_blank" rel="noopener">天保山5</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_Nishinomaru_Garden_April_2005.JPG" target="_blank" rel="noopener">大阪城1</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_(5239985304).jpg" target="_blank" rel="noopener">大阪城2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_Park,_Japan_(8368519077).jpg" target="_blank" rel="noopener">大阪城3</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Castle_and_walls.jpg" target="_blank" rel="noopener">大阪城4</a>、<a href="https://commons.wikimedia.org/wiki/File:OsakaCastleM0783.jpg" target="_blank" rel="noopener">大阪城5</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9144.jpg" target="_blank" rel="noopener">和歌山城1</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9115.jpg" target="_blank" rel="noopener">和歌山城2</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9155.jpg" target="_blank" rel="noopener">和歌山城3</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9192.jpg" target="_blank" rel="noopener">和歌山城4</a>、<a href="https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau_de_Wakayama_9151.jpg" target="_blank" rel="noopener">和歌山城5</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_07.jpg" target="_blank" rel="noopener">勝尾寺1</a>、<a href="https://commons.wikimedia.org/wiki/File:Daruma_Dolls_Osaka.JPG" target="_blank" rel="noopener">勝尾寺2</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_main_gate.jpg" target="_blank" rel="noopener">勝尾寺3</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo_ji_temple_Benzaiten_Shrine_Osaka_prefecture_by_Don_Ramey_Logan.jpg" target="_blank" rel="noopener">勝尾寺4</a>、<a href="https://commons.wikimedia.org/wiki/File:Katsuo-ji_daruma_on_roof.jpg" target="_blank" rel="noopener">勝尾寺5</a>、<a href="https://commons.wikimedia.org/wiki/File:Outside_view_of_the_Tower_of_the_Sun_in_Osaka,_Japan.jpg" target="_blank" rel="noopener">太陽之塔1</a>、<a href="https://commons.wikimedia.org/wiki/File:%E6%A2%85%E4%B8%B9%E6%9C%AC%E8%88%97_(2813134756).jpg" target="_blank" rel="noopener">太陽之塔2</a>、<a href="https://commons.wikimedia.org/wiki/File:Osaka_Expo%2770_Korean_Pavilion.jpg" target="_blank" rel="noopener">太陽之塔3</a>、<a href="https://commons.wikimedia.org/wiki/File:EXPO_%2770_PAVILION_bekkan_3.jpg" target="_blank" rel="noopener">太陽之塔4</a></div>
   資料來源：樂桃訂單 QAJ7AN（2026/10/18）、大阪マラソン官網。賽事資訊依官方大会要項（2026/10 查），中途關門點與補給站以跑者手冊為準。
@@ -518,10 +620,14 @@ function stopsHTML(route){
     return `<span class="stop${key?' key':''}">${t}</span>`;
   }).join('<span class="arrow">›</span>');
 }
+// 卡片大標（仿交通卡的地點標題）；路線改成站點＋粉紅箭頭
+const TITLE={D1:'INTEX 領物・海遊館',D2:'萬博・勝尾寺・心齋橋',D3:'大阪馬拉松 Race Day',D4:'和歌山城・回台灣'};
+// 皮卡丘插畫（img/pika/d1.webp…）；還沒放圖就先用景點照片
 daysBox.innerHTML=DAYS.map(v=>`
   <div class="day clickable">
     <div class="tag"><div class="dnum"><i style="background:var(--d${v.c})"></i>${v.d}</div><div class="date">${v.date}</div></div>
-    <div class="body"><div class="routeline">${v.route}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join(' ')}</div>`:''}</div>
+    <div class="body"><div class="ttl">${TITLE[v.d]||''}</div><div class="stops">${stopsHTML(v.route)}</div>${v.meta?`<div class="meta">${v.meta.split('　').map(x=>`<span class="mi">${x}</span>`).join(' ')}</div>`:''}</div>
+    <img class="pika" src="img/pika/${v.d.toLowerCase()}.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='${COVER[v.d]||''}'">
   </div>`).join('');
 
 function chainHTML(chain, dayKey){
