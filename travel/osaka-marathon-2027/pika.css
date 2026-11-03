@@ -114,7 +114,7 @@ body details.sub>summary::after{content:'';display:inline-block;width:15px;heigh
 body .nophoto{flex-direction:column;gap:4px;padding-top:56px;background:url(img/pika/s_peek.webp) center 18px/64px auto no-repeat,var(--pika-pattern) 0 0/160px 120px,linear-gradient(135deg,var(--c-sky),var(--c-lav))}
 
 /* 行程頁的日卡外框改霧白，避免跟 D1 粉紅撞色（同總覽） */
-body #days.sec{background-color:rgba(255,255,255,.62);border-color:#fff;--inner:#d6e8f5}
+
 
 
 .wrap>.hero~.sub{margin-bottom:20px}
@@ -188,3 +188,23 @@ body .item .buy li{flex-direction:column;align-items:flex-start;gap:4px;padding:
 body .item .buy li:last-child{border-bottom:0;padding-bottom:0}
 body .item .buy li>span:last-child b{display:block;font-size:13.5px;line-height:1.45}
 body .item .buy li>span:last-child small{display:block;margin-top:2px;line-height:1.5}
+/* ── 總覽點開的每日彈窗：上方當天皮卡丘插畫、寶可夢球日期、整個彈窗跟著當天顏色 ── */
+.modal:has(.mhead i[style*="--d1)"]){--dk:var(--d1);--dbg:var(--c-pink);--dln:var(--b-pink)}
+.modal:has(.mhead i[style*="--d2)"]){--dk:var(--d2);--dbg:var(--c-mint);--dln:var(--b-mint)}
+.modal:has(.mhead i[style*="--d3)"]){--dk:var(--d3);--dbg:var(--c-lav);--dln:var(--b-lav)}
+.modal:has(.mhead i[style*="--d4)"]){--dk:var(--d4);--dbg:var(--c-sky);--dln:var(--b-sky)}
+body .modal{border-color:var(--dln,var(--b-sky));background:var(--pika-pattern-soft) 0 0/220px 165px,#fff}
+body .modal .mban{display:block;width:calc(100% + 48px);max-width:none;height:150px;object-fit:cover;object-position:center 35%;margin:-22px -24px 4px;
+  -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent);mask-image:linear-gradient(180deg,#000 60%,transparent)}
+body .modal .x{z-index:2;background:rgba(255,255,255,.9);border-radius:50%;width:30px;height:30px;line-height:30px;color:var(--brown);box-shadow:0 2px 6px rgba(0,0,0,.12)}
+body .modal .mhead{background:var(--dbg,var(--c-sky));border-radius:999px;padding:6px 8px 6px 10px;position:relative;margin-top:-26px}
+body .modal .mhead i{width:22px;height:22px;border-radius:0;background:var(--pokeball) center/contain no-repeat!important}
+body .modal .mhead b{color:var(--dk)}
+body .modal .mhead .mfull{margin-right:0;background:#fff;border-color:var(--dln);color:var(--dk)}
+body .modal .mroute{font-size:15px;font-weight:700;color:var(--brown)}
+body .modal .mlegs>b{display:inline-flex;align-items:center;gap:6px}
+body .modal .mlegs>b::before{content:'';width:16px;height:16px;background:var(--pokeball) center/contain no-repeat}
+body .modal .chain .cnode{border-color:var(--dbg);background:#fff}
+body .modal .chain .ctime{background:var(--dbg);color:var(--dk)}
+body .modal .chain .cbar{background:var(--dln)}
+body .modal .chain .ctext{color:var(--muted)}
