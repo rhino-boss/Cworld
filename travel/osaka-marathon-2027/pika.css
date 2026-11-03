@@ -214,3 +214,9 @@ body .modal .chain .ctext{color:var(--muted)}
 
 /* 行程頁：每天的卡片外面不要再包一層粉紅大框，直接排在頁面上 */
 body #days.sec{background:none;border:0;box-shadow:none;padding:0}
+/* 子層級改用超級球（藍色上半＋兩道紅紋）：勾選框、清單項目、表格分組、子區塊標題、地圖卡標題；
+   區塊大標題、D 日期膠囊、標籤列維持一般寶可夢球 */
+:root{--greatball:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M1 10a9 9 0 0 1 18 0z' fill='%233d7fd0'/%3E%3Cpath d='M3.2 5.6Q5.5 3.6 7 6.2L5.6 8.6Q4.6 6.6 2.4 7.6zM16.8 5.6Q14.5 3.6 13 6.2L14.4 8.6Q15.4 6.6 17.6 7.6z' fill='%23e8457c'/%3E%3Cpath d='M1 10a9 9 0 0 0 18 0z' fill='%23fff'/%3E%3Ccircle cx='10' cy='10' r='9' fill='none' stroke='%235a3a1a' stroke-width='1.6'/%3E%3Cpath d='M1 10h18' stroke='%235a3a1a' stroke-width='1.6'/%3E%3Ccircle cx='10' cy='10' r='3' fill='%23fff' stroke='%235a3a1a' stroke-width='1.6'/%3E%3C/svg%3E")}
+body .ck input[type=checkbox]:checked{background-image:var(--greatball)}
+body .ck input[type=checkbox]{border-color:#aacfea}
+body .tips li::before,body .notes li::before,body .srcs li::before,body .info th::before,body details.sub>summary::after,body .mtitle::before,body .modal .mlegs>b::before{background-image:var(--greatball)}
