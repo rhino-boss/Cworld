@@ -373,7 +373,7 @@ details.sec:not([open])>summary::after{top:50%;margin-top:-30px;height:60px;widt
 /* 區塊底色上加白色寶可夢球／閃電／星星底紋（用 id 才蓋得過各區塊的 background 簡寫）；行程收合時跟其他條一樣用粉色底 */
 #sec-days,#sec-flight,#sec-stay,#sec-race,#sec-travel{background-image:var(--pika-pattern);background-size:160px 120px}
 details#sec-days:not([open]){background-color:var(--c-pink);border-color:var(--b-pink)}
-#sec-days>summary::after{background-image:url(img/pika/s_days.webp)}
+#sec-days>summary::after{background-image:url(img/pika/s_days.webp?v=2)}
 #sec-flight>summary::after{background-image:url(img/pika/s_flight.webp)}
 #sec-stay>summary::after{background-image:url(img/pika/s_stay.webp)}
 #sec-race>summary::after{background-image:url(img/pika/s_race.webp)}
@@ -454,7 +454,7 @@ details.sec:not([open])>summary .peek{display:block}
 .peek i.k{color:var(--pink)}
 @media (max-width:640px){.peek{font-size:12px}}
 </style>
-<link rel="stylesheet" href="pika.css?v=20261103l">
+<link rel="stylesheet" href="pika.css?v=20261103m">
 </head>
 <body>
 
@@ -749,6 +749,6 @@ editList(document.getElementById('eatlist'), 'eat5', [
 ]);
 })();
 </script>
-<script src="pika.js?v=20261103l"></script>
+<script src="pika.js?v=20261103m"></script>
 </body>
 </html>
