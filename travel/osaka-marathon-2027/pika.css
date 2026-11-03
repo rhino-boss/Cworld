@@ -286,3 +286,5 @@ footer::before{content:none!important;display:none!important}
 .stay2 .fhead b::before,#sec-stay .fhead b::before,#sec-race .fhead b::before{content:''!important;width:28px;height:28px;border-radius:0;background:var(--pokeball) center/contain no-repeat!important;box-shadow:none}
 /* 馬拉松篇子區塊標題（賽事資訊、跑步路線…）後面不放寶可夢球 */
 body details.sub>summary::after{content:none!important;display:none!important}
+/* 飯店／賽事名稱跟「訂房」同層級：用同一顆超級球、同樣大小 */
+.stay2 .fhead b::before,#sec-stay .fhead b::before,#sec-race .fhead b::before{width:18px!important;height:18px!important;background:var(--greatball) center/contain no-repeat!important}
