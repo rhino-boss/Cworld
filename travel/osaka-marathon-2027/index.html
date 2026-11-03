@@ -362,7 +362,7 @@ header:has(.hero){position:relative;text-align:center}
   -webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
 body{overflow-x:clip}
 /* 日期條：跟下方區塊同寬同形狀 */
-.hero~.datepill{display:block;text-align:center;white-space:nowrap;width:100%;border-radius:22px;margin:10px 0 4px;padding:12px 16px}
+.hero~.datepill{display:block;text-align:center;white-space:nowrap;width:100%;margin:-2px 0 8px;padding:0 16px;background:none;border:0;box-shadow:none;text-shadow:0 0 10px #fff,0 0 4px #fff}
 @media (max-width:640px){.hero{object-position:22% 62%}.hero~.datepill{font-size:1.25rem}}
 .hero~.hicon{display:none}
 .hero~h1{position:relative;text-shadow:0 0 12px #fff,0 0 4px #fff}
@@ -372,6 +372,10 @@ body{overflow-x:clip}
 /* 各區塊標題右側放一隻主題皮卡丘貼圖（去背），像交通卡角落的角色 */
 details.sec>summary{position:relative;display:flex;align-items:center;min-height:66px;padding-right:96px}
 details.sec>summary::after{content:'';position:absolute;right:18px;top:3px;width:78px;height:76px;background:center bottom/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(90,58,26,.15));transition:transform .2s}
+/* 收合時壓扁：上下留白縮小、貼圖垂直置中、區塊間距變小 */
+details.sec:not([open]){margin:10px 0}
+details.sec:not([open])>summary{min-height:0;padding-top:9px;padding-bottom:9px}
+details.sec:not([open])>summary::after{top:50%;margin-top:-30px;height:60px;width:64px}
 #sec-days>summary::after{background-image:url(img/pika/s_days.webp)}
 #sec-flight>summary::after{background-image:url(img/pika/s_flight.webp)}
 #sec-stay>summary::after{background-image:url(img/pika/s_stay.webp)}
@@ -419,12 +423,11 @@ details.sec>summary:hover::after{transform:rotate(-6deg) scale(1.06)}
 /* 插畫不加框：貼齊卡片左下邊、右側與上緣淡出融進卡片底色；路線區是半透明白底，不是另一張卡 */
 .day{position:relative;overflow:hidden;grid-template-columns:230px 1fr;grid-template-areas:none;gap:0;background:var(--dbg);border:2px solid var(--dln);border-radius:22px;padding:0}
 /* 卡片高度只由右側白色區決定：插畫與編號都絕對定位在左欄，不撐高卡片 */
-.day .tag{position:absolute;top:0;left:0;z-index:2;flex-direction:row;align-items:center;gap:10px;padding:10px 14px 4px}
-/* D1～D4 做成寶可夢球：上半該日顏色寫編號、中間棕線、白色按鈕 */
-.day .dnum{position:relative;width:60px;height:60px;font-size:13px;line-height:1;align-items:flex-start;padding-top:8px;border:3px solid #fff;
-  background:linear-gradient(180deg,var(--dk) 0 50%,var(--brown) 50% 57%,#fff 57%);box-shadow:0 3px 8px rgba(0,0,0,.14),inset 0 0 0 2px var(--brown)}
-.day .dnum::after{content:'';position:absolute;left:50%;top:53.5%;width:14px;height:14px;border-radius:50%;background:#fff;border:2.5px solid var(--brown);transform:translate(-50%,-50%)}
-.day .date{background:rgba(255,255,255,.85);font-size:13px;padding:2px 12px}
+/* 左上角一顆白色膠囊：小寶可夢球（同子頁標題那顆）＋D1＋日期 */
+.day .tag{position:absolute;top:10px;left:10px;z-index:2;flex-direction:row;align-items:center;gap:6px;padding:3px 12px 3px 7px;background:rgba(255,255,255,.92);border-radius:999px;box-shadow:0 2px 6px rgba(90,58,26,.12)}
+.day .dnum{width:auto;height:auto;border:0;border-radius:0;background:none;box-shadow:none;padding:0;gap:6px;color:var(--dk);font-size:14px;line-height:1.4}
+.day .dnum::before{content:'';flex:none;width:18px;height:18px;background:var(--pokeball) center/contain no-repeat}
+.day .date{background:none;color:var(--brown);font-size:13px;padding:0}
 .day .pika{position:absolute;top:0;left:0;bottom:0;width:250px;height:100%;object-fit:cover;object-position:center 35%;border:0;border-radius:0;box-shadow:none;background:none;
   -webkit-mask-image:linear-gradient(90deg,#000 66%,transparent);mask-image:linear-gradient(90deg,#000 66%,transparent)}
 .day .body{grid-row:1;grid-column:2;background:rgba(255,255,255,.72);border-radius:16px;padding:12px 16px;margin:8px 8px 8px -24px;position:relative;z-index:1;backdrop-filter:blur(2px)}
@@ -445,11 +448,14 @@ details.sec>summary:hover::after{transform:rotate(-6deg) scale(1.06)}
   .day .meta .mi{display:inline-block}
 }
 /* 收合時標題旁的重點小膠囊，讓空白處有內容 */
-.peek{display:none;flex-wrap:wrap;gap:6px;margin-left:14px;font-size:12.5px;font-weight:700;min-width:0}
-details.sec:not([open])>summary .peek{display:flex}
-.peek i{font-style:normal;background:rgba(255,255,255,.85);border:1.5px solid var(--inner);color:var(--brown);border-radius:999px;padding:1px 10px;white-space:nowrap}
-.peek i.k{background:var(--pink);border-color:var(--pink);color:#fff}
-@media (max-width:640px){details.sec>summary{flex-wrap:wrap}.peek{margin:6px 0 0 18px;width:100%;font-size:11.5px}}
+/* 收合時：標題下一行淡色小字摘要（單行、太長就…），重點那段用粉紅 */
+details.sec>summary{flex-wrap:wrap;align-content:center}
+.peek{display:none;width:calc(100% - 18px);margin:2px 0 0 18px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.sec:not([open])>summary .peek{display:block}
+.peek i{font-style:normal}
+.peek i+i::before{content:'・';color:var(--faint)}
+.peek i.k{color:var(--pink)}
+@media (max-width:640px){.peek{font-size:12px}}
 </style>
 <link rel="stylesheet" href="pika.css">
 </head>
