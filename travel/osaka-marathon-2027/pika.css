@@ -171,3 +171,10 @@ body .prog .bar i::after{z-index:2}
 /* 刻度下的數字 */
 body .prog .bar{margin-bottom:20px}
 body .prog .bar>b.tk{position:absolute;top:calc(100% + 3px);transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--faint);line-height:1}
+/* 總覽資訊格：第一格（手機版每列第一格）不要左虛線，免得跟外框疊在一起（要用 id 才蓋得過） */
+#sec-stay .ft:first-child,#sec-race .ft:first-child{border-left:0}
+@media (max-width:640px){#sec-stay .ft:nth-child(odd),#sec-race .ft:nth-child(odd){border-left:0}#sec-stay .ft:nth-child(n+3),#sec-race .ft:nth-child(n+3){border-top:2px dashed var(--inner)}}
+
+/* 馬拉松篇公里表：上坡那段不用整片黃底，改成淡綠底＋左側粉紅標線、公里數變粉紅 */
+body table.km tr.hill td{background:#f2faf5}
+body table.km tr.hill td:first-child{box-shadow:inset 4px 0 0 var(--pink);color:var(--pink)}
