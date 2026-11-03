@@ -138,3 +138,13 @@ body .prog .bar i{border-radius:999px;min-width:18px;
   background:repeating-linear-gradient(-45deg,rgba(255,255,255,.35) 0 6px,transparent 6px 12px),linear-gradient(90deg,#ffe066,#ffb703)}
 body .prog .bar i::after{right:-24px;top:-30px;width:48px;height:38px;filter:drop-shadow(0 2px 2px rgba(90,58,26,.15))}
 body .prog .pct{font-size:20px;color:#e0a100}
+/* Google Map 等按鈕：白底膠囊＋粉紅立體邊（按下去會往下沉），右邊帶小箭頭，跟寶可夢球同色系 */
+body .mapbtn,body .mapbtn.ghost{background:#fff;color:var(--brown);border:2px solid var(--b-pink);border-radius:999px;padding:7px 16px 7px 12px;font-size:13.5px;font-weight:700;
+  box-shadow:0 4px 0 var(--b-pink);transform:translateY(0);transition:transform .12s,box-shadow .12s,background .12s;margin-bottom:4px}
+body .mapbtn::after{content:'↗';font-size:12px;color:var(--pink);margin-left:2px}
+body .mapbtn:hover{background:var(--c-pink)}
+body .mapbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--b-pink)}
+body .mapbtn.ghost{border-color:var(--b-sky);box-shadow:0 4px 0 var(--b-sky)}
+body .mapbtn.ghost::after{color:var(--blue)}
+body .mapbtn.ghost:hover{background:var(--c-sky)}
+body .mapbtn.ghost:active{box-shadow:0 1px 0 var(--b-sky)}
