@@ -25,6 +25,8 @@ details.sec,.sec{background-image:var(--pika-pattern);background-size:160px 120p
 .days .day{background-image:var(--pika-pattern);background-size:160px 120px}
 
 /* ── 子頁標題：跟總覽一樣的滿版皮卡丘橫幅，下緣淡出，標題與說明置中疊在下方 ── */
+/* iPhone Safari 光靠 body clip 擋不住橫向捲動，html 也要 hidden（會傳給視窗本身，不影響 sticky 標籤列） */
+html{overflow-x:hidden}
 body{overflow-x:clip}
 .wrap:has(>.hero){padding-top:0}
 .wrap>.hero{display:block;width:100vw;max-width:none;margin:0 0 -58px calc(50% - 50vw);height:clamp(220px,28vw,380px);object-fit:cover;object-position:center 60%;
