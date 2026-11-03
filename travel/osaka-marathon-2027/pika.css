@@ -260,3 +260,36 @@ footer::before{content:none!important;display:none!important}
   .stay2 .frow{grid-template-columns:1fr;gap:4px}
   .stay2 .frow>span{justify-self:start;padding:1px 12px}
 }
+/* ════════ 旅行篇重新設計 ════════ */
+/* 共用：當天顏色的寶可夢球膠囊 */
+.dtag{display:inline-flex;align-items:center;gap:3px;background:#fff;color:var(--dk);border:1.5px solid currentColor;border-radius:999px;padding:0 8px 0 3px;font-size:11.5px;font-weight:700;line-height:1.6;font-style:normal;vertical-align:1px}
+.dtag::before{content:'';width:13px;height:13px;background:var(--pokeball) center/contain no-repeat}
+
+/* 總覽「旅行篇」：三個子卡標題前放圓形主題圖示，清單項目名稱粗體、備註改淡色小字在下一行 */
+#sec-travel details.sub>summary{display:flex;align-items:center;gap:10px;padding:10px 14px}
+#sec-travel details.sub>summary::after{display:none}
+#sec-travel details.sub>summary .ic{flex:none;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:17px;border:2px solid #fff;box-shadow:0 2px 4px rgba(90,58,26,.12)}
+#sec-travel .ck li{align-items:flex-start;padding:9px 2px;border-bottom:1.5px dashed var(--inner)}
+#sec-travel .ck li:last-child{border-bottom:0}
+#sec-travel .ck input[type=checkbox]{margin-top:2px}
+#sec-travel .ck .txt{font-weight:700;color:var(--brown);line-height:1.5}
+#sec-travel .ck .txt .note{display:block;margin-top:2px;font-weight:400;font-size:12.5px;color:var(--muted)}
+#sec-travel .ck .txt.done .note{text-decoration:none}
+
+/* 必買：每類一張淡色大卡，標題前圓形圖示＋右側件數膠囊 */
+.shopsec>h2{display:flex;align-items:center;gap:10px;margin:2px 4px 12px}
+.shopsec>h2::before{display:none}
+.shopsec>h2 .ic{flex:none;width:34px;height:34px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 4px rgba(90,58,26,.12)}
+.shopsec>h2 .cnt{margin-left:auto;font-size:12px;background:#fff;border:1.5px solid var(--inner);border-radius:999px;padding:1px 10px;color:var(--muted)}
+
+/* 玩什麼／吃什麼：依天數分組的分隔標題 */
+.dgrp{display:flex;align-items:center;gap:8px;margin:18px 4px 10px;--dk:var(--pink)}
+.dgrp:first-child{margin-top:4px}
+.dgrp[style*="--d1"]{--dk:var(--d1)}.dgrp[style*="--d2"]{--dk:var(--d2)}.dgrp[style*="--d3"]{--dk:var(--d3)}.dgrp[style*="--d4"]{--dk:var(--d4)}
+.dgrp{background:none!important}
+.dgrp b{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--dk);border-radius:999px;padding:4px 14px 4px 6px;font-size:15px;box-shadow:0 2px 6px rgba(90,58,26,.1)}
+.dgrp b::before{content:'';width:20px;height:20px;background:var(--pokeball) center/contain no-repeat}
+.dgrp span{font-weight:700;color:var(--brown);font-size:13.5px}
+.dgrp i{margin-left:auto;font-style:normal;font-size:12px;font-weight:700;color:var(--muted)}
+.dgrp::after{content:'';flex:1;order:3;height:0;border-top:2px dashed color-mix(in srgb,var(--dk) 35%,transparent)}
+.dgrp i{order:4;margin-left:0}

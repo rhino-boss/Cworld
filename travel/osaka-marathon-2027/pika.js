@@ -41,6 +41,43 @@
   });
   fitNotes(); window.addEventListener('load', fitNotes); window.addEventListener('resize', fitNotes);
 
+  /* 玩什麼／吃什麼：依天數分組，每組前面放一顆「寶可夢球＋D1・2/26 五」分隔標題 */
+  const spots = document.getElementById('spots');
+  if (spots) {
+    // 先把卡片依 D1→D4→有空 排好（同一天內維持原本順序），同一天才會只有一個分隔標題
+    const keyOf = c => c.querySelector('.head .day')?.textContent.trim() || '';
+    const rank = k => /^D\d$/.test(k) ? +k[1] : 9;
+    [...spots.querySelectorAll(':scope>.spot')].map((c, i) => [c, i])
+      .sort((a, b) => rank(keyOf(a[0])) - rank(keyOf(b[0])) || a[1] - b[1])
+      .forEach(([c]) => spots.appendChild(c));
+    let last = null;
+    spots.querySelectorAll(':scope>.spot').forEach(card => {
+      const tag = card.querySelector('.head .day');
+      const key = tag ? tag.textContent.trim() : '';
+      if (key === last) return;
+      last = key;
+      const day = (window.DAYS || []).find(v => v.d === key);
+      const n = [...spots.querySelectorAll(':scope>.spot')].filter(c => (c.querySelector('.head .day')?.textContent.trim() || '') === key).length;
+      const h = document.createElement('div');
+      h.className = 'dgrp';
+      if (tag) h.setAttribute('style', tag.getAttribute('style') || '');
+      h.innerHTML = '<b>' + (key === '有空' || !key ? '有空再去' : key) + '</b>' + (day ? '<span>' + day.date + '</span>' : '') + '<i>' + n + ' 個</i>';
+      spots.insertBefore(h, card);
+    });
+  }
+
+  /* 必買：各類標題右側的件數 */
+  document.querySelectorAll('.shopsec').forEach(s => { const c = s.querySelector('h2 .cnt'); if (c) c.textContent = s.querySelectorAll('.item').length + ' 項'; });
+
+  /* 總覽「旅行篇」清單：備註開頭的 D1／D2… 做成當天顏色的寶可夢球膠囊（勾選會重畫清單，所以用觀察器每次補上） */
+  const tagDays = ul => ul.querySelectorAll('.note:not([data-t])').forEach(em => {
+    em.dataset.t = '1';
+    const m = em.textContent.match(/^(D[1-4])\s*(.*)$/);
+    if (!m) return;
+    em.innerHTML = '<span class="dtag" style="--dk:var(--d' + m[1][1] + ')">' + m[1] + '</span>' + (m[2] ? ' ' + m[2].replace(/</g, '&lt;') : '');
+  });
+  document.querySelectorAll('#sec-travel .ck').forEach(ul => { tagDays(ul); new MutationObserver(() => tagDays(ul)).observe(ul, { childList: true }); });
+
   const run = () => document.querySelectorAll('details').forEach(bind);
   run();
   // 有些區塊是 JS 之後才產生的，晚一點再補綁一次
