@@ -153,3 +153,7 @@ body .mapbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c62f63}
 body .mapcard #stmap{margin-top:0;box-shadow:none}
 /* 地圖卡標題列右側的圓形圖示鈕（同行程時間節點的 📍／↗），稍微放大好點 */
 body .mapbar .lnk{flex:none;width:32px;height:32px;font-size:15px}
+
+/* 右上角探頭皮卡丘：在藍色導覽列／標籤列裡上下置中 */
+.tabbar::after{bottom:auto;top:50%;transform:translateY(-50%)}
+@media (max-width:640px){.cnav::after{bottom:auto;top:50%;transform:translateY(-50%)}}
