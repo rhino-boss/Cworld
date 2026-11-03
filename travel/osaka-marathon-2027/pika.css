@@ -33,3 +33,96 @@ body{overflow-x:clip}
 .wrap>.hero~.sub{text-align:center;max-width:640px;margin:2px auto 18px;text-shadow:0 0 8px #fff}
 .sec>h2::before{content:'';display:inline-block;width:18px;height:18px;margin-right:8px;vertical-align:-3px;background:var(--pokeball) center/contain no-repeat}
 @media (max-width:640px){.wrap>.hero{height:220px}.wrap>.hero~h1{font-size:1.6rem}}
+
+/* ════════ 子頁內容：套用總覽的設計語言 ════════ */
+/* 每日顏色：D1 粉、D2 綠、D3 紫、D4 藍（卡片淡底／框線／文字） */
+[style*="--d1)"],.dc.d1,.day:has(.dnum[style*="--d1)"]){--dk:var(--d1);--dbg:var(--c-pink);--dln:var(--b-pink)}
+[style*="--d2)"],.dc.d2,.day:has(.dnum[style*="--d2)"]){--dk:var(--d2);--dbg:var(--c-mint);--dln:var(--b-mint)}
+[style*="--d3)"],.dc.d3,.day:has(.dnum[style*="--d3)"]){--dk:var(--d3);--dbg:var(--c-lav);--dln:var(--b-lav)}
+[style*="--d4)"],.dc.d4,.day:has(.dnum[style*="--d4)"]){--dk:var(--d4);--dbg:var(--c-sky);--dln:var(--b-sky)}
+
+/* D 標籤 → 白色膠囊＋小寶可夢球＋當日顏色字（同總覽每日卡左上角） */
+body .head .day,body .item .buy .dc{background:#fff!important;color:var(--dk,var(--brown));border:1.5px solid var(--dln,var(--inner));display:inline-flex;align-items:center;gap:4px;padding:1px 9px 1px 4px;font-size:11.5px;border-radius:999px;line-height:1.5}
+body .head .day::before,body .item .buy .dc::before{content:'';width:14px;height:14px;flex:none;background:var(--pokeball) center/contain no-repeat}
+body .item .buy .dc{margin-top:0}
+
+/* 行程頁：每天一張淡色卡（白色底紋），日期膠囊同總覽 */
+body .day:has(.dhead){background-color:var(--dbg);background-image:var(--pika-pattern);background-size:160px 120px;border:2px solid var(--dln);border-radius:22px}
+body .dhead{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.92);border-radius:999px;padding:3px 14px 3px 7px;box-shadow:0 2px 6px rgba(90,58,26,.1);margin-bottom:10px}
+body .dhead .dnum{width:auto;height:auto;background:none!important;box-shadow:none;color:var(--dk);font-size:15px;gap:6px}
+body .dhead .dnum::before{content:'';width:18px;height:18px;background:var(--pokeball) center/contain no-repeat}
+body .dhead .ddate{background:none;color:var(--brown);padding:0;font-size:13px}
+body .day:has(.dhead) .route{font-size:17px;color:var(--brown)}
+body .day:has(.dhead) .chain .cnode{border-color:#fff;box-shadow:0 2px 6px rgba(90,58,26,.06)}
+body .day:has(.dhead) .chain .ctime{background:var(--dbg);color:var(--dk)}
+body .day:has(.dhead) .chain .cbar{background:var(--dln)}
+.ov .dc .h i{width:14px;height:14px;border-radius:0;background:var(--pokeball) center/contain no-repeat!important}
+
+/* 照片卡：照片下緣淡出接到白色內文（像總覽插畫融進卡片） */
+body .card>.cphoto{background:#fff;-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
+body .card>.cphoto .dots{bottom:22px}
+body .card>.cphoto+.body{margin-top:-18px;position:relative}
+body .spot .name{font-size:18px}
+body .spot .head{row-gap:6px}
+
+/* 清單：虛線分隔、項目前面小寶可夢球 */
+body .spot .tips,body .stay-tips,body .tips{list-style:none;margin:10px 0 0;padding:8px 0 0;border-top:1.5px dashed var(--inner)}
+body .tips li{position:relative;padding-left:20px}
+body .tips li::before{content:'';position:absolute;left:0;top:.35em;width:13px;height:13px;background:var(--pokeball) center/contain no-repeat}
+body .notes,body .srcs{list-style:none;margin-left:0}
+body .notes li,body .srcs li{position:relative;padding-left:22px;border-bottom:1.5px dashed var(--inner)}
+body .notes li::before,body .srcs li::before{content:'';position:absolute;left:0;top:.65em;width:14px;height:14px;background:var(--pokeball) center/contain no-repeat}
+
+/* 表格（住宿／馬拉松）：分組標題做成彩色膠囊、列與列之間虛線 */
+body .info{border:2px solid var(--inner)}
+body .info th{padding-top:16px}
+body .info th>*:first-child,body .info th{color:var(--brown)}
+body .info th::before{content:'';display:inline-block;width:15px;height:15px;margin-right:6px;vertical-align:-2px;background:var(--pokeball) center/contain no-repeat}
+body .info th{border-bottom:2px dashed var(--inner);font-size:13px;letter-spacing:.04em}
+body .info td{border-bottom:1.5px dashed #efe6d6}
+body .info td:first-child{color:var(--brown)}
+body .info tr:last-child td{border-bottom:0}
+body .km{border:2px solid var(--inner)}
+body .km td{border-bottom:1.5px dashed #efe6d6}
+
+/* 必買：照片區白底、數量徽章改成寶可夢紅膠囊、卡片框線加粗 */
+body .item{border-width:2px}
+body .item .ph{border-bottom:1.5px dashed var(--inner)}
+body .item .qty{background:#fff;color:var(--pink);border:2px solid var(--pink);display:inline-flex;align-items:center;gap:4px;padding:1px 10px 1px 5px}
+body .item .qty::before{content:'';width:14px;height:14px;background:var(--pokeball) center/contain no-repeat}
+body .item .name{font-size:16px}
+
+/* 勾選框 → 寶可夢球（沒勾是空心圈，勾了變寶可夢球） */
+body .ck input[type=checkbox]{-webkit-appearance:none;appearance:none;width:19px;height:19px;border-radius:50%;border:2px solid var(--b-pink);background:#fff;cursor:pointer;flex:none;margin:0;transition:transform .15s}
+body .ck input[type=checkbox]:checked{border-color:transparent;background:var(--pokeball) center/contain no-repeat;transform:rotate(-20deg)}
+
+/* 準備：進度條改成皮卡丘黃，皮卡丘跟著進度跑 */
+body .prog .bar{overflow:visible;position:relative;background:var(--c-yel);height:14px;border:1.5px solid var(--b-yel)}
+body .prog .bar i{position:relative;background:linear-gradient(90deg,#ffd84d,#ffb300);min-width:6px}
+body .prog .bar i::after{content:'';position:absolute;right:-20px;top:-22px;width:40px;height:32px;background:url(img/pika/s_peek.webp) center bottom/contain no-repeat}
+body .pcat{border-width:2px;background-image:none}
+body .pcat h3 .ic{border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(90,58,26,.1)}
+body .pcat h3{padding-bottom:8px;border-bottom:1.5px dashed var(--inner)}
+body .tipbox{border-style:dashed;border-width:2px}
+
+/* 馬拉松篇：子區塊標題前小寶可夢球 */
+body details.sub>summary::after{content:'';display:inline-block;width:15px;height:15px;margin-left:8px;vertical-align:-2px;background:var(--pokeball) center/contain no-repeat;opacity:.9}
+
+/* 還沒放照片的格子：探頭皮卡丘＋底紋，不再是空白 */
+body .nophoto{flex-direction:column;gap:4px;padding-top:56px;background:url(img/pika/s_peek.webp) center 18px/64px auto no-repeat,var(--pika-pattern) 0 0/160px 120px,linear-gradient(135deg,var(--c-sky),var(--c-lav))}
+
+/* 行程頁的日卡外框改霧白，避免跟 D1 粉紅撞色（同總覽） */
+body #days.sec{background-color:rgba(255,255,255,.62);border-color:#fff;--inner:#d6e8f5}
+
+/* 每頁第一個區塊上緣坐一隻該頁主題皮卡丘（說明文字下方多留空間給牠） */
+.wrap>.hero~.sub{margin-bottom:46px}
+.wrap>.hero~.sec:first-of-type,.wrap>.hero~.prog{position:relative}
+.wrap>.hero~.sec:first-of-type::after{content:'';position:absolute;right:16px;top:-46px;width:76px;height:64px;background:center bottom/contain no-repeat;pointer-events:none;z-index:3}
+body:has(.tabbar a.on[href="plan.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_days.webp)}
+body:has(.tabbar a.on[href="stay.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_stay.webp)}
+body:has(.tabbar a.on[href="prep.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_prep.webp)}
+body:has(.tabbar a.on[href="race.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_race.webp)}
+body:has(.tabbar a.on[href="shop.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_shop.webp)}
+body:has(.tabbar a.on[href="play.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_play.webp)}
+body:has(.tabbar a.on[href="eat.html"]) .wrap>.hero~.sec:first-of-type::after{background-image:url(img/pika/s_travel.webp)}
+@media (max-width:640px){.wrap>.hero~.sec:first-of-type::after{width:60px;height:52px;top:-38px;right:10px}}

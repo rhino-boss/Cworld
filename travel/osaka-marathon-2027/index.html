@@ -256,7 +256,8 @@ details.sec{--inner:#bfdbef;border-radius:22px;border:2px solid var(--b-sky);bac
 details.sec::before{display:none}
 details.sec>summary{color:var(--brown);font-size:1.15rem;padding:14px 20px 10px}
 summary::before{color:var(--pink)}
-#sec-days{background:var(--c-pink);border-color:var(--b-pink);--inner:#f8c9da}
+/* 行程大卡用霧白底＋淡藍框，讓裡面四張彩色日卡跳出來 */
+#sec-days{background-color:rgba(255,255,255,.62);border-color:#fff;--inner:#d6e8f5;backdrop-filter:blur(3px)}
 #sec-flight{background:var(--c-sky);border-color:var(--b-sky);--inner:#bfdbef}
 #sec-stay{background:var(--c-yel);border-color:var(--b-yel);--inner:#f6e4ab}
 #sec-race{background:var(--c-mint);border-color:var(--b-mint);--inner:#bee5d0}
@@ -376,6 +377,15 @@ details.sec>summary::after{content:'';position:absolute;right:18px;top:3px;width
 details.sec:not([open]){margin:10px 0}
 details.sec:not([open])>summary{min-height:0;padding-top:9px;padding-bottom:9px}
 details.sec:not([open])>summary::after{top:50%;margin-top:-30px;height:60px;width:64px}
+/* 收合時右半邊鋪該區塊的水彩場景，往左淡出成區塊底色 */
+#sec-days{--sbg:#f5faff;--scene:url(img/pika/h_plan.webp)}
+#sec-flight{--sbg:var(--c-sky);--scene:url(img/pika/d1.webp)}
+#sec-stay{--sbg:var(--c-yel);--scene:url(img/pika/h_stay.webp)}
+#sec-race{--sbg:var(--c-mint);--scene:url(img/pika/h_race.webp)}
+#sec-travel{--sbg:var(--c-lav);--scene:url(img/pika/h_shop.webp)}
+details.sec:not([open]){background-image:linear-gradient(90deg,var(--sbg) 28%,color-mix(in srgb,var(--sbg) 55%,transparent) 62%,color-mix(in srgb,var(--sbg) 15%,transparent)),var(--scene);
+  background-size:auto,62% auto;background-position:0 0,right 40%;background-repeat:no-repeat}
+@media (max-width:640px){details.sec:not([open]){background-size:auto,80% auto}}
 #sec-days>summary::after{background-image:url(img/pika/s_days.webp)}
 #sec-flight>summary::after{background-image:url(img/pika/s_flight.webp)}
 #sec-stay>summary::after{background-image:url(img/pika/s_stay.webp)}
