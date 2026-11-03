@@ -208,3 +208,9 @@ body .modal .chain .cnode{border-color:var(--dbg);background:#fff}
 body .modal .chain .ctime{background:var(--dbg);color:var(--dk)}
 body .modal .chain .cbar{background:var(--dln)}
 body .modal .chain .ctext{color:var(--muted)}
+/* 總覽最下面睡覺皮卡丘：上下淡出加長，邊緣完全融進背景 */
+.divider.foot{-webkit-mask-image:linear-gradient(180deg,transparent,#000 38%,#000 58%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(180deg,transparent,#000 38%,#000 58%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-composite:intersect}
+
+/* 行程頁：每天的卡片外面不要再包一層粉紅大框，直接排在頁面上 */
+body #days.sec{background:none;border:0;box-shadow:none;padding:0}
