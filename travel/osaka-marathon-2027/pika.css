@@ -138,13 +138,16 @@ body .prog .bar i{border-radius:999px;min-width:18px;
   background:repeating-linear-gradient(-45deg,rgba(255,255,255,.35) 0 6px,transparent 6px 12px),linear-gradient(90deg,#ffe066,#ffb703)}
 body .prog .bar i::after{right:-24px;top:-30px;width:48px;height:38px;filter:drop-shadow(0 2px 2px rgba(90,58,26,.15))}
 body .prog .pct{font-size:20px;color:#e0a100}
-/* Google Map 等按鈕：白底膠囊＋粉紅立體邊（按下去會往下沉），右邊帶小箭頭，跟寶可夢球同色系 */
-body .mapbtn,body .mapbtn.ghost{background:#fff;color:var(--brown);border:2px solid var(--b-pink);border-radius:999px;padding:7px 16px 7px 12px;font-size:13.5px;font-weight:700;
-  box-shadow:0 4px 0 var(--b-pink);transform:translateY(0);transition:transform .12s,box-shadow .12s,background .12s;margin-bottom:4px}
-body .mapbtn::after{content:'↗';font-size:12px;color:var(--pink);margin-left:2px}
-body .mapbtn:hover{background:var(--c-pink)}
-body .mapbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--b-pink)}
-body .mapbtn.ghost{border-color:var(--b-sky);box-shadow:0 4px 0 var(--b-sky)}
-body .mapbtn.ghost::after{color:var(--blue)}
-body .mapbtn.ghost:hover{background:var(--c-sky)}
-body .mapbtn.ghost:active{box-shadow:0 1px 0 var(--b-sky)}
+
+/* 地圖卡：白卡裡上方一列「標題＋小按鈕」，地圖在下面，按鈕不再孤零零掛在中間 */
+body .mapcard{background:#fff;border:2px solid var(--inner);border-radius:18px;padding:10px 10px 10px;margin-top:12px;box-shadow:0 2px 8px rgba(90,58,26,.06)}
+body .mapbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 4px 10px;flex-wrap:nowrap}
+body .mtitle{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--brown);min-width:0}
+body .mtitle::before{content:'';flex:none;width:18px;height:18px;background:var(--pokeball) center/contain no-repeat}
+body .mtitle small{font-size:12px;color:var(--muted);font-weight:700;margin-left:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body .mapbtn{flex:none;display:inline-flex;align-items:center;gap:5px;background:var(--pink);color:#fff;border:0;border-radius:999px;padding:6px 12px 6px 14px;font-size:12.5px;font-weight:700;text-decoration:none;
+  box-shadow:0 3px 0 #c62f63;transition:transform .12s,box-shadow .12s}
+body .mapbtn::after{content:'↗';font-size:12px}
+body .mapbtn:hover{background:#f05a8c}
+body .mapbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c62f63}
+body .mapcard #stmap{margin-top:0;box-shadow:none}
