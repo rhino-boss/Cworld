@@ -220,8 +220,8 @@ body #days.sec{background:none;border:0;box-shadow:none;padding:0}
 body .ck input[type=checkbox]:checked{background-image:var(--greatball)}
 body .ck input[type=checkbox]{border-color:#aacfea}
 body .tips li::before,body .notes li::before,body .srcs li::before,body .info th::before,body details.sub>summary::after,body .mtitle::before,body .modal .mlegs>b::before{background-image:var(--greatball)}
-/* 頁尾那排小圖示換成六隻寶可夢頭像（皮卡丘、伊布、妙蛙種子、小火龍、傑尼龜、胖丁） */
-footer::before{content:''!important;display:block;height:46px;margin:2px auto 10px;max-width:300px;letter-spacing:0;background:url(img/pika/s_heads2.webp) center/contain no-repeat}
+/* 頁尾不放小圖示 */
+footer::before{content:none!important;display:none!important}
 /* 總覽中間那張戴草帽皮卡丘：上下淡出加長（左右維持原本的淡出） */
 .divider:not(.foot){-webkit-mask-image:linear-gradient(180deg,transparent,#000 26%,#000 70%,transparent),linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);-webkit-mask-composite:source-in;
   mask-image:linear-gradient(180deg,transparent,#000 26%,#000 70%,transparent),linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-composite:intersect}
