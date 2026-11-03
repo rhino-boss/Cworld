@@ -297,3 +297,6 @@ body .modal .mhead b,body .modal .mhead span{text-shadow:0 0 6px #fff,0 0 3px #f
 .days .day .tag{background:none;box-shadow:none;padding-left:4px}
 .days .day .tag .dnum,.days .day .tag .date{text-shadow:0 0 6px #fff,0 0 3px #fff,0 0 2px #fff}
 .days .day .tag .dnum::before{filter:drop-shadow(0 0 2px #fff)}
+/* 彈窗頂部插畫：加高、往下多露一點，淡出改在更下面才開始 */
+body .modal .mban{height:210px;object-position:center 45%;-webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}
+@media (max-width:640px){body .modal .mban{height:190px}}
