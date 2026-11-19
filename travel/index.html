@@ -51,6 +51,19 @@
     .chip b { font-weight: 600; color: var(--muted); margin-left: 4px; }
     .chip.on { background: #3e5a78; color: #fff; border-color: #3e5a78; }
     .chip.on b { color: rgba(255,255,255,.75); }
+    /* 篩選改成下拉：跟排序同一排，按鈕大小不變 */
+    .toolbar { flex-wrap: nowrap; }
+    .toolbar .sp { flex: 1; }
+    .fdd { position: relative; flex: none; }
+    .fdd .chip::after { content: ' ▾'; font-size: .7rem; opacity: .8; }
+    .fmenu {
+      display: none; position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; min-width: 130px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.12); flex-direction: column; gap: 4px;
+    }
+    .fdd.open .fmenu { display: flex; }
+    .fmenu .chip { text-align: left; white-space: nowrap; }
+    .fmenu .chip::after { content: none; }
 
     /* 卡片模式：同 Omniplay 遊戲卡（封面、標題＋日期膠囊、說明、兩顆按鈕） */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
@@ -149,14 +162,12 @@
   <input class="search" id="q" type="search" placeholder="搜尋旅行名稱、路線、日期…" autocomplete="off">
 
   <div class="toolbar">
-    <span class="count" id="count"></span>
-    <span>排序</span>
+    <span class="fdd" id="fdd"><button class="chip on" id="fbtn" type="button"></button><span class="fmenu" id="fmenu"></span></span>
+    <span class="sp"></span>
     <button class="tbtn" id="sortkey" type="button"></button>
     <button class="tbtn" id="sortdir" type="button" title="切換升／降冪"></button>
     <button class="tbtn" id="view" type="button"></button>
   </div>
-
-  <div class="chips" id="chips"></div>
   <div id="body"></div>
 </div>
 
@@ -209,12 +220,16 @@ function render() {
   document.getElementById('sortdir').textContent = sortDesc ? '↓' : '↑';
   document.getElementById('view').textContent = view === 'card' ? '☰ 清單' : '▦ 卡片';
 
-  // 篩選標籤
+  // 篩選下拉：按鈕顯示目前選的狀態與數量，點開選其他
   const n = k => k === 'all' ? TRIPS.length : TRIPS.filter(t => t.status === k).length;
-  document.getElementById('chips').innerHTML = [['all', '全部'], ['planning', '計畫中'], ['done', '已結束']]
+  const FILTERS = [['all', '全部'], ['planning', '計畫中'], ['done', '已結束']];
+  const cur = FILTERS.find(f => f[0] === filter) || FILTERS[0];
+  document.getElementById('fbtn').innerHTML = `${cur[1]}<b>${n(cur[0])}</b>`;
+  document.getElementById('fmenu').innerHTML = FILTERS
     .map(([k, l]) => `<button class="chip${filter === k ? ' on' : ''}" data-f="${k}" type="button">${l}<b>${n(k)}</b></button>`).join('');
-  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
-    filter = c.dataset.f; localStorage.setItem(PK + 'filter', filter); render();
+  document.querySelectorAll('#fmenu .chip').forEach(c => c.addEventListener('click', () => {
+    filter = c.dataset.f; localStorage.setItem(PK + 'filter', filter);
+    document.getElementById('fdd').classList.remove('open'); render();
   }));
 
   // 篩選＋搜尋＋排序
@@ -223,7 +238,6 @@ function render() {
     const r = sortKey === 'date' ? a.start.localeCompare(b.start) : a.name.localeCompare(b.name, 'zh-Hant');
     return sortDesc ? -r : r;
   });
-  document.getElementById('count').textContent = `${list.length} 趟`;
 
   const body = document.getElementById('body');
   if (!list.length) { body.className = ''; body.innerHTML = '<div class="empty">沒有符合的旅行。</div>'; return; }
@@ -259,6 +273,8 @@ document.getElementById('sortkey').addEventListener('click', () => {
   const i = SORTS.findIndex(s => s.key === sortKey);
   sortKey = SORTS[(i + 1) % SORTS.length].key; localStorage.setItem(PK + 'sort', sortKey); render();
 });
+document.getElementById('fbtn').addEventListener('click', e => { e.stopPropagation(); document.getElementById('fdd').classList.toggle('open'); });
+document.addEventListener('click', e => { if (!e.target.closest('#fdd')) document.getElementById('fdd').classList.remove('open'); });
 document.getElementById('sortdir').addEventListener('click', () => {
   sortDesc = !sortDesc; localStorage.setItem(PK + 'dir', sortDesc ? 'desc' : 'asc'); render();
 });
